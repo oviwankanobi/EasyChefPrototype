@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { AppShell, Header } from "@mantine/core";
-import EasyChefHeader from "./Header.jsx";
-import { links } from "../utils/mock.jsx";
+import EasyChefHeader from "../../components/Header.jsx";
+import { links } from "../../utils/mock.jsx";
 import { Outlet } from "react-router-dom";
 
 const Layout = () => (

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import {
-  HomePage,
-  MyRecipesPage,
-  CreateRecipePage,
-  ProfilePage,
+  Home,
+  MyRecipes,
+  CreateRecipes,
+  Profile,
+  Layout,
 } from "./pages";
-import Layout from "./components/Layout.jsx";
 
 const router = createBrowserRouter([
   {
@@ -14,19 +14,19 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <HomePage />,
+        element: <Home />,
       },
       {
         path: "/my-recipes",
-        element: <MyRecipesPage />,
+        element: <MyRecipes />,
       },
       {
         path: "/create-recipe",
-        element: <CreateRecipePage />,
+        element: <CreateRecipes />,
       },
       {
         path: "/profile",
-        element: <ProfilePage />,
+        element: <Profile />,
       },
     ],
   },
