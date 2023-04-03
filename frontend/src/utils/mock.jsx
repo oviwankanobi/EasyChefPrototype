@@ -1,26 +1,26 @@
 export const links = [
     {
-        "link": "home/",
+        "link": "/",
         "label": "Home"
     },
     {
-        "link": "create/",
+        "link": "/create-recipe",
         "label": "Create Recipe"
     },
     {
-        "link": "recipes/",
+        "link": "/my-recipes",
         "label": "My Recipes"
     },
     {
-        "link": "profile/",
+        "link": "/profile",
         "label": "John",
         "dropdown": [
             {
-                "link": "shoppinglist/",
+                "link": "/shoppinglist",
                 "label": "My Shopping List"
             },
             {
-                "link": "edit/",
+                "link": "/edit",
                 "label": "Edit Profile"
             },
             {

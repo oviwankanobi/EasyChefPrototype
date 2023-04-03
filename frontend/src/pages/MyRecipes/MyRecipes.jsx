@@ -3,7 +3,7 @@ import React from 'react';
 function MyRecipesPage() {
     return (
         <div>
-            <p>test test test</p>
+            <p>We are in the My Recipes Page</p>
         </div>
     );
 }

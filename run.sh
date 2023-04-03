@@ -7,6 +7,7 @@ python manage.py runserver &
 sleep 5
 
 cd ../frontend
+npm i
 npm start
-
+cd ..
 

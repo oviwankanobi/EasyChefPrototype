@@ -3,7 +3,7 @@ import React from 'react';
 function ProfilePage() {
     return (
         <div>
-            <p>test test test</p>
+            <p>We are in the Profile Page</p>
         </div>
     );
 }
