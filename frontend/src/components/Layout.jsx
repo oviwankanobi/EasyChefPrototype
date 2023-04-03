@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { AppShell, Container, Header } from "@mantine/core";
+import { AppShell, Header } from "@mantine/core";
 import EasyChefHeader from "./Header.jsx";
 import { links } from "../utils/mock.jsx";
 import { Outlet } from "react-router-dom";
