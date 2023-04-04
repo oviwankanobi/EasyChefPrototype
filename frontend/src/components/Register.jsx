@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import {
     TextInput,
     PasswordInput,
@@ -57,6 +58,12 @@ export default function Register() {
             console.error(error);
         }
     };
+
+    useEffect(() => {
+        if (localStorage.getItem('access_token')) {
+            navigate('/');
+        }
+    }, []);
 
     return (
         <Container size={520} my={40}>
