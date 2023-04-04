@@ -12,6 +12,8 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { Link, useNavigate } from 'react-router-dom'
+import axios from "axios";
+import { useState } from "react";
 
 const useStyles = createStyles((theme) => ({
     wrapper: {
@@ -54,23 +56,23 @@ export default function Login() {
 
     const handleLogin = async (formValues) => {
         try {
-            const response = await fetch(LOGIN_API_ENDPOINT, {
-                method: 'POST',
+            const response = await axios.post(LOGIN_API_ENDPOINT, {
+                email: formValues.email,
+                password: formValues.password,
+            }, {
                 headers: {
                     'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: formValues.email,
-                    password: formValues.password,
-                })
+                }
             });
 
-            const result = await response.json();
-            if (response.ok) {
+            if (response.status === 200) {
+                const data = response.data;
+                localStorage.clear();
+                localStorage.setItem('access_token', data.access);
+                localStorage.setItem('refresh_token', data.refresh);
+                axios.defaults.headers.common['Authorization'] =
+                    `Bearer ${data['access']}`;
                 navigate('/');
-            }
-            else {
-                console.log(result)
             }
         } catch (error) {
             console.error(error);

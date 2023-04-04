@@ -12,6 +12,7 @@ import {
 } from "@mantine/core";
 import { useForm, hasLength, isEmail, matchesField } from '@mantine/form';
 import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios';
 
 export default function Register() {
     const form = useForm({
@@ -36,25 +37,21 @@ export default function Register() {
 
     const handleRegister = async (formValues) => {
         try {
-            const response = await fetch(REGISTER_API_ENDPOINT, {
-                method: 'POST',
+            const response = await axios.post(REGISTER_API_ENDPOINT, {
+                first_name: formValues.firstName,
+                last_name: formValues.lastName,
+                email: formValues.email,
+                password: formValues.password1,
+            }, {
                 headers: {
                     'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    first_name: formValues.firstName,
-                    last_name: formValues.lastName,
-                    email: formValues.email,
-                    password: formValues.password1,
-                })
+                }
             });
 
-            const result = await response.json();
-            if (response.ok) {
+            if (response.status === 200) {
                 navigate('/login');
-            }
-            else {
-                console.log(result)
+            } else {
+                console.log(response.data);
             }
         } catch (error) {
             console.error(error);

@@ -37,4 +37,8 @@ export const links = [
     link: "/register",
     label: "Register",
   },
+  {
+    link: "/logout",
+    label: "Logout",
+  },
 ];
