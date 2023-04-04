@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import {
     Paper,
     createStyles,
@@ -13,7 +14,6 @@ import {
 import { useForm } from '@mantine/form';
 import { Link, useNavigate } from 'react-router-dom'
 import axios from "axios";
-import { useState } from "react";
 
 const useStyles = createStyles((theme) => ({
     wrapper: {
@@ -80,6 +80,12 @@ export default function Login() {
     };
 
     const { classes } = useStyles();
+
+    useEffect(() => {
+        if (localStorage.getItem('access_token')) {
+            navigate('/');
+        }
+    }, []);
 
     return (
         <div className={classes.wrapper}>
