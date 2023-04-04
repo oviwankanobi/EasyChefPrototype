@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Register, Login, Logout } from "./components"
 import {
   Home,
   MyRecipes,
   CreateRecipes,
   Profile,
   Layout,
+  Authentication,
 } from "./pages";
 
 const router = createBrowserRouter([
@@ -27,6 +29,23 @@ const router = createBrowserRouter([
       {
         path: "/profile",
         element: <Profile />,
+      },
+    ],
+  },
+  {
+    element: <Authentication />,
+    children: [
+      {
+        path: "/register",
+        element: <Register />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
+      },
+      {
+        path: "/logout",
+        element: <Logout />,
       },
     ],
   },
