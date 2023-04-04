@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Register, Login, Logout } from "./components"
 import {
-  HomePage,
-  MyRecipesPage,
-  CreateRecipePage,
-  ProfilePage,
+  Home,
+  MyRecipes,
+  CreateRecipes,
+  Profile,
+  Layout,
+  Authentication,
 } from "./pages";
-import Layout from "./components/Layout.jsx";
 
 const router = createBrowserRouter([
   {
@@ -14,19 +16,36 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <HomePage />,
+        element: <Home />,
       },
       {
         path: "/my-recipes",
-        element: <MyRecipesPage />,
+        element: <MyRecipes />,
       },
       {
         path: "/create-recipe",
-        element: <CreateRecipePage />,
+        element: <CreateRecipes />,
       },
       {
         path: "/profile",
-        element: <ProfilePage />,
+        element: <Profile />,
+      },
+    ],
+  },
+  {
+    element: <Authentication />,
+    children: [
+      {
+        path: "/register",
+        element: <Register />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
+      },
+      {
+        path: "/logout",
+        element: <Logout />,
       },
     ],
   },
