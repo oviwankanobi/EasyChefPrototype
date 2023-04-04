@@ -29,4 +29,16 @@ export const links = [
       },
     ],
   },
+  {
+    link: "/login",
+    label: "Login",
+  },
+  {
+    link: "/register",
+    label: "Register",
+  },
+  {
+    link: "/logout",
+    label: "Logout",
+  },
 ];
