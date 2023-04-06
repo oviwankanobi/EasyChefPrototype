@@ -1,4 +1,6 @@
 import React from "react";
+import SearchBar from '../../components/search.jsx'
+import CARD_COMP from '../../components/card.jsx'
 import { Container, Title, Text } from '@mantine/core'
 
 function HomePage() {
@@ -17,6 +19,9 @@ function HomePage() {
       <Text>
         Auth is: {auth}
       </Text>
+      <SearchBar/>
+      <br/>
+      <CARD_COMP/>
     </Container>
   );
 }
