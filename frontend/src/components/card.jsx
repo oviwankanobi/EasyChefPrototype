@@ -1,6 +1,6 @@
 import { Card, Image, Text, Badge, Button, Group } from '@mantine/core';
 
-const CARD_COMP = () => {
+export default function CARD_COMP() {
   return (
     <>
     <Card shadow="sm" padding="lg" radius="md" withBorder>
@@ -31,5 +31,3 @@ const CARD_COMP = () => {
     </>
   );
 };
-
-export default CARD_COMP;

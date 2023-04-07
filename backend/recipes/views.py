@@ -19,7 +19,7 @@ from recipes.models import Comment
 class SearchAPIView(ListAPIView):
     # https://stackoverflow.com/questions/31933239/using-annotate-or-extra-to-add-field-of-foreignkey-to-queryset-equivalent-of
     queryset = Recipe.objects.annotate(avg_rating=Avg('recipe_ratings__stars'))
-    serializer_class = RecipeSerializer
+    serializer_class = ShowRecipeSerializer
     permission_classes = [AllowAny]
     # https://www.django-rest-framework.org/api-guide/filtering/
     filter_backends = [SearchFilter, OrderingFilter, RecipeFilter]
