@@ -15,6 +15,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from recipes.filters import RecipeFilter
 from rest_framework.response import Response
 from recipes.models import Comment
+from django.db.models import Count
 
 class SearchAPIView(ListAPIView):
     # https://stackoverflow.com/questions/31933239/using-annotate-or-extra-to-add-field-of-foreignkey-to-queryset-equivalent-of
@@ -381,6 +382,20 @@ class CartDetailsView(views.APIView):
         result += totals
         
         return Response(result)
+
+
+class MostPopularRecipes(ListAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = ShowRecipeSerializer
+    
+    def get_queryset(self):
+        top = []
+        favorites = Favorite.objects.all().values('recipe').annotate(total=Count('recipe')).order_by('-total')[:2] #top 2
+                
+        for fav in favorites:
+            top.append(fav.get('recipe'))
+        
+        return Recipe.objects.all().filter(pk__in=top)
 
 
 # ==== SOCIAL MEDIA ===

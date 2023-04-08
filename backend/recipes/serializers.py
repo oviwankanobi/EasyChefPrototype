@@ -101,6 +101,11 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
     steps = StepSerializer(many=True, read_only=True)
     images = serializers.SerializerMethodField('get_images')
     videos = serializers.SerializerMethodField('get_videos')
+    favorites = serializers.SerializerMethodField('get_favorites')
+    
+    def get_favorites(self, recipe):
+        
+        return Favorite.objects.filter(recipe=recipe).count()
     
     def get_ingredients(self, recipe):
         
@@ -134,6 +139,7 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
                   'owner',
                   'name',
                   'description',
+                  'favorites',
                   'diet',
                   'cuisine',
                   'ingredients_info',

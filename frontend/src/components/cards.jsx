@@ -1,6 +1,17 @@
 import { Card, Image, Text, Badge, Button, Group } from '@mantine/core';
+import { useEffect, useState } from 'react';
 
-export default function CARD_COMP() {
+export default function Cards() {
+
+  var [cards, setCards] = useState([])
+
+  const POPULAR_RECIPES_ENDPOINT = 'http://127.0.0.1:8000/popular/';
+
+  useEffect(() => {
+
+  }, [])
+
+
   return (
     <>
     <Card shadow="sm" padding="lg" radius="md" withBorder>
