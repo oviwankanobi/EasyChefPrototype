@@ -1,4 +1,5 @@
 import React from "react";
+import Cards from '../../components/cards/cards.jsx'
 import { Container, Title, Text } from '@mantine/core'
 
 function HomePage() {
@@ -17,6 +18,7 @@ function HomePage() {
       <Text>
         Auth is: {auth}
       </Text>
+      <Cards/>
     </Container>
   );
 }

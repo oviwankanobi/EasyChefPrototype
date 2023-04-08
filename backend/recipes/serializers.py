@@ -59,6 +59,25 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 class StepSerializer(serializers.ModelSerializer):
     
+    images = serializers.SerializerMethodField('get_images')
+    videos = serializers.SerializerMethodField('get_videos')
+    
+    def get_images(self, step):
+        
+        queryset = step.step_images.all()
+        
+        data = [{'image': str(img.image)} for img in queryset]
+        
+        return data
+    
+    def get_videos(self, step):
+        
+        queryset = step.step_videos.all()
+        
+        data = [{'video': str(vid.video)} for vid in queryset]
+        
+        return data
+    
     class Meta:
         model = Step
         fields = ['number',
@@ -66,7 +85,9 @@ class StepSerializer(serializers.ModelSerializer):
                   'description',
                   'prep_time',
                   'cooking_time',
-                  'recipe']
+                  'recipe',
+                  'images',
+                  'videos']
 
 
 class ShowRecipeSerializer(serializers.ModelSerializer):
@@ -78,6 +99,13 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
     ingredients_info = serializers.SerializerMethodField('get_ingredients')
     base_recipe = serializers.CharField(read_only=True)
     steps = StepSerializer(many=True, read_only=True)
+    images = serializers.SerializerMethodField('get_images')
+    videos = serializers.SerializerMethodField('get_videos')
+    favorites = serializers.SerializerMethodField('get_favorites')
+    
+    def get_favorites(self, recipe):
+        
+        return Favorite.objects.filter(recipe=recipe).count()
     
     def get_ingredients(self, recipe):
         
@@ -89,6 +117,21 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
         
         return data
         
+    def get_images(self, recipe):
+        
+        queryset = recipe.overall_images.all()
+        
+        data = [{'image': str(img.image)} for img in queryset]
+        
+        return data
+    
+    def get_videos(self, recipe):
+        
+        queryset = recipe.overall_videos.all()
+        
+        data = [{'video': str(vid.video)} for vid in queryset]
+        
+        return data
 
     class Meta:
         model = Recipe
@@ -96,6 +139,7 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
                   'owner',
                   'name',
                   'description',
+                  'favorites',
                   'diet',
                   'cuisine',
                   'ingredients_info',
@@ -103,7 +147,9 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
                   'prep_time',
                   'cooking_time',
                   'base_recipe',
-                  'steps']
+                  'steps',
+                  'images',
+                  'videos']
 
 
 class ImageRecipeSerializer(serializers.ModelSerializer):
