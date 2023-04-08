@@ -3,6 +3,9 @@ from recipes.views import *
 
 urlpatterns = [
 
+    #most favorited recipes
+    path('popular/', MostPopularRecipes.as_view(), name='popular'),
+
     path('filter/', SearchAPIView.as_view(), name='search'),
 
     path('create-recipe/', CreateRecipeView.as_view()),
