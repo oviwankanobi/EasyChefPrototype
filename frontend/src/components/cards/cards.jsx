@@ -1,5 +1,6 @@
 import { Card, Image, Text, Badge, Group, Input, Button, Container, Flex } from '@mantine/core';
 import { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import './cards.css';
 
@@ -8,6 +9,7 @@ export default function Cards() {
   var [cards, setCards] = useState([])
   var [search, setSearch] = useState("");
   var [header, setHeader] = useState("Popular recipes");
+  const navigate = useNavigate();
 
   const POPULAR_RECIPES_ENDPOINT = 'http://127.0.0.1:8000/recipes/popular/';
 
@@ -30,9 +32,9 @@ export default function Cards() {
       setCards(response.data.results);
 
       if(isDataAvailable){
-        setHeader("Search results for "+search)
+        setHeader('Search results for "'+search+'"')
       } else{
-        setHeader("Nothing found for "+search)
+        setHeader('Nothing found for "'+search+'"')
       }
     } catch (error) {
         console.error(error);
@@ -44,6 +46,10 @@ export default function Cards() {
     if (e.key === 'Enter') {
       handleSearchClick()
     }
+  }
+
+  function cardClick(recipeID) {
+    navigate("/recipe-details/"+recipeID);
   }
 
   return (
@@ -66,13 +72,13 @@ export default function Cards() {
         </Button>
       </Flex>
     </Container>
-    <h1 id="header">{header}</h1>
+    <h4 id="header">{header}</h4>
 
     <div className="flex-container">
 
       {cards.map(card => (
         <div key={card.name} style={{width: 280}}>
-          <Card shadow="sm" padding="lg" radius="md" withBorder>
+          <Card className='card' onClick={() => cardClick(card.id)} shadow="sm" padding="lg" radius="md" withBorder>
             <Card.Section>
               <Image
                 src={"http://127.0.0.1:8000/media/"+card.images[0].image}

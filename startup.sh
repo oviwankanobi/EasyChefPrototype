@@ -11,6 +11,7 @@ python manage.py migrate --run-syncdb
 echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin@mail.com', '12345678')" | python manage.py shell
 
 cd ../frontend
+npm install embla-carousel-react @mantine/carousel
 npm i
 
 cd ../

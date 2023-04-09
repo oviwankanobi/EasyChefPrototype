@@ -1,0 +1,184 @@
+body {
+    background-color: rgba(255, 255, 255, 0.834);
+}
+
+
+/*RECIPE DETAILS CONTENT*/
+.recipe-details-container {
+    text-align: center;
+    padding-top: 50px;
+}
+
+.recipe-details-container h1 {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.recipe-details-container #details-main-pic {
+    margin-top: 20px;
+    margin-bottom: 40px;
+    width: 350px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.233);
+}
+
+.recipe-details-container p {
+    text-align: center;
+    width: 50%;
+    margin: auto;
+    padding-bottom: 7px;
+    padding-top: 5px;
+}
+
+#rating-text {
+    color: black;
+    font-size: .92rem;
+    margin-left: 5px;
+    font-family: 'Roboto', sans-serif;
+}
+
+#underline-padded {
+    display: inline-block;
+    border-bottom: 1px solid black;
+    padding-bottom: 0.1px;
+}
+
+#jsmith-profile {
+    border-radius: 50%;
+    margin-bottom: 20px;
+    width: 70px;
+}
+
+hr {
+    width: 55%;
+    background-color: rgb(11, 130, 194);
+}
+
+#recipe-info {
+    display: flex;
+    justify-content: center;
+}
+
+.cook-times-container {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.cook-times-container>div {
+    width: 60px;
+    text-align: center;
+    padding: 2px;
+    flex: 1;
+}
+
+.cook-times-headers {
+    color: rgb(11, 130, 194);
+}
+
+ul li {
+    text-align: left;
+}
+
+.card-body h4 {
+    text-align: left;
+}
+
+
+.steps h2 {
+    margin-top: 60px;
+}
+
+.list-group li {
+    text-align: center;
+}
+
+.list-group-item img {
+    width: 400px;
+}
+
+.list-group-item p {
+    width: 30%;
+}
+
+/*ratings*/
+.checked {
+    color: orange;
+    font-size: 20px;
+}
+
+.unchecked {
+    font-size: 20px;
+}
+
+
+/*comment section*/
+/*https://gosnippets.com/snippets/bootstrap-5-user-comment-section-template-snippets*/
+#comment-section p {
+    font-family: 'Roboto', sans-serif;
+}
+
+.card-c {
+    background-color: #fff;
+    border: none;
+}
+
+.form-color {
+    background-color: #dddddd52;
+    border-radius: 20px;
+}
+
+#form-control-comment {
+    width: 700px;
+    padding-left: 20px;
+    height: 48px;
+    border-radius: 25px;
+    border: 2px solid black !important;
+
+}
+
+#form-control-comment:focus {
+    background-color: #fff;
+    transition: 0.2s ease;
+    border: 2px solid rgb(11, 130, 194) !important;
+    box-shadow: none;
+    outline: 0;
+}
+
+.c-badge {
+    background-color: rgb(11, 130, 194);
+    color: white;
+    height: 20px;
+    font-size: 11px;
+    width: 92px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2px;
+}
+
+.comment-text {
+    font-size: 12px;
+}
+
+.wish {
+    color: rgb(11, 130, 194);
+}
+
+.user-feed {
+    font-size: 14px;
+    margin-top: 12px;
+}
+
+/*media queries for p steps*/
+@media screen and (max-width: 1200px) {
+    .list-group-item p {
+        width: 60%;
+    }
+}
+
+@media screen and (max-width: 750px) {
+    .list-group-item p {
+        width: 100%;
+    }
+}
