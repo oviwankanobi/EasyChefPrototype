@@ -5,9 +5,13 @@ urlpatterns = [
 
     #most favorited recipes
     path('popular/', MostPopularRecipes.as_view(), name='popular'),
+    
+    path('get-recipes/', GetAllRecipes.as_view()),
 
+    #search for a recipe
     path('filter/', SearchAPIView.as_view(), name='search'),
 
+    #create a recipe
     path('create-recipe/', CreateRecipeView.as_view()),
     
     #delete a recipe

@@ -82,14 +82,14 @@ export default function CreateRecipePage() {
     }
   };
 
-  const VIEWRECIPE_API_ENDPOINT =
-    "http://127.0.0.1:8000/recipes/recipe-details/1/";
+  const VIEWRECIPE_API_ENDPOINT = "http://127.0.0.1:8000/recipes/get-recipes/";
 
   const handleViewRecipe = async () => {
     try {
       const response = await axios.get(VIEWRECIPE_API_ENDPOINT);
       if (response.status === 200) {
-        console.log(response.data);
+        const d = response.data.results;
+        console.log(JSON.stringify(d, null, 2));
       } else {
         console.log(response.data);
       }
