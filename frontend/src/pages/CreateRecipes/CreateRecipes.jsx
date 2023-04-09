@@ -58,20 +58,11 @@ export default function CreateRecipePage() {
 
   const handleCreateRecipe = async (formValues) => {
     try {
-      const response = await axios.post(
-        CREATERECIPE_API_ENDPOINT,
-        {
-          name: formValues.recipeName,
-          serving: formValues.servingSize,
-          prep_time: formValues.prepTime,
-          base_recipe: formValues.baseRecipe,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.post(CREATERECIPE_API_ENDPOINT, {
+        name: formValues.recipeName,
+        serving: formValues.serving,
+        prep_time: formValues.prepTime,
+      });
 
       if (response.status === 200) {
       } else {
