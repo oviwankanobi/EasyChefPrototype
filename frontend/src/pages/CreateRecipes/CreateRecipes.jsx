@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   TextInput,
   PasswordInput,
@@ -34,6 +34,26 @@ const data = [
 ];
 
 export default function CreateRecipePage() {
+  const [dietOptions, setDietOptions] = useState([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const { ingredientData } = await axios.get(
+        "http://127.0.0.1:8000/recipes/get-ingredients/"
+      );
+      const { dietData } = await axios.get(
+        "http://127.0.0.1:8000/recipes/get-diets/"
+      );
+      const { cuisineData } = await axios.get(
+        "http://127.0.0.1:8000/recipes/get-cuisines/"
+      );
+      console.log(ingredientData.data);
+      setDietOptions([ingredientData.data]);
+    }
+
+    fetchData();
+  }, []);
+
   const form = useForm({
     initialValues: {
       image: "",
@@ -80,7 +100,8 @@ export default function CreateRecipePage() {
       const response = await axios.get(VIEWRECIPE_API_ENDPOINT);
       if (response.status === 200) {
         const d = response.data.results;
-        console.log(JSON.stringify(d, null, 2));
+        //console.log(JSON.stringify(d, null, 2));
+        console.log(dietOptions);
       } else {
         console.log(response.data);
       }

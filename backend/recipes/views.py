@@ -17,11 +17,26 @@ from rest_framework.response import Response
 from recipes.models import Comment
 from django.db.models import Count
 
-class GetAllRecipes(ListAPIView):
+class GetRecipes(ListAPIView):
     queryset = Recipe.objects.all()
     permission_classes = [AllowAny]
     serializer_class = ShowRecipeSerializer
-
+    
+class GetIngredients(ListAPIView):
+    queryset = Ingredient.objects.all()
+    permissions_classes = [AllowAny]
+    serializer_class = IngredientSerializer
+    
+class GetDiets(ListAPIView):
+    queryset = Diet.objects.all()
+    permissions_classes = [AllowAny]
+    serializer_class = DietSerializer
+    
+class GetCuisines(ListAPIView):
+    queryset = Cuisine.objects.all()
+    permissions_classes = [AllowAny]
+    serializer_class = CuisineSerializer
+  
 class SearchAPIView(ListAPIView):
     # https://stackoverflow.com/questions/31933239/using-annotate-or-extra-to-add-field-of-foreignkey-to-queryset-equivalent-of
     queryset = Recipe.objects.annotate(avg_rating=Avg('recipe_ratings__stars'))
@@ -81,7 +96,7 @@ class DeleteIngredientView(DestroyAPIView):
             raise PermissionDenied()
         
         instance.delete()
-
+        
 
 class CreateDietView(CreateAPIView):
     serializer_class = DietSerializer
