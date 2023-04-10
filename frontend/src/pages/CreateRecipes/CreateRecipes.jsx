@@ -24,15 +24,14 @@ import { Attachments } from "../../components";
 import axios from "axios";
 
 export default function CreateRecipePage() {
+  window.onerror = (e) => console.log(e);
+
   const [ingredientOptions, setIngredientOptions] = useState([]);
   const [dietOptions, setDietOptions] = useState([]);
   const [cuisineOptions, setCuisineOptions] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
-      const ingredientData = await axios.get(
-        "http://127.0.0.1:8000/recipes/get-ingredients/"
-      );
       const dietData = await axios.get(
         "http://127.0.0.1:8000/recipes/get-diets/"
       );
@@ -40,28 +39,20 @@ export default function CreateRecipePage() {
         "http://127.0.0.1:8000/recipes/get-cuisines/"
       );
 
-      const ingredientArr = ingredientData.data.results.map((item) => ({
-        value: item.recipe,
-        label: item.recipe,
-        id: item.id,
-        quantity: item.quantity,
-      }));
-
       const dietArr = dietData.data.results.map((item) => ({
+        key: item.id.toString(),
         value: item.name,
         label: item.name,
-        id: item.id,
       }));
 
       const cuisineArr = cuisineData.data.results.map((item) => ({
+        key: item.id.toString(),
         value: item.name,
         label: item.name,
-        id: item.id,
       }));
 
-      setIngredientOptions([ingredientArr]);
-      setDietOptions([dietArr]);
-      setCuisineOptions([cuisineArr]);
+      setDietOptions(dietArr);
+      setCuisineOptions(cuisineArr);
     }
     fetchData();
   }, []);

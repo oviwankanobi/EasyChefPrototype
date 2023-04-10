@@ -10,6 +10,8 @@ urlpatterns = [
     path('get-ingredients/', GetIngredients.as_view()),
     path('get-diets/', GetDiets.as_view()),
     path('get-cuisines/', GetCuisines.as_view()),
+    path('get-base-ingredients/', GetBaseIngredients.as_view()),
+
 
 
     #search for a recipe

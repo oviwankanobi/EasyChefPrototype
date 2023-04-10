@@ -36,6 +36,11 @@ class GetCuisines(ListAPIView):
     queryset = Cuisine.objects.all()
     permissions_classes = [AllowAny]
     serializer_class = CuisineSerializer
+    
+class GetBaseIngredients(ListAPIView):
+    queryset = BaseIngredient.objects.all()
+    permissions_classes = [AllowAny]
+    serializer_class = BaseIngredientSerializer
   
 class SearchAPIView(ListAPIView):
     # https://stackoverflow.com/questions/31933239/using-annotate-or-extra-to-add-field-of-foreignkey-to-queryset-equivalent-of
