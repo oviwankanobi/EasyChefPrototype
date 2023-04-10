@@ -8,6 +8,7 @@ import {
   Profile,
   Layout,
   Authentication,
+  ShoppingList,
 } from "./pages";
 
 const router = createBrowserRouter([
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       {
         path: "/profile",
         element: <Profile />,
+      },
+      {
+        path: "/shopping-list",
+        element: <ShoppingList />
       },
     ],
   },

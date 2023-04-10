@@ -5,8 +5,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './style.css';
 import axios from "axios";
 import EditProfileTextField from './EditProfileTextField';
+import { Avatar } from '@mantine/core';
 
 function EditProfileForm() {
+    const ALERT_TIMEOUT = 4000
     var [data, setData] = useState({
         "first_name": "",
         "last_name": "",
@@ -92,7 +94,7 @@ function EditProfileForm() {
                     "variant": "success",
                     "text": "Your changes have been saved.",
                     "show": false
-                }, 4000)
+                }, ALERT_TIMEOUT)
 
                 get_profile_data()
             })
@@ -108,7 +110,7 @@ function EditProfileForm() {
                             "variant": "danger",
                             "text": "Please make sure you are logged in and try again.",
                             "show": false
-                        }, 4000)
+                        }, ALERT_TIMEOUT)
                         break
                     default:
                         // if ("phone_number" in error.response.data) {
@@ -136,7 +138,7 @@ function EditProfileForm() {
                             "variant": "danger",
                             "text": "Please make sure all fields are valid and try again.",
                             "show": false
-                        }, 4000)
+                        }, ALERT_TIMEOUT)
                     
                 }
                 
@@ -148,7 +150,8 @@ function EditProfileForm() {
             <form noValidate className="w-100" onSubmit={formSubmit}>
                 <div className="row m-5">
                     <div className="col-lg-12 mb-5">
-                        <img src={avatarURL} className="rounded-circle ratio ratio-1x1" id="edit-dp" alt="..." />
+                        <Avatar src={avatarURL} radius="xl" size="xl" />
+                        {/* <img src={avatarURL} className="rounded-circle ratio ratio-1x1" id="edit-dp" alt="..." /> */}
                         <br />
                         <br />
                         <label htmlFor="addprofilepic">Upload Profile Picture</label>
@@ -172,8 +175,8 @@ function EditProfileForm() {
                     
                 </div>
                 &nbsp;
-                <button id="apply" type="submit" className="btn btn-primary mx-5 my-2" >Apply Changes</button>
-                <Alert show={alertData["show"]} variant={alertData["variant"]} className="m-5 w-75" >
+                <button id="apply" type="submit" className="btn btn-primary mx-5 my-1" >Apply Changes</button>
+                <Alert show={alertData["show"]} variant={alertData["variant"]} className="mx-5 my-1 w-75" >
                             {alertData["text"]}
                     </Alert>
             </form>

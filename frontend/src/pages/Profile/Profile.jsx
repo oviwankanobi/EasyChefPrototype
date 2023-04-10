@@ -7,7 +7,7 @@ function ProfilePage() {
     return (
         <>
             <div className="container">
-                <EditProfileHeader />
+                <EditProfileHeader text="Edit Profile" />
                 <EditProfileForm />
             </div>
             

@@ -363,7 +363,9 @@ class CartDetailsView(views.APIView):
             ]
             all_ingredients += recipe_ingredients
         
-            rec_details = [{rec.name: recipe_ingredients}]
+            rec_details = [{"id": rec.id,
+                            "name": rec.name,
+                            "ingredients": recipe_ingredients}]
             result += rec_details
         
         sum_dict = {}
