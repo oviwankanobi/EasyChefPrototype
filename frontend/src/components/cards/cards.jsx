@@ -1,4 +1,4 @@
-import { Card, Image, Text, Badge, Group, Input, Button, Container, Flex } from '@mantine/core';
+import { Card, Image, Text, Badge, Group, Input, Button, Container, Flex, Rating } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
@@ -80,18 +80,23 @@ export default function Cards() {
         <div key={card.name} style={{width: 280}}>
           <Card className='card' onClick={() => cardClick(card.id)} shadow="sm" padding="lg" radius="md" withBorder>
             <Card.Section>
+
+            {Object.keys(card.images).length === 0 ? <span></span> : 
               <Image
-                src={"http://127.0.0.1:8000/media/"+card.images[0].image}
-                height={200}
-                width={280}
-                alt={card.name}
+              src={"http://127.0.0.1:8000/media/"+card.images[0].image}
+              height={200}
+              width={280}
+              alt={card.name}
               />
+            }
+
             </Card.Section>
       
-            <Group position="apart" mt="md" mb="xs">
-              <Text weight={500}>{card.name}</Text>
+            <Group position="center" mt="md" mb="xs">
+              <Text size="md" weight={500}>{card.name}</Text>
+              <Rating value={card.average_rating} readOnly />
               <Badge color="pink" variant="light">
-                {card.favorites} likes
+                {card.favorites} favorites
               </Badge>
             </Group>
       

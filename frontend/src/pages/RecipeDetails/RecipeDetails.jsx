@@ -1,9 +1,9 @@
 import React from 'react';
-import { Image, Rating } from '@mantine/core';
+import { Image, Rating, Tooltip, Title  } from '@mantine/core';
 import { useParams } from 'react-router-dom';
 import './RecipeDetails.css';
 import { Carousel } from "@mantine/carousel";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 
 function RecipeDetailsPage() {
@@ -11,35 +11,44 @@ function RecipeDetailsPage() {
     const { id } = useParams()
     var [recipe, setRecipe] = useState([]);
     var [images, setImages] = useState([]);
+    var [videos, setVideos] = useState([]);
     var [avgRating, setAvgRating] = useState([]);
     var [numRatings, setNumRatings] = useState([]);
     var [isRated, setIsRated] = useState(0);
+    var [avatar, setAvatar] = useState("");
 
     const RECIPE_DETAILS_ENDPOINT = "http://127.0.0.1:8000/recipes/recipe-details/"+id+"/";
     const DID_USER_RATE_ENDPOINT = "http://127.0.0.1:8000/recipes/is-rated/"+id+"/";
 
     useEffect(() => {
-  
-      async function fetchData() {
-        const response = await axios.get(RECIPE_DETAILS_ENDPOINT);
-        setRecipe(response.data);
-        setImages(response.data.images);
-        setAvgRating(response.data.average_rating);
-        setNumRatings(response.data.num_ratings);
-      }
-      fetchData();
 
-      async function fetchIsRated() {
-        var accessToken = localStorage.getItem('access_token');
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer '+accessToken
+        //get all recipe details
+        async function fetchData() {
+            const response = await axios.get(RECIPE_DETAILS_ENDPOINT);
+            setRecipe(response.data);
+            setImages(response.data.images);
+            setVideos(response.data.videos);
+            setAvgRating(response.data.average_rating);
+            setNumRatings(response.data.num_ratings);
+            setAvatar(response.data.avatar);
         }
-        const response = await axios.get(DID_USER_RATE_ENDPOINT, {headers: headers});
-        setIsRated(response.data.is_rated)
-        console.log(isRated)
-    }
-    fetchIsRated();
+        fetchData();
+
+        //see if user already rated the recipe, if logged in
+        async function fetchIsRated() {
+            var accessToken = localStorage.getItem('access_token');
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+accessToken
+            }
+            const response = await axios.get(DID_USER_RATE_ENDPOINT, {headers: headers});
+            setIsRated(response.data.is_rated)
+        }
+
+        var accessToken = localStorage.getItem('access_token');
+        if(accessToken){
+            fetchIsRated();
+        }        
 
     }, [])
 
@@ -49,14 +58,13 @@ function RecipeDetailsPage() {
 
 
     const rateRecipe = (user_rating) => {
-        console.log("got here")
+
         var accessToken = localStorage.getItem('access_token');
         if (accessToken) { //logged in
             
-            console.log("rated before if: "+isRated)
             //if not rated, rate (creates new rating)
             if(isRated === 0){
-                console.log("got to rated === 0")
+
                 const headers = {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer '+accessToken
@@ -76,7 +84,7 @@ function RecipeDetailsPage() {
                 
             //if rated, update user's existing rating
             } else if (isRated > 0){
-                console.log("got to rated > 0")
+
                 const headers = {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer '+accessToken
@@ -102,9 +110,6 @@ function RecipeDetailsPage() {
             }
             fetchUpdatedRatingData();
 
-        } else { //not logged in
-            //else: show tooltip saying not logged in
-            console.log("You must be logged in to rate a recipe")
         }
         
     }
@@ -114,28 +119,47 @@ function RecipeDetailsPage() {
         <div className="recipe-details-container">
             <h1>{recipe.name}</h1>
 
-            <span id="rating-text">{avgRating + " out of 5"}</span>
+            <span id="rating-text">{(Math.round(avgRating * 10) / 10) + " out of 5"}</span>
 
-            <Rating className='rating' value={avgRating} onChange={(newRating) => rateRecipe(newRating)}/>
+            <Tooltip label="You must be logged in to rate" disabled = {localStorage.getItem('access_token')}>
+                <Rating className='rating' value={avgRating} onChange={(newRating) => rateRecipe(newRating)}/>
+            </Tooltip>
 
             <span id="num-ratings">{numRatings+ " ratings"}</span>
+
             <br />
             <br />
-            <Carousel sx={{ maxWidth: 450 }} mx="auto" withIndicators height={350}>
 
-                {images.map(image => (
-                    <Carousel.Slide sx={{ backgroundColor: "#eee" }}>
-                        <Image src={"http://127.0.0.1:8000/media/"+image.image} />
-                    </Carousel.Slide>
-                ))}
-
-            </Carousel>
-            
             <p>
                 by &nbsp;
                 <span id="underline-padded">{recipe.owner_name}</span>
             </p>
-            <img src="./images/johnsmith_avatar.png" id="jsmith-profile" alt="John Smith"></img>
+
+            {Object.keys(avatar).length === 0 ? <span></span> : 
+            <img src={"http://127.0.0.1:8000/media/"+avatar} id="jsmith-profile"></img>
+            }
+
+            <br />
+            <br />
+
+            {Object.keys(images).length === 0 && Object.keys(videos).length === 0 ? <span></span> :
+                <Carousel sx={{ maxWidth: 650 }} mx="auto" withIndicators height={450}>
+
+                    {images.map(image => (
+                        <Carousel.Slide sx={{ backgroundColor: "#eee" }}>
+                            <Image width={650} height={450} src={"http://127.0.0.1:8000/media/"+image.image} />
+                        </Carousel.Slide>
+                    ))}
+        
+                    {videos.map(video => (
+                        <Carousel.Slide sx={{ backgroundColor: "#eee" }}>
+                            <video width={650} height={450} controls loop autoPlay src={"http://127.0.0.1:8000/media/"+video.video} fit="contain" />
+                        </Carousel.Slide>
+                    ))}
+        
+                </Carousel>
+            }
+            
             <br />
             {/**
             <button type="button" class="btn btn-primary" onclick="location.href='#recipe-info';">Jump to Recipe</button>
@@ -143,7 +167,7 @@ function RecipeDetailsPage() {
             <button type="button" class="btn btn-primary">Add to Shopping List</button>
             */}
             <br />
-            <p>This colorful, hearty combination of spiced sweet potatoes, black beans, baby spinach, and feta is perfect for meal prepping. Make roasted sweet potato salad for lunch or dinner.</p>
+            <p>{recipe.description}</p>
             {/**<img src="./images/reasted_sweet_potato_salad.png" id="details-main-pic" alt="..."></img>*/}
             <div id="recipe-info">
                 <div className="card">
