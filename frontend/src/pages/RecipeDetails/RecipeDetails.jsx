@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image } from '@mantine/core';
+import { Image, Rating } from '@mantine/core';
 import { useParams } from 'react-router-dom';
 import './RecipeDetails.css';
 import { Carousel } from "@mantine/carousel";
@@ -11,8 +11,12 @@ function RecipeDetailsPage() {
     const { id } = useParams()
     var [recipe, setRecipe] = useState([]);
     var [images, setImages] = useState([]);
+    var [avgRating, setAvgRating] = useState([]);
+    var [numRatings, setNumRatings] = useState([]);
+    var [isRated, setIsRated] = useState(0);
 
-    const RECIPE_DETAILS_ENDPOINT = "http://127.0.0.1:8000/recipes/recipe-details/"+id;
+    const RECIPE_DETAILS_ENDPOINT = "http://127.0.0.1:8000/recipes/recipe-details/"+id+"/";
+    const DID_USER_RATE_ENDPOINT = "http://127.0.0.1:8000/recipes/is-rated/"+id+"/";
 
     useEffect(() => {
   
@@ -20,24 +24,103 @@ function RecipeDetailsPage() {
         const response = await axios.get(RECIPE_DETAILS_ENDPOINT);
         setRecipe(response.data);
         setImages(response.data.images);
+        setAvgRating(response.data.average_rating);
+        setNumRatings(response.data.num_ratings);
       }
       fetchData();
+
+      async function fetchIsRated() {
+        var accessToken = localStorage.getItem('access_token');
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer '+accessToken
+        }
+        const response = await axios.get(DID_USER_RATE_ENDPOINT, {headers: headers});
+        setIsRated(response.data.is_rated)
+        console.log(isRated)
+    }
+    fetchIsRated();
+
     }, [])
+
+    const RATE_RECIPE_ENDPOINT = "http://127.0.0.1:8000/recipes/rate/";
+    const UPDATE_USER_RATING_ENDPOINT = "http://127.0.0.1:8000/recipes/update-rating/"+id+"/";
+    const GET_RATING_DATA = "http://127.0.0.1:8000/recipes/"+id+"/average-rating/"
+
+
+    const rateRecipe = (user_rating) => {
+        console.log("got here")
+        var accessToken = localStorage.getItem('access_token');
+        if (accessToken) { //logged in
+            
+            console.log("rated before if: "+isRated)
+            //if not rated, rate (creates new rating)
+            if(isRated === 0){
+                console.log("got to rated === 0")
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer '+accessToken
+                }
+
+                axios.post(RATE_RECIPE_ENDPOINT, {
+                    recipe: id,
+                    stars: user_rating
+                }, {
+                    headers: headers
+                })
+                .then((response) => {
+                    console.log(response);
+                }, (error) => {
+                    console.log(error);
+                });
+                
+            //if rated, update user's existing rating
+            } else if (isRated > 0){
+                console.log("got to rated > 0")
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer '+accessToken
+                }
+
+                axios.patch(UPDATE_USER_RATING_ENDPOINT, {
+                    stars: user_rating
+                }, {
+                    headers: headers
+                })
+                .then((response) => {
+                    console.log(response);
+                }, (error) => {
+                    console.log(error);
+                });
+            }
+
+            //update avg rating and num rating states
+            async function fetchUpdatedRatingData() {
+                const response = await axios.get(GET_RATING_DATA);
+                setAvgRating(response.data.average_rating)
+                setNumRatings(response.data.num_ratings)
+            }
+            fetchUpdatedRatingData();
+
+        } else { //not logged in
+            //else: show tooltip saying not logged in
+            console.log("You must be logged in to rate a recipe")
+        }
+        
+    }
 
     return (
         <>
         <div className="recipe-details-container">
             <h1>{recipe.name}</h1>
-            {/**
-            <span class="fa fa-star checked"></span>
-            <span class="fa fa-star checked"></span>
-            <span class="fa fa-star checked"></span>
-            <span class="fa fa-star checked"></span>
-            */}
-            <span className="fa fa-star checked">
-                <span id="rating-text">4.9 (26 ratings)</span>
-            </span>
 
+            <span id="rating-text">{avgRating + " out of 5"}</span>
+
+            <Rating className='rating' value={avgRating} onChange={(newRating) => rateRecipe(newRating)}/>
+
+            <span id="num-ratings">{numRatings+ " ratings"}</span>
+            <br />
+            <br />
             <Carousel sx={{ maxWidth: 450 }} mx="auto" withIndicators height={350}>
 
                 {images.map(image => (

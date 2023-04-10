@@ -2,6 +2,14 @@ body {
     background-color: rgba(255, 255, 255, 0.834);
 }
 
+#num-ratings{
+    font-size: small;
+}
+
+.rating {
+    margin-left: auto;
+    margin-right: auto;
+}
 
 /*RECIPE DETAILS CONTENT*/
 .recipe-details-container {
