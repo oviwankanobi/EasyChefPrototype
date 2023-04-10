@@ -1,15 +1,10 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TextInput,
-  PasswordInput,
-  Anchor,
-  Paper,
   Title,
-  Text,
   Container,
   Group,
   Button,
-  Stack,
   MultiSelect,
   Image,
   FileInput,
@@ -17,14 +12,13 @@ import {
   Select,
   Flex,
   Center,
-  Tooltip,
   Textarea,
-  AspectRatio,
 } from "@mantine/core";
-import { useForm, hasLength, isEmail, matchesField } from "@mantine/form";
+import { useForm } from "@mantine/form";
 import placeholder from "../../assets/images/placeholder.png";
 import { Attachments } from "../../components";
 import axios from "axios";
+import { getRecipesAPI } from "../../utils/apis.jsx";
 
 export default function CreateRecipePage() {
   const [ingredientInput, setIngredientInput] = useState();
@@ -102,11 +96,12 @@ export default function CreateRecipePage() {
     } */
   };
 
-  const VIEWRECIPE_API_ENDPOINT = "http://127.0.0.1:8000/recipes/get-recipes/";
+  const GETBASERECIPE_API_ENDPOINT =
+    "http://127.0.0.1:8000/recipes/get-recipe-base/";
 
-  const handleViewRecipe = async () => {
+  const getBaseRecipeAPI = async () => {
     try {
-      const response = await axios.get(VIEWRECIPE_API_ENDPOINT);
+      const response = await axios.get(GETBASERECIPE_API_ENDPOINT);
       if (response.status === 200) {
         const d = response.data.results;
         console.log(JSON.stringify(d, null, 2));
@@ -246,8 +241,12 @@ export default function CreateRecipePage() {
         </form>
       </Flex>
 
-      <form onSubmit={form.onSubmit(handleViewRecipe)}>
+      <form onSubmit={form.onSubmit(getRecipesAPI)}>
         <Button type="submit">console.log(recipes available)</Button>
+      </form>
+
+      <form onSubmit={form.onSubmit(getBaseRecipeAPI)}>
+        <Button type="submit">Base Recipe</Button>
       </form>
     </Container>
   );
