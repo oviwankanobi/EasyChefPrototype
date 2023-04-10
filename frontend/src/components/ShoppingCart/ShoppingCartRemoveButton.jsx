@@ -17,7 +17,6 @@ function ShoppingCartRemoveButton(props) {
             })
             .catch((error) => {
                 setRemoveErrors(error.response)
-                console.log(setRemoveErrors)
             })
     }
 

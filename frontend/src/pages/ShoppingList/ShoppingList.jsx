@@ -29,10 +29,7 @@ function ShoppingListPage() {
                     setLoginError(false)
                 }
             })
-        console.log(removeErrors)
     }, [removeErrors])
-
-    console.log(loginError)
 
     return (
         <>
