@@ -23,34 +23,46 @@ import placeholder from "../../assets/images/placeholder.png";
 import { Attachments } from "../../components";
 import axios from "axios";
 
-const data = [
-  { value: "react", label: "React" },
-  { value: "ng", label: "Angular" },
-  { value: "svelte", label: "Svelte" },
-  { value: "vue", label: "Vue" },
-  { value: "riot", label: "Riot" },
-  { value: "next", label: "Next.js" },
-  { value: "blitz", label: "Blitz.js" },
-];
-
 export default function CreateRecipePage() {
+  const [ingredientOptions, setIngredientOptions] = useState([]);
   const [dietOptions, setDietOptions] = useState([]);
+  const [cuisineOptions, setCuisineOptions] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
-      const { ingredientData } = await axios.get(
+      const ingredientData = await axios.get(
         "http://127.0.0.1:8000/recipes/get-ingredients/"
       );
-      const { dietData } = await axios.get(
+      const dietData = await axios.get(
         "http://127.0.0.1:8000/recipes/get-diets/"
       );
-      const { cuisineData } = await axios.get(
+      const cuisineData = await axios.get(
         "http://127.0.0.1:8000/recipes/get-cuisines/"
       );
-      console.log(ingredientData.data);
-      setDietOptions([ingredientData.data]);
-    }
 
+      const ingredientArr = ingredientData.data.results.map((item) => ({
+        value: item.recipe,
+        label: item.recipe,
+        id: item.id,
+        quantity: item.quantity,
+      }));
+
+      const dietArr = dietData.data.results.map((item) => ({
+        value: item.name,
+        label: item.name,
+        id: item.id,
+      }));
+
+      const cuisineArr = cuisineData.data.results.map((item) => ({
+        value: item.name,
+        label: item.name,
+        id: item.id,
+      }));
+
+      setIngredientOptions([ingredientArr]);
+      setDietOptions([dietArr]);
+      setCuisineOptions([cuisineArr]);
+    }
     fetchData();
   }, []);
 
@@ -77,6 +89,8 @@ export default function CreateRecipePage() {
     "http://127.0.0.1:8000/recipes/create-recipe/";
 
   const handleCreateRecipe = async (formValues) => {
+    console.log(formValues);
+    /*
     try {
       const response = await axios.post(CREATERECIPE_API_ENDPOINT, {
         name: formValues.recipeName,
@@ -90,10 +104,11 @@ export default function CreateRecipePage() {
       }
     } catch (error) {
       console.error(error);
-    }
+    } */
   };
 
-  const VIEWRECIPE_API_ENDPOINT = "http://127.0.0.1:8000/recipes/get-recipes/";
+  const VIEWRECIPE_API_ENDPOINT =
+    "http://127.0.0.1:8000/recipes/get-ingredients/";
 
   const handleViewRecipe = async () => {
     try {
@@ -137,17 +152,16 @@ export default function CreateRecipePage() {
             required
             {...form.getInputProps("serving")}
           />
-
           <Group>
             <MultiSelect
-              data={data}
+              data={dietOptions}
               placeholder="Diets"
               label="Diets"
               required
               {...form.getInputProps("diets")}
             />
             <MultiSelect
-              data={data}
+              data={cuisineOptions}
               placeholder="Cuisine"
               label="Cuisine"
               required
@@ -171,12 +185,6 @@ export default function CreateRecipePage() {
             />
           </Group>
 
-          <Select
-            data={data}
-            placeholder="Base Recipe"
-            label="Base Recipe"
-            required
-          />
           <Attachments
             placeholder="Attachments"
             label="Gallery Attachment(s)"
