@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   TextInput,
   PasswordInput,
@@ -17,6 +17,9 @@ import {
   Select,
   Flex,
   Center,
+  Tooltip,
+  Textarea,
+  AspectRatio,
 } from "@mantine/core";
 import { useForm, hasLength, isEmail, matchesField } from "@mantine/form";
 import placeholder from "../../assets/images/placeholder.png";
@@ -24,7 +27,8 @@ import { Attachments } from "../../components";
 import axios from "axios";
 
 export default function CreateRecipePage() {
-  window.onerror = (e) => console.log(e);
+  const [ingredientInput, setIngredientInput] = useState();
+  const [stepInput, setStepInput] = useState();
 
   const [ingredientOptions, setIngredientOptions] = useState([]);
   const [dietOptions, setDietOptions] = useState([]);
@@ -63,12 +67,12 @@ export default function CreateRecipePage() {
       recipeName: "",
       serving: 1,
       ingredients: [
-        { amount: 1, name: "Lettuce" },
-        { amount: 2, name: "Tomato" },
+        { quantity: 1, name: "Lettuce" },
+        { quantity: 2, name: "Tomato" },
       ],
       diets: [],
       cuisine: [],
-      steps: [""],
+      steps: [],
       prepTime: 1,
       cookingTime: 1,
       baseRecipe: "",
@@ -98,16 +102,14 @@ export default function CreateRecipePage() {
     } */
   };
 
-  const VIEWRECIPE_API_ENDPOINT =
-    "http://127.0.0.1:8000/recipes/get-ingredients/";
+  const VIEWRECIPE_API_ENDPOINT = "http://127.0.0.1:8000/recipes/get-recipes/";
 
   const handleViewRecipe = async () => {
     try {
       const response = await axios.get(VIEWRECIPE_API_ENDPOINT);
       if (response.status === 200) {
         const d = response.data.results;
-        //console.log(JSON.stringify(d, null, 2));
-        console.log(dietOptions);
+        console.log(JSON.stringify(d, null, 2));
       } else {
         console.log(response.data);
       }
@@ -129,12 +131,41 @@ export default function CreateRecipePage() {
             src={placeholder}
             alt="Random image"
           />
+
           <TextInput
             placeholder="Recipe Name"
             label="Create Recipe"
             required
             {...form.getInputProps("recipeName")}
           />
+
+          <Group>
+            <Button
+              onClick={() =>
+                form.insertListItem("ingredients", {
+                  quantity: 1,
+                  name: ingredientInput,
+                })
+              }
+            >
+              +
+            </Button>
+            <TextInput
+              onChange={(event) =>
+                setIngredientInput(event.currentTarget.value)
+              }
+            />
+          </Group>
+
+          {form.getInputProps("ingredients").value.map((v) => {
+            return (
+              <Group>
+                <NumberInput defaultValue={v.quantity} min={1} />
+                <TextInput defaultValue={v.name} />
+              </Group>
+            );
+          })}
+
           <NumberInput
             defaultValue={1}
             min={1}
@@ -143,6 +174,7 @@ export default function CreateRecipePage() {
             required
             {...form.getInputProps("serving")}
           />
+
           <Group>
             <MultiSelect
               data={dietOptions}
@@ -159,6 +191,32 @@ export default function CreateRecipePage() {
               {...form.getInputProps("cuisine")}
             />
           </Group>
+
+          <Group>
+            <Button
+              onClick={() =>
+                form.insertListItem("steps", {
+                  prepTime: 1,
+                  description: stepInput,
+                })
+              }
+            >
+              +
+            </Button>
+            <Textarea
+              onChange={(event) => setStepInput(event.currentTarget.value)}
+            />
+          </Group>
+
+          {form.getInputProps("steps").value.map((v) => {
+            return (
+              <Group>
+                <NumberInput defaultValue={v.prepTime} min={1} />
+                <Textarea defaultValue={v.description} />
+              </Group>
+            );
+          })}
+
           <Group>
             <NumberInput
               min={1}
@@ -181,14 +239,16 @@ export default function CreateRecipePage() {
             label="Gallery Attachment(s)"
             required
           />
+
           <Center>
             <Button type="submit">Create Recipe</Button>
           </Center>
         </form>
-        <form onSubmit={form.onSubmit(handleViewRecipe)}>
-          <Button type="submit">console.log(recipes available)</Button>
-        </form>
       </Flex>
+
+      <form onSubmit={form.onSubmit(handleViewRecipe)}>
+        <Button type="submit">console.log(recipes available)</Button>
+      </form>
     </Container>
   );
 }
