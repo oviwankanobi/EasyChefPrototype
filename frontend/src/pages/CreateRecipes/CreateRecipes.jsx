@@ -16,7 +16,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import placeholder from "../../assets/images/placeholder.png";
-import { Attachments } from "../../components";
+import { Attachments, SearchModal } from "../../components";
 import axios from "axios";
 import { getRecipesAPI } from "../../utils/apis.jsx";
 
@@ -245,9 +245,7 @@ export default function CreateRecipePage() {
         <Button type="submit">console.log(recipes available)</Button>
       </form>
 
-      <form onSubmit={form.onSubmit(getBaseRecipeAPI)}>
-        <Button type="submit">Base Recipe</Button>
-      </form>
+      <SearchModal />
     </Container>
   );
 }
