@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-^qul5c81s3f6@sm&v&k5@w-wsdj+68(%29++#4*8r(nlm77tb-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -58,8 +58,6 @@ MIDDLEWARE = [
 
 # Generally unsafe, but easier for development purposes.
 CORS_ALLOW_ALL_ORIGINS = True  
-ALLOWED_HOSTS = ['*']
-
 # Enables sending cookies and session data
 CORS_ALLOW_CREDENTIALS = True
 

@@ -12,21 +12,21 @@ class DietSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Diet
-        fields = ['name']
+        fields = ['id', 'name']
 
 
 class CuisineSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Cuisine
-        fields = ['name']
+        fields = ['id', 'name']
 
 
 class BaseIngredientSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = BaseIngredient
-        fields = ['name']
+        fields = ['id', 'name']
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -35,7 +35,7 @@ class IngredientSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Ingredient
-        fields = ['base_ingredient', 'recipe', 'quantity']
+        fields = ['id', 'base_ingredient', 'recipe', 'quantity']
 
 
 class RecipeSerializer(serializers.ModelSerializer):
@@ -93,6 +93,7 @@ class StepSerializer(serializers.ModelSerializer):
 class ShowRecipeSerializer(serializers.ModelSerializer):
     
     owner = serializers.CharField(read_only=True)
+    owner_name = serializers.SerializerMethodField('get_owner_full_name')
     diet = DietSerializer(many=True, read_only=True)
     cuisine = CuisineSerializer(many=True, read_only=True)
     #https://www.django-rest-framework.org/api-guide/fields/#serializermethodfield
@@ -103,6 +104,23 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
     videos = serializers.SerializerMethodField('get_videos')
     favorites = serializers.SerializerMethodField('get_favorites')
     
+    def get_owner_full_name(self, recipe):
+        
+        first = recipe.owner.first_name
+        last = recipe.owner.last_name
+        
+        if not first:
+            if not last:
+                return "Anonymous"
+            else:
+                return last
+        else:
+            if not last:
+                return first
+        
+        return first + " " + last
+        
+            
     def get_favorites(self, recipe):
         
         return Favorite.objects.filter(recipe=recipe).count()
@@ -136,8 +154,9 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ['id',
-                  'owner',
                   'name',
+                  'owner',
+                  'owner_name',
                   'description',
                   'favorites',
                   'diet',
