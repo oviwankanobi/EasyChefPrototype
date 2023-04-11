@@ -198,7 +198,7 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         # fields = ['author', 'author_first_name', 'author_last_name', 'author_avatar', 'recipe', 'datetime_created',
         # 'content']
-        fields = ['author', 'recipe', 'datetime_created', 'content']
+        fields = ['id', 'author', 'recipe', 'datetime_created', 'content']
 
 
 class CreateCommentSerializer(serializers.ModelSerializer):

@@ -486,7 +486,7 @@ class GetCommentsFromRecipesView(ListAPIView):
     def get_queryset(self):
         recipe_id = self.kwargs.get('recipe_id', None)
         recipe = get_object_or_404(Recipe, id=recipe_id)
-        return Comment.objects.filter(recipe=recipe)
+        return Comment.objects.filter(recipe=recipe).order_by('-datetime_created')
 
 
 class DeleteCommentView(DestroyAPIView):
