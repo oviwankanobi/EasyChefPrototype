@@ -23,6 +23,15 @@ body {
     margin-right: auto;
 }
 
+.recipe-name-title{
+    margin-bottom: -8px;
+}
+
+.favs{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 /*RECIPE DETAILS CONTENT*/
 .recipe-details-container {
     text-align: center;

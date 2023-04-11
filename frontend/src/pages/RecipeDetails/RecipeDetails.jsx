@@ -1,9 +1,9 @@
 import React from 'react';
-import { Image, Rating, Tooltip, Text  } from '@mantine/core';
+import { Image, Rating, Tooltip, Button, Badge } from '@mantine/core';
 import { useParams } from 'react-router-dom';
 import './RecipeDetails.css';
 import { Carousel } from "@mantine/carousel";
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 
 function RecipeDetailsPage() {
@@ -20,9 +20,16 @@ function RecipeDetailsPage() {
     var [cuisines, setCuisines] = useState([]);
     var [ingredients, setIngredients] = useState([]);
     var [steps, setSteps] = useState([]);
+    var [serving, setServing] = useState([]);
+    var [favBtnColor, setFavBtnColor] = useState("");
+    var [favBtnText, setFavBtnText] = useState("");
+    var [isFavorited, setisFavorited] = useState(0);
+    var [favorites, setFavorites] = useState(0);
 
     const RECIPE_DETAILS_ENDPOINT = "http://127.0.0.1:8000/recipes/recipe-details/"+id+"/";
     const DID_USER_RATE_ENDPOINT = "http://127.0.0.1:8000/recipes/is-rated/"+id+"/";
+    const DID_USER_FAVORITE_ENDPOINT = "http://127.0.0.1:8000/recipes/is-favorited/"+id+"/";
+
 
     useEffect(() => {
 
@@ -38,7 +45,9 @@ function RecipeDetailsPage() {
             setDiets(response.data.diet);
             setCuisines(response.data.cuisine);
             setIngredients(response.data.ingredients_info);
-            setSteps(response.data.steps)
+            setSteps(response.data.steps);
+            setServing(response.data.serving);
+            setFavorites(response.data.favorites);
         }
         fetchData();
 
@@ -56,7 +65,32 @@ function RecipeDetailsPage() {
         var accessToken = localStorage.getItem('access_token');
         if(accessToken){
             fetchIsRated();
-        }        
+        }   
+        
+        async function didUserFavorite() { //TODO: handle button states if logged out
+
+            //set favBtnColor & favBtnText accordingly based on 0 or 1 return from backend
+            var accessToken = localStorage.getItem('access_token');
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+accessToken
+            }
+            const response = await axios.get(DID_USER_FAVORITE_ENDPOINT, {headers: headers});
+            var isFavorited = response.data.is_favorited
+    
+            if(isFavorited === 0){
+                setFavBtnColor("indigo")
+                setFavBtnText("Save to Favorites")
+                setisFavorited(0)
+            } else if (isFavorited > 0){
+                setFavBtnColor("green")
+                setFavBtnText("Saved")
+                setisFavorited(1)
+            }
+    
+        }
+
+        didUserFavorite()
 
     }, [])
 
@@ -122,10 +156,80 @@ function RecipeDetailsPage() {
         
     }
 
+    const incrementServing = () => {
+        
+        setServing(serving + 1)
+
+        var multiplier = serving / (serving - 1)
+
+        //multiply every qty in ingredients by multiplier
+        for (let i = 0; i < ingredients.length; i++) {
+            ingredients[i].quantity = ingredients[i].quantity * multiplier
+        }
+    }
+
+    const decrementServing = () => {
+
+        if(serving - 1 > 1){
+
+            setServing(serving - 1)
+
+            var multiplier = serving / (serving + 1)
+
+            //multiply every qty in ingredients by multiplier
+            for (let i = 0; i < ingredients.length; i++) {
+                ingredients[i].quantity = ingredients[i].quantity * multiplier
+            }
+        }
+    }
+
+
+    const favoriteRecipe = () => {
+        //TODO: must be logged in to favorite a recipe
+
+        //if already saved, delete favorite
+        //if not saved, add favorite
+
+
+        if(isFavorited === 0){
+            //call endpoint to fav a recipe (create Favorite)
+            var accessToken = localStorage.getItem('access_token');
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+accessToken
+            }
+            const FAV_RECIPE_ENDPOINT = "http://127.0.0.1:8000/recipes/favorite/";
+            axios.post(FAV_RECIPE_ENDPOINT, {
+                recipe: id
+            }, {
+                headers: headers
+            })
+            .then((response) => {
+                console.log(response);
+            }, (error) => {
+                console.log(error);
+            });
+
+            setisFavorited(1)
+            setFavBtnColor("green")
+            setFavBtnText("Saved")
+            
+            setFavorites(favorites + 1)
+
+        } else if (isFavorited > 0){
+            //call endpoint to unfav a recipe (delete Favorite)
+            console.log("unfavorited")
+        }
+
+    }
+
     return (
         <>
         <div className="recipe-details-container">
-            <h1>{recipe.name}</h1>
+            <h1 className='recipe-name-title'>{recipe.name}</h1>
+            <Badge className='favs' color="pink" variant="light">
+                {favorites} favorites
+            </Badge>
 
             <Tooltip label="You must be logged in to rate" disabled = {localStorage.getItem('access_token')}>
                 <Rating size='lg' className='rating' value={avgRating} onChange={(newRating) => rateRecipe(newRating)}/>
@@ -133,8 +237,15 @@ function RecipeDetailsPage() {
             <span id="rating-text">
                 {(Math.round(avgRating * 10) / 10) + " out of 5, "+numRatings+" ratings"}
             </span>
+
+            <br />
             <br />
 
+            <Button variant="light" color={favBtnColor} radius="lg" size="xs" onClick={favoriteRecipe}>
+                {favBtnText}
+            </Button>
+
+            <br />
             <br />
 
             <p>
@@ -185,35 +296,37 @@ function RecipeDetailsPage() {
                                 <span className="cook-times-headers">Diet</span>
                                 <br />
                             
-                                <table className="sub-tables">
+                                <tbody className="sub-tables">
 
                                     {Object.keys(diets).length === 0 ? <span>unspecified</span> : 
                                         diets.map(diet => (
                                             <tr>
-                                            <td>{diet.name}</td>
+                                            <td> &nbsp; {diet.name}</td>
                                             </tr>
                                         ))
                                     }
-                                </table>
+                                </tbody>
                             </div>
                             <div>
                                 <span className="cook-times-headers">Cuisine</span>
                                 <br />
-                                <table className="sub-tables">
+                                <tbody className="sub-tables">
 
                                     {Object.keys(cuisines).length === 0 ? <span>unspecified</span> : 
                                         cuisines.map(cuisine => (
                                             <tr>
-                                            <td>{cuisine.name}</td>
+                                            <td> &nbsp; {cuisine.name}</td>
                                             </tr>
                                         ))
                                     }
-                                </table>
+                                </tbody>
                             </div>
                             <div>
-                                <span className="cook-times-headers">Servings</span>
+                                <span className="cook-times-headers">Serving</span>
                                 <br />
-                                {recipe.serving === null ? <span>unspecified</span> : recipe.serving}
+                                <Button compact className='decrementServing' onClick={decrementServing}>-</Button> &nbsp;
+                                {recipe.serving === null ? <span>unspecified</span> : serving} &nbsp;
+                                <Button compact className='incrementServing' onClick={incrementServing}>+</Button>
                             </div>
                         </div>
                         <br />
@@ -235,7 +348,7 @@ function RecipeDetailsPage() {
                         <ul>
                             {Object.keys(ingredients).length === 0 ? <span>no ingredients specified</span> : 
                                 ingredients.map(ingredient => (
-                                    <li>{ingredient.quantity+" oz of "+ingredient.name}</li>
+                                    <li>{ingredient.quantity.toFixed(1)+" oz of "+ingredient.name}</li>
                                 ))
                             }
                         </ul>
