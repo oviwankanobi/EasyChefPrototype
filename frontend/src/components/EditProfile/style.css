@@ -1,0 +1,56 @@
+
+
+.editprofileheader {
+    margin: 3rem 1rem 0 1rem;
+}
+body {
+    background-color: rgba(255, 255, 255, 0.834);
+}
+
+/*logo*/
+.banner-container img {
+    width: 200px;
+    margin-top: 30px;
+    margin-bottom: 40px;
+}
+
+/*navbar*/
+nav {
+    font-family: 'Roboto', sans-serif;
+}
+
+.navbar-nav>li {
+    margin-left: 2rem;
+    margin-right: 2rem;
+}
+
+a.nav-link {
+    transition: 0.4s ease;
+    color: white;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+}
+
+a.nav-link:hover {
+    color: rgba(255, 255, 255, 0.803) !important;
+    border-bottom: 1px solid white;
+}
+
+.user-profile-container {
+    text-align: center;
+}
+
+.user-profile-container #profile-pic {
+    width: 100px;
+    border-radius: 50%;
+}
+
+#edit-dp {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+
+#editprofile {
+    margin: 50px auto auto 50px;
+}
