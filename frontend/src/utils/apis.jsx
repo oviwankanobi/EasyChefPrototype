@@ -32,68 +32,41 @@ export const getIngredientsAPI = async () => {
   }
 };
 
-export const addIngredientAPI = async (baseIngredient, quantity) => {
-  console.log(baseIngredient, quantity);
-  try {
-    const response = await axios.post(
-      "http://127.0.0.1:8000/recipes/add-ingredient-to-recipe/",
-      {
-        base_ingredient: baseIngredient,
-        quantity: quantity,
-      }
-    );
-    console.log(response);
-    console.log(response.data);
-    if (response.status === 200) {
-      return response.data;
-    } else {
-      console.log(response.data);
+export const addIngredientAPI = async (ingredientObject, recipeId) => {
+  const { base_ingredient, quantity } = ingredientObject;
+  const response = await axios.post(
+    `http://127.0.0.1:8000/recipes/add-ingredient-to-recipe/${recipeId}/`,
+    {
+      base_ingredient: base_ingredient,
+      quantity: quantity,
     }
-  } catch (error) {
-    console.error(error);
-  }
+  );
 };
 
 export const createBaseIngredientAPI = async (ingredientName) => {
-  console.log(ingredientName);
-  try {
-    const response = await axios.post(
-      "http://127.0.0.1:8000/recipes/create-base-ingredient/",
-      {
-        name: ingredientName,
-      }
-    );
-    console.log(response);
-    console.log(response.data);
-    if (response.status === 200) {
-      return response.data;
-    } else {
-      console.log(response.data);
+  const response = await axios.post(
+    "http://127.0.0.1:8000/recipes/create-base-ingredient/",
+    {
+      name: ingredientName,
     }
-  } catch (error) {
-    console.error(error);
-  }
+  );
+  return response.data.id;
 };
 
 export const createRecipeAPI = async (formValues) => {
-  try {
-    const response = await axios.post(
-      "http://127.0.0.1:8000/recipes/create-recipe/",
-      {
-        name: formValues.recipeName,
-        serving: formValues.serving,
-        prep_time: formValues.prepTime,
-        cooking_time: formValues.cookingTime,
-      }
-    );
-
-    if (response.status === 200) {
-    } else {
-      console.log(response.data);
+  const response = await axios.post(
+    "http://127.0.0.1:8000/recipes/create-recipe/",
+    {
+      name: formValues.recipeName,
+      description: "",
+      serving: formValues.serving,
+      diet: formValues.diets,
+      cuisine: formValues.cuisine,
+      prep_time: formValues.prepTime,
+      cooking_time: formValues.cookingTime,
     }
-  } catch (error) {
-    console.error(error);
-  }
+  );
+  return response.data.id;
 };
 
 export const getBaseRecipeAPI = async () => {

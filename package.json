@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "@mantine/dropzone": "^6.0.7",
-    "@mantine/hooks": "^6.0.7"
-  }
-}

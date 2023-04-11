@@ -83,28 +83,38 @@ export default function CreateRecipePage() {
     },
   });
 
-  const handleRecipe = (formValues) => {
-    console.log(formValues);
-    //console.log(getIngredientsAPI());
-    const ingredientNames = formValues.ingredients.map((ingredient) => {
-      console.log(ingredient.name);
-      //const { base_ingredient } = createBaseIngredientAPI(ingredient.name);
-      //const { quantity } = ingredient.quantity;
-      //return { base_ingredient, quantity };
-    });
-    //console.log(ingredientNames);
+  const handleRecipe = async (formValues) => {
+    const ingredientPromises = formValues.ingredients.map(
+      async (ingredient) => {
+        const base_ingredient = await createBaseIngredientAPI(ingredient.name);
+        const quantity = ingredient.quantity;
+        return { base_ingredient, quantity };
+      }
+    );
+
+    const ingredientObject = await Promise.all(ingredientPromises);
+
+    try {
+      createRecipeAPI(formValues).then((recipeId) => {
+        ingredientObject.forEach((ingredient) => {
+          addIngredientAPI(ingredient, recipeId);
+        });
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const IngredientsField = form.values.ingredients.map((item, index) => (
     <Group key={index}>
-      <NumberInput value={item.quantity} min={1} />
+      <NumberInput value={item.quantity} precision={2} step={0.5} min={1} />
       <TextInput {...form.getInputProps(`ingredients.${index}.name`)} />
     </Group>
   ));
 
   const StepsField = form.values.steps.map((item, index) => (
     <Group grow key={index}>
-      <NumberInput v={item.prepTime} min={1} />
+      <NumberInput value={item.prepTime} min={1} />
       <Textarea {...form.getInputProps(`steps.${index}.description`)} />
     </Group>
   ));
@@ -122,6 +132,7 @@ export default function CreateRecipePage() {
             radius="md"
             src={placeholder}
             alt="Placeholder"
+            {...form.getInputProps("image")}
           />
           <TextInput
             my="1rem"
@@ -202,14 +213,14 @@ export default function CreateRecipePage() {
 
           <Group>
             <NumberInput
-              min={1}
+              min={0}
               placeholder="Prep Time"
               label="Prep Time"
               required
               {...form.getInputProps("prepTime")}
             />
             <NumberInput
-              min={1}
+              min={0}
               placeholder="Cooking Time"
               label="Cooking Time"
               required
@@ -220,6 +231,7 @@ export default function CreateRecipePage() {
             placeholder="Attachments"
             label="Gallery Attachment(s)"
             required
+            {...form}
           />
           <Center>
             <Button type="submit">Create Recipe</Button>
@@ -229,6 +241,9 @@ export default function CreateRecipePage() {
 
       <form onSubmit={form.onSubmit(getRecipesAPI)}>
         <Button type="submit">console.log(recipes available)</Button>
+      </form>
+      <form onSubmit={form.onSubmit(getIngredientsAPI)}>
+        <Button type="submit">console.log(ingredients available)</Button>
       </form>
 
       <SearchModal />
