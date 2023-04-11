@@ -19,6 +19,7 @@ function RecipeDetailsPage() {
     var [diets, setDiets] = useState([]);
     var [cuisines, setCuisines] = useState([]);
     var [ingredients, setIngredients] = useState([]);
+    var [steps, setSteps] = useState([]);
 
     const RECIPE_DETAILS_ENDPOINT = "http://127.0.0.1:8000/recipes/recipe-details/"+id+"/";
     const DID_USER_RATE_ENDPOINT = "http://127.0.0.1:8000/recipes/is-rated/"+id+"/";
@@ -37,6 +38,7 @@ function RecipeDetailsPage() {
             setDiets(response.data.diet);
             setCuisines(response.data.cuisine);
             setIngredients(response.data.ingredients_info);
+            setSteps(response.data.steps)
         }
         fetchData();
 
@@ -166,7 +168,6 @@ function RecipeDetailsPage() {
             }
             
             {/**
-            <button type="button" class="btn btn-primary" onclick="location.href='#recipe-info';">Jump to Recipe</button>
             <button type="button" class="btn btn-primary">Save to Favorites</button>
             <button type="button" class="btn btn-primary">Add to Shopping List</button>
             */}
@@ -241,56 +242,46 @@ function RecipeDetailsPage() {
                     </div>
                 </div>
             </div>
+            <br />
             <div className="steps">
-                <h2>Steps</h2>
-                <ul className="list-group">
-                    <li className="list-group-item">
-                        <h6>Preheat the oven to 425°F.</h6>
-                        Arrange a rack in the middle of the oven.
-                    </li>
-                    <li className="list-group-item">
-                        <h6>Prepare the sweet potatoes</h6>
-                        <p>
-                            Peel the sweet potatoes, if desired, and cut into 1-inch cubes. Place on a rimmed baking sheet. Drizzle with 2 tablespoons of olive oil and sprinkle with the chili powder and 1/2 teaspoon kosher salt.
-                            <br />
-                            <br />
-                            Toss to coat. Arrange the potatoes in a single layer. Roast, tossing halfway through, until tender and browned in spots, about 30 minutes.
-                            <br />
-                            <br />
-                            Once the potatoes are done, let them cool on the baking sheet until just warm to the touch, 10 to 15 minutes.
-                        </p>
-                        <br />
-                        <img src="./images/step2_1.png" alt="..."></img>
-                        <br />
-                        <br />
-                        <img src="./images/step2_2.png" alt="..."></img>
-                    </li>
-                    <li className="list-group-item">
-                        <h6>Quick pickle the onion</h6>
-                        <p>
-                            Meanwhile, slice the red onion into very thin half-moons and place in a large bowl. Finely grate the zest of the lime into the bowl, then halve the lime crosswise and squeeze its juice into the bowl. Toss to coat the onion in the juice then leave to quick-pickle while the potatoes roast.
-                        </p>
-                        <img src="./images/step3.png" alt="..."></img>
-                        <br />
-                    </li>
-                    <li className="list-group-item">
-                        <h6>Assemble the salad</h6>
-                        <p>
-                            Add the roasted sweet potatoes, black beans, baby spinach, remaining 2 tablespoons olive oil, remaining 1/4 teaspoon kosher salt, and black pepper to the bowl with the onion and lime juice and toss to combine. Add the feta and toss gently again to combine.
-                            <br />
-                            <br />
-                            Taste and season with additional salt and pepper, as needed. Enjoy warm or at room temperature.
-                            <br />
-                            <br />
-                            Leftovers can be refrigerated in an airtight container for up to 5 days.
-                        </p>
-                        <br />
-                        <img src="images/step4_1.png" alt="..."></img>
-                        <br />
-                        <br />
-                        <img src="images/step4_2.png" alt="..."></img>
-                    </li>
-                </ul>
+                <h1>Steps</h1>
+                <div className="a-step">
+
+                    {Object.keys(steps).length === 0 ? <span>no steps specified</span> : 
+                        steps.map((step, i) => (
+                            <div>
+                            <h2>{(i+1)+". "+step.name}</h2>
+                            <p>
+                                {recipe.prep_time === null ? <span>prep time: unspecified</span> : "prep time: "+recipe.prep_time}
+                                <br />
+                                {recipe.cooking_time === null ? <span>cook time: unspecified</span> : "cook time: "+recipe.cooking_time}
+                            </p>
+                            <p>
+                                {step.description}
+                            </p>
+
+                            {Object.keys(step.images).length === 0 && Object.keys(step.videos).length === 0 ? <span></span> :
+                                <Carousel sx={{ maxWidth: 650 }} mx="auto" withIndicators height={450}>
+
+                                    {step.images.map(image => (
+                                        <Carousel.Slide sx={{ backgroundColor: "#eee" }}>
+                                            <Image width={650} height={450} src={"http://127.0.0.1:8000/media/"+image.image} />
+                                        </Carousel.Slide>
+                                    ))}
+                        
+                                    {step.videos.map(video => (
+                                        <Carousel.Slide sx={{ backgroundColor: "#eee" }}>
+                                            <video width={650} height={450} controls loop autoPlay src={"http://127.0.0.1:8000/media/"+video.video} fit="contain" />
+                                        </Carousel.Slide>
+                                    ))}
+            
+                                </Carousel>
+                            }
+
+                            </div>
+                        ))
+                    }
+                </div>
             </div>
         </div>
         </>
