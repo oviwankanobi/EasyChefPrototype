@@ -18,8 +18,6 @@ function Comment(props) {
 
     const { classes } = useStyles();
 
-    console.log(userid === author["id"])
-
     function deleteComment() {
         axios.delete(`http://localhost:8000/recipes/comments/${id}/`)
         setUpdate(!update)

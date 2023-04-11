@@ -42,8 +42,7 @@ function CommentSection(props) {
             })
         }
     }, [update])
-    
-    console.log(comments)
+
     return (
         <>
            <Container>
