@@ -16,6 +16,22 @@ export const getRecipesAPI = async () => {
   }
 };
 
+export const getIngredientsAPI = async () => {
+  try {
+    const response = await axios.get(
+      "http://127.0.0.1:8000/recipes/get-ingredients/"
+    );
+    if (response.status === 200) {
+      const d = response.data.results;
+      console.log(JSON.stringify(d, null, 2));
+    } else {
+      console.log(response.data);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const addIngredientAPI = async (baseIngredient, quantity) => {
   console.log(baseIngredient, quantity);
   try {
@@ -72,6 +88,22 @@ export const createRecipeAPI = async (formValues) => {
     );
 
     if (response.status === 200) {
+    } else {
+      console.log(response.data);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getBaseRecipeAPI = async () => {
+  try {
+    const response = await axios.get(
+      "http://127.0.0.1:8000/recipes/get-recipe-base/"
+    );
+    if (response.status === 200) {
+      const d = response.data.results;
+      console.log(JSON.stringify(d, null, 2));
     } else {
       console.log(response.data);
     }

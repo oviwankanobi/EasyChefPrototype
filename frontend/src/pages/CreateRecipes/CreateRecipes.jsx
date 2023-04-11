@@ -9,16 +9,21 @@ import {
   Image,
   FileInput,
   NumberInput,
-  Select,
-  Flex,
   Center,
   Textarea,
+  Stack,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import placeholder from "../../assets/images/placeholder.png";
 import { Attachments, SearchModal } from "../../components";
 import axios from "axios";
-import { getRecipesAPI } from "../../utils/apis.jsx";
+import {
+  getRecipesAPI,
+  createRecipeAPI,
+  addIngredientAPI,
+  createBaseIngredientAPI,
+  getIngredientsAPI,
+} from "../../utils/apis.jsx";
 
 export default function CreateRecipePage() {
   const [ingredientInput, setIngredientInput] = useState();
@@ -38,14 +43,12 @@ export default function CreateRecipePage() {
       );
 
       const dietArr = dietData.data.results.map((item) => ({
-        key: item.id.toString(),
-        value: item.name,
+        value: item.id,
         label: item.name,
       }));
 
       const cuisineArr = cuisineData.data.results.map((item) => ({
-        key: item.id.toString(),
-        value: item.name,
+        value: item.id,
         label: item.name,
       }));
 
@@ -66,7 +69,13 @@ export default function CreateRecipePage() {
       ],
       diets: [],
       cuisine: [],
-      steps: [],
+      steps: [
+        {
+          description: "wash lettuce and cut into size of your choosing",
+          prepTime: 300,
+        },
+        { description: "slice tomato", prepTime: 150 },
+      ],
       prepTime: 1,
       cookingTime: 1,
       baseRecipe: "",
@@ -74,94 +83,55 @@ export default function CreateRecipePage() {
     },
   });
 
-  const CREATERECIPE_API_ENDPOINT =
-    "http://127.0.0.1:8000/recipes/create-recipe/";
-
-  const handleCreateRecipe = async (formValues) => {
+  const handleRecipe = (formValues) => {
     console.log(formValues);
-    /*
-    try {
-      const response = await axios.post(CREATERECIPE_API_ENDPOINT, {
-        name: formValues.recipeName,
-        serving: formValues.serving,
-        prep_time: formValues.prepTime,
-      });
-
-      if (response.status === 200) {
-      } else {
-        console.log(response.data);
-      }
-    } catch (error) {
-      console.error(error);
-    } */
+    //console.log(getIngredientsAPI());
+    const ingredientNames = formValues.ingredients.map((ingredient) => {
+      console.log(ingredient.name);
+      //const { base_ingredient } = createBaseIngredientAPI(ingredient.name);
+      //const { quantity } = ingredient.quantity;
+      //return { base_ingredient, quantity };
+    });
+    //console.log(ingredientNames);
   };
 
-  const GETBASERECIPE_API_ENDPOINT =
-    "http://127.0.0.1:8000/recipes/get-recipe-base/";
+  const IngredientsField = form.values.ingredients.map((item, index) => (
+    <Group key={index}>
+      <NumberInput value={item.quantity} min={1} />
+      <TextInput {...form.getInputProps(`ingredients.${index}.name`)} />
+    </Group>
+  ));
 
-  const getBaseRecipeAPI = async () => {
-    try {
-      const response = await axios.get(GETBASERECIPE_API_ENDPOINT);
-      if (response.status === 200) {
-        const d = response.data.results;
-        console.log(JSON.stringify(d, null, 2));
-      } else {
-        console.log(response.data);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const StepsField = form.values.steps.map((item, index) => (
+    <Group grow key={index}>
+      <NumberInput v={item.prepTime} min={1} />
+      <Textarea {...form.getInputProps(`steps.${index}.description`)} />
+    </Group>
+  ));
 
   return (
     <Container>
-      <Title>Create Your Own Recipe</Title>
-      <Flex>
-        <form onSubmit={form.onSubmit(handleCreateRecipe)}>
+      <Title my="1rem">Create Your Own Recipe</Title>
+      <Stack>
+        <form onSubmit={form.onSubmit(handleRecipe)}>
           <Image
             component={FileInput}
             maw={240}
-            mx="auto"
+            mah={240}
+            mx="0"
             radius="md"
             src={placeholder}
-            alt="Random image"
+            alt="Placeholder"
           />
-
           <TextInput
+            my="1rem"
             placeholder="Recipe Name"
             label="Create Recipe"
             required
             {...form.getInputProps("recipeName")}
           />
-
-          <Group>
-            <Button
-              onClick={() =>
-                form.insertListItem("ingredients", {
-                  quantity: 1,
-                  name: ingredientInput,
-                })
-              }
-            >
-              +
-            </Button>
-            <TextInput
-              onChange={(event) =>
-                setIngredientInput(event.currentTarget.value)
-              }
-            />
-          </Group>
-
-          {form.getInputProps("ingredients").value.map((v) => {
-            return (
-              <Group>
-                <NumberInput defaultValue={v.quantity} min={1} />
-                <TextInput defaultValue={v.name} />
-              </Group>
-            );
-          })}
-
           <NumberInput
+            my="1rem"
             defaultValue={1}
             min={1}
             placeholder="Serving Size"
@@ -169,8 +139,30 @@ export default function CreateRecipePage() {
             required
             {...form.getInputProps("serving")}
           />
+          <Group my="1rem">
+            <TextInput
+              label="Ingredients"
+              defaultValue={ingredientInput}
+              onChange={(event) =>
+                setIngredientInput(event.currentTarget.value)
+              }
+            />
+            <Button
+              label="Ingredients"
+              onClick={() => {
+                form.insertListItem("ingredients", {
+                  quantity: 1,
+                  name: ingredientInput,
+                });
+                setIngredientInput("");
+              }}
+            >
+              +
+            </Button>
+          </Group>
+          {IngredientsField}
 
-          <Group>
+          <Group my="1rem" grow>
             <MultiSelect
               data={dietOptions}
               placeholder="Diets"
@@ -187,30 +179,26 @@ export default function CreateRecipePage() {
             />
           </Group>
 
-          <Group>
+          <Group my="1rem">
+            <Textarea
+              label="Steps"
+              defaultValue={stepInput}
+              onChange={(event) => setStepInput(event.currentTarget.value)}
+            />
             <Button
-              onClick={() =>
+              onClick={() => {
                 form.insertListItem("steps", {
                   prepTime: 1,
                   description: stepInput,
-                })
-              }
+                });
+                setStepInput("");
+              }}
             >
               +
             </Button>
-            <Textarea
-              onChange={(event) => setStepInput(event.currentTarget.value)}
-            />
           </Group>
 
-          {form.getInputProps("steps").value.map((v) => {
-            return (
-              <Group>
-                <NumberInput defaultValue={v.prepTime} min={1} />
-                <Textarea defaultValue={v.description} />
-              </Group>
-            );
-          })}
+          {StepsField}
 
           <Group>
             <NumberInput
@@ -228,18 +216,16 @@ export default function CreateRecipePage() {
               {...form.getInputProps("cookingTime")}
             />
           </Group>
-
           <Attachments
             placeholder="Attachments"
             label="Gallery Attachment(s)"
             required
           />
-
           <Center>
             <Button type="submit">Create Recipe</Button>
           </Center>
         </form>
-      </Flex>
+      </Stack>
 
       <form onSubmit={form.onSubmit(getRecipesAPI)}>
         <Button type="submit">console.log(recipes available)</Button>
