@@ -2,7 +2,7 @@ from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView, UpdateAPIView
-from accounts.serializers import CreateUserSerializer, UpdateUserSerializer, ChangePasswordSerializer
+from accounts.serializers import CreateUserSerializer, UpdateUserSerializer, ChangePasswordSerializer, GetUserBasicSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
@@ -34,5 +34,11 @@ class GetProfileView(APIView):
     def get(self, request):
         u = get_object_or_404(UserModel, id=request.user.id)
         serializer = UpdateUserSerializer(u)
-        print (serializer.data)
+        return Response(serializer.data)
+
+class GetUserBasic(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        u = get_object_or_404(UserModel, id=request.user.id)
+        serializer = GetUserBasicSerializer(u)
         return Response(serializer.data)
