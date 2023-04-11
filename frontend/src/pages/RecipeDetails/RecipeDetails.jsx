@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Rating, Tooltip, Title  } from '@mantine/core';
+import { Image, Rating, Tooltip, Text  } from '@mantine/core';
 import { useParams } from 'react-router-dom';
 import './RecipeDetails.css';
 import { Carousel } from "@mantine/carousel";
@@ -16,6 +16,9 @@ function RecipeDetailsPage() {
     var [numRatings, setNumRatings] = useState([]);
     var [isRated, setIsRated] = useState(0);
     var [avatar, setAvatar] = useState("");
+    var [diets, setDiets] = useState([]);
+    var [cuisines, setCuisines] = useState([]);
+    var [ingredients, setIngredients] = useState([]);
 
     const RECIPE_DETAILS_ENDPOINT = "http://127.0.0.1:8000/recipes/recipe-details/"+id+"/";
     const DID_USER_RATE_ENDPOINT = "http://127.0.0.1:8000/recipes/is-rated/"+id+"/";
@@ -31,6 +34,9 @@ function RecipeDetailsPage() {
             setAvgRating(response.data.average_rating);
             setNumRatings(response.data.num_ratings);
             setAvatar(response.data.avatar);
+            setDiets(response.data.diet);
+            setCuisines(response.data.cuisine);
+            setIngredients(response.data.ingredients_info);
         }
         fetchData();
 
@@ -119,15 +125,14 @@ function RecipeDetailsPage() {
         <div className="recipe-details-container">
             <h1>{recipe.name}</h1>
 
-            <span id="rating-text">{(Math.round(avgRating * 10) / 10) + " out of 5"}</span>
-
             <Tooltip label="You must be logged in to rate" disabled = {localStorage.getItem('access_token')}>
-                <Rating className='rating' value={avgRating} onChange={(newRating) => rateRecipe(newRating)}/>
+                <Rating size='lg' className='rating' value={avgRating} onChange={(newRating) => rateRecipe(newRating)}/>
             </Tooltip>
-
-            <span id="num-ratings">{numRatings+ " ratings"}</span>
-
+            <span id="rating-text">
+                {(Math.round(avgRating * 10) / 10) + " out of 5, "+numRatings+" ratings"}
+            </span>
             <br />
+
             <br />
 
             <p>
@@ -160,34 +165,54 @@ function RecipeDetailsPage() {
                 </Carousel>
             }
             
-            <br />
             {/**
             <button type="button" class="btn btn-primary" onclick="location.href='#recipe-info';">Jump to Recipe</button>
             <button type="button" class="btn btn-primary">Save to Favorites</button>
             <button type="button" class="btn btn-primary">Add to Shopping List</button>
             */}
-            <br />
             <p>{recipe.description}</p>
-            {/**<img src="./images/reasted_sweet_potato_salad.png" id="details-main-pic" alt="..."></img>*/}
+
+            <br />
+            <br />
+
             <div id="recipe-info">
-                <div className="card">
+                <div className="card2">
                     <div className="card-body">
                         <h2 className="card-title">Recipe</h2>
                         <div className="cook-times-container">
                             <div>
                                 <span className="cook-times-headers">Diet</span>
                                 <br />
-                                Vegetarian
+                            
+                                <table className="sub-tables">
+
+                                    {Object.keys(diets).length === 0 ? <span>unspecified</span> : 
+                                        diets.map(diet => (
+                                            <tr>
+                                            <td>{diet.name}</td>
+                                            </tr>
+                                        ))
+                                    }
+                                </table>
                             </div>
                             <div>
                                 <span className="cook-times-headers">Cuisine</span>
                                 <br />
-                                American
+                                <table className="sub-tables">
+
+                                    {Object.keys(cuisines).length === 0 ? <span>unspecified</span> : 
+                                        cuisines.map(cuisine => (
+                                            <tr>
+                                            <td>{cuisine.name}</td>
+                                            </tr>
+                                        ))
+                                    }
+                                </table>
                             </div>
                             <div>
                                 <span className="cook-times-headers">Servings</span>
                                 <br />
-                                4 to 6 servings
+                                {recipe.serving === null ? <span>unspecified</span> : recipe.serving}
                             </div>
                         </div>
                         <br />
@@ -195,32 +220,23 @@ function RecipeDetailsPage() {
                             <div>
                                 <span className="cook-times-headers">Prep Time</span>
                                 <br />
-                                15 mins
+                                {recipe.prep_time === null ? <span>unspecified</span> : recipe.prep_time}
                             </div>
+    
                             <div>
                                 <span className="cook-times-headers">Cook Time</span>
                                 <br />
-                                30 mins
-                            </div>
-                            <div>
-                                <span className="cook-times-headers">Total Time</span>
-                                <br />
-                                45 mins
+                                {recipe.cooking_time === null ? <span>unspecified</span> : recipe.cooking_time}
                             </div>
                         </div>
                         <br />
                         <h4>Ingredients</h4>
                         <ul>
-                            <li>2 pounds sweet potatoes (3 medium or 2 large)</li>
-                            <li>4 tablespoons olive oil, divided</li>
-                            <li>1 tablespoon chili powder</li>
-                            <li>3/4 teaspoon kosher salt, divided, plus more to taste</li>
-                            <li>1/2 medium red onion</li>
-                            <li>1 large lime</li>
-                            <li>2 (14-ounce) cans black beans, drained and rinsed</li>
-                            <li>1 to 2 packed cups baby spinach</li>
-                            <li>1/4 teaspoon freshly ground black pepper, plus more to taste</li>
-                            <li>4 ounces feta cheese, crumbled (about 1 cup)</li>
+                            {Object.keys(ingredients).length === 0 ? <span>no ingredients specified</span> : 
+                                ingredients.map(ingredient => (
+                                    <li>{ingredient.quantity+" oz of "+ingredient.name}</li>
+                                ))
+                            }
                         </ul>
                     </div>
                 </div>
