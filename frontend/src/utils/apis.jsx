@@ -16,21 +16,20 @@ export const getRecipesAPI = async () => {
   }
 };
 
-export const addIngredientAPI = async (formValues) => {
-  console.log(formValues);
-
+export const addIngredientAPI = async (baseIngredient, quantity) => {
+  console.log(baseIngredient, quantity);
   try {
     const response = await axios.post(
       "http://127.0.0.1:8000/recipes/add-ingredient-to-recipe/",
       {
-        name: formValues.recipeName,
-        serving: formValues.serving,
-        prep_time: formValues.prepTime,
-        cooking_time: formValues.cookingTime,
+        base_ingredient: baseIngredient,
+        quantity: quantity,
       }
     );
-
+    console.log(response);
+    console.log(response.data);
     if (response.status === 200) {
+      return response.data;
     } else {
       console.log(response.data);
     }
@@ -39,12 +38,31 @@ export const addIngredientAPI = async (formValues) => {
   }
 };
 
-export const createBaseIngredientAPI = async (formValues) => {
-  console.log(formValues);
-
+export const createBaseIngredientAPI = async (ingredientName) => {
+  console.log(ingredientName);
   try {
     const response = await axios.post(
       "http://127.0.0.1:8000/recipes/create-base-ingredient/",
+      {
+        name: ingredientName,
+      }
+    );
+    console.log(response);
+    console.log(response.data);
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      console.log(response.data);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const createRecipeAPI = async (formValues) => {
+  try {
+    const response = await axios.post(
+      "http://127.0.0.1:8000/recipes/create-recipe/",
       {
         name: formValues.recipeName,
         serving: formValues.serving,
