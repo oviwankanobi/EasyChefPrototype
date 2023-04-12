@@ -13,7 +13,7 @@ export const links = [
   },
   {
     link: "/profile",
-    label: "John",
+    label: "Profile",
     dropdown: [
       {
         link: "/shoppinglist",

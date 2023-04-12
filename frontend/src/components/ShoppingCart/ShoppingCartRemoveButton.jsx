@@ -10,7 +10,6 @@ function ShoppingCartRemoveButton(props) {
     const {recipe_id, setRemoveErrors} = props
 
     function removeCart() {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`
         axios.delete("http://localhost:8000/recipes/remove-recipe-from-cart/" + recipe_id + "/")
             .then(() => {
                 setRemoveErrors([])

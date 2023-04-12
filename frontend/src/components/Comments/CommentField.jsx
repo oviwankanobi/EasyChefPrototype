@@ -27,7 +27,6 @@ function CommentField(props) {
 
     function postComment(e) {
         e.preventDefault();
-        axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`
         axios.post("http://localhost:8000/recipes/comments/create/", {
             content: comment,
             recipe: recipe_id
