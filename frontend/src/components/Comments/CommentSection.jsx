@@ -21,6 +21,7 @@ function CommentSection(props) {
 
     useEffect(() => {
         // Get comments
+        delete axios.defaults.headers.common["Authorization"];
         axios.get(`http://localhost:8000/recipes/${recipeid}/comments/?page=${page}`)
         .then(response => {
             setComments(response.data["results"])
@@ -31,6 +32,7 @@ function CommentSection(props) {
         .catch(error => console.log(error));
 
         // Get user data
+        axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
         if (accessToken) {
             axios.get('http://localhost:8000/accounts/my-info/')
             .then(response => {

@@ -9,7 +9,7 @@ export default function Logout() {
 
         if (localStorage.getItem('access_token')) {
             localStorage.clear();
-            delete axios.defaults.headers.common['Authorization']
+            axios.defaults.headers.common['Authorization'] = null;
         }
         navigate('/login')
 
