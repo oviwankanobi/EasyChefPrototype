@@ -34,6 +34,8 @@ function RecipeDetailsPage() {
 
     useEffect(() => {
 
+        delete axios.defaults.headers.common["Authorization"]
+
         //get all recipe details
         async function fetchData() {
             const response = await axios.get(RECIPE_DETAILS_ENDPOINT);

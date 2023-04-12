@@ -15,6 +15,8 @@ export default function Cards() {
 
   useEffect(() => {
 
+    delete axios.defaults.headers.common["Authorization"]
+
     async function fetchData() {
       const response = await axios.get(POPULAR_RECIPES_ENDPOINT);
       setCards(response.data.results);
