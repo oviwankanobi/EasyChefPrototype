@@ -23,13 +23,31 @@ function Comment(props) {
         setUpdate(!update)
     }
 
+    function getName(first_name, last_name) {
+        if (!(first_name || last_name)) {
+            return "Anonymous";
+        }
+        else if (first_name && last_name) {
+            return first_name + " " + last_name;
+        }
+        else if (first_name) {
+            return first_name;
+        }
+        else if (last_name) {
+            return last_name;
+        }
+        else {
+            return "Anonymous";
+        }
+    }
+
     return (
         <div>
             <Group>
                 <Avatar src={author["avatar"]} radius="xl" />
                 <div>
                     <Flex gap="md">
-                        <Text size="sm">{`${author["first_name"]} ${author["last_name"]}`}</Text>
+                        <Text size="sm">{`${getName(author["first_name"], author["last_name"])}`}</Text>
                         {userid === author["id"] && <Button color="red" radius="xl" size="xs" compact onClick={deleteComment}>Delete</Button>}
                     </Flex>
                     
