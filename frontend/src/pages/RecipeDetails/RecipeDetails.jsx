@@ -5,6 +5,7 @@ import './RecipeDetails.css';
 import { Carousel } from "@mantine/carousel";
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import CommentSection from '../../components/Comments/CommentSection';
 
 function RecipeDetailsPage() {
 
@@ -409,6 +410,7 @@ function RecipeDetailsPage() {
                 </div>
             </div>
         </div>
+        <CommentSection recipeid={id} />
         </>
     );
 }
