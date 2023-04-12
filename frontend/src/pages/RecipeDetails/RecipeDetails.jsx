@@ -90,7 +90,16 @@ function RecipeDetailsPage() {
     
         }
 
-        didUserFavorite()
+        var accessToken = localStorage.getItem('access_token');
+
+        if(accessToken){
+            didUserFavorite()
+        }else{
+            setFavBtnColor("indigo")
+            setFavBtnText("Save to Favorites")
+            setisFavorited(0)
+        }
+
 
     }, [])
 
@@ -117,11 +126,6 @@ function RecipeDetailsPage() {
                     stars: user_rating
                 }, {
                     headers: headers
-                })
-                .then((response) => {
-                    console.log(response);
-                }, (error) => {
-                    console.log(error);
                 });
                 
             //if rated, update user's existing rating
@@ -136,11 +140,6 @@ function RecipeDetailsPage() {
                     stars: user_rating
                 }, {
                     headers: headers
-                })
-                .then((response) => {
-                    console.log(response);
-                }, (error) => {
-                    console.log(error);
                 });
             }
 
@@ -185,42 +184,49 @@ function RecipeDetailsPage() {
 
 
     const favoriteRecipe = () => {
-        //TODO: must be logged in to favorite a recipe
 
-        //if already saved, delete favorite
-        //if not saved, add favorite
+        var accessToken = localStorage.getItem('access_token');
+        if (accessToken) { //logged in
 
+            if(isFavorited === 0){
+                //call endpoint to fav a recipe (create Favorite)
+                var accessToken = localStorage.getItem('access_token');
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer '+accessToken
+                }
+                const FAV_RECIPE_ENDPOINT = "http://127.0.0.1:8000/recipes/favorite/";
+                axios.post(FAV_RECIPE_ENDPOINT, {
+                    recipe: id
+                }, {
+                    headers: headers
+                });
 
-        if(isFavorited === 0){
-            //call endpoint to fav a recipe (create Favorite)
-            var accessToken = localStorage.getItem('access_token');
-            const headers = {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer '+accessToken
+                setisFavorited(1)
+                setFavBtnColor("green")
+                setFavBtnText("Saved")
+                
+                setFavorites(favorites + 1)
+
+            } else if (isFavorited > 0){
+                //call endpoint to unfav a recipe (delete Favorite)
+                var accessToken = localStorage.getItem('access_token');
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer '+accessToken
+                }
+                const UNFAV_RECIPE_ENDPOINT = "http://127.0.0.1:8000/recipes/favorite/"+id+"/";
+                axios.delete(UNFAV_RECIPE_ENDPOINT, {
+                    headers: headers
+                });
+
+                setisFavorited(0)
+                setFavBtnColor("indigo")
+                setFavBtnText("Save to Favorites")
+                
+                setFavorites(favorites - 1)
             }
-            const FAV_RECIPE_ENDPOINT = "http://127.0.0.1:8000/recipes/favorite/";
-            axios.post(FAV_RECIPE_ENDPOINT, {
-                recipe: id
-            }, {
-                headers: headers
-            })
-            .then((response) => {
-                console.log(response);
-            }, (error) => {
-                console.log(error);
-            });
-
-            setisFavorited(1)
-            setFavBtnColor("green")
-            setFavBtnText("Saved")
-            
-            setFavorites(favorites + 1)
-
-        } else if (isFavorited > 0){
-            //call endpoint to unfav a recipe (delete Favorite)
-            console.log("unfavorited")
         }
-
     }
 
     return (
@@ -235,15 +241,21 @@ function RecipeDetailsPage() {
                 <Rating size='lg' className='rating' value={avgRating} onChange={(newRating) => rateRecipe(newRating)}/>
             </Tooltip>
             <span id="rating-text">
-                {(Math.round(avgRating * 10) / 10) + " out of 5, "+numRatings+" ratings"}
+                {(Math.round(avgRating * 10) / 10) + " out of 5"}
+            </span>
+            <br />
+            <span id='num-ratings'>
+                {numRatings+" ratings"}
             </span>
 
             <br />
             <br />
 
+            <Tooltip label="You must be logged in to favorite" disabled = {localStorage.getItem('access_token')}>
             <Button variant="light" color={favBtnColor} radius="lg" size="xs" onClick={favoriteRecipe}>
                 {favBtnText}
             </Button>
+            </Tooltip>
 
             <br />
             <br />
