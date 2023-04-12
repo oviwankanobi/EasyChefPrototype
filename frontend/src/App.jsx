@@ -10,6 +10,7 @@ import {
   Layout,
   Authentication,
   ShoppingList,
+  EditRecipe,
 } from "./pages";
 
 const router = createBrowserRouter([
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
       {
         path: "/recipe-details/:id",
         element: <RecipeDetails />,
+      },
+      {
+        path: "/recipe-details/:id/edit",
+        element: <EditRecipe />
       },
       {
         path: "/profile",
