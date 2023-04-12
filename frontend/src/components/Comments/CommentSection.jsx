@@ -10,7 +10,6 @@ import Comment from './Comment';
 function CommentSection(props) {
     const {recipeid} = props
     const accessToken = localStorage.getItem('access_token');
-
     var [userID, setUserID] = useState(null);
     var [avatarURL, setAvatarURL] = useState("")
     var [update, setUpdate] = useState(false);
@@ -45,7 +44,7 @@ function CommentSection(props) {
 
     return (
         <>
-           <Container>
+           <Container mt="5rem">
                 <Row className='height d-flex justify-content-center align-items-center'>
                     <Col md={7}>
                         <div>
@@ -54,7 +53,7 @@ function CommentSection(props) {
                             </div>
                             {
                                 accessToken ? 
-                                    <CommentField recipe_id={1} avatar={avatarURL} setUpdate={setUpdate} update={update} />
+                                    <CommentField recipe_id={recipeid} avatar={avatarURL} setUpdate={setUpdate} update={update} />
                                     : <p>You must be logged in to comment.</p>
                             }
                             <div className='mt-2'>
