@@ -54,20 +54,21 @@ export default function Cards() {
 
   return (
     <>
-    <Container  mt={120}>
+    <Container className='search-bar-container'  mt={70}>
       <Flex
         direction={{ base: "column", sm: "row" }}
         gap="sm"
         align="center"
       >
-        <Input
+        <Input className='search-bar'
           placeholder="Search for any recipe"
           value={search}
           onKeyDown={handleSearchKeydown}
           onChange={(e) => setSearch(e.target.value)}
-          radius="xl"
+          radius="lg"
+          size='lg'
         />
-        <Button onClick={handleSearchClick}  size="xs" radius="xl">
+        <Button onClick={handleSearchClick}  size="md" radius="xl">
           Search
         </Button>
       </Flex>

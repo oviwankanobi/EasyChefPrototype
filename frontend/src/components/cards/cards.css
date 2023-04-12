@@ -17,3 +17,18 @@
   border: thin solid rgb(11, 130, 194);
   box-shadow: 0 0 8px rgb(11, 130, 194);
 }
+
+.search-bar-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 80px;
+}
+
+.search-bar{
+  width: 400px;
+}
+
+#header{
+  padding-left: 10px;
+}

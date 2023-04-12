@@ -12,12 +12,6 @@ function HomePage() {
   }
   return (
     <Container>
-      <Title>
-        Home Page
-      </Title>
-      <Text>
-        Auth is: {auth}
-      </Text>
       <Cards/>
     </Container>
   );
