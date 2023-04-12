@@ -4,6 +4,9 @@ from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
 from accounts.serializers import CreateUserSerializer, CommentUserSerializer
 from recipes.models import *
+from django.db.models import Avg
+from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 
 
 #all serializers taken from class and https://www.django-rest-framework.org/api-guide/serializers/
@@ -93,6 +96,7 @@ class StepSerializer(serializers.ModelSerializer):
 class ShowRecipeSerializer(serializers.ModelSerializer):
     
     owner = serializers.CharField(read_only=True)
+    owner_id = serializers.SerializerMethodField('get_owner_id')
     owner_name = serializers.SerializerMethodField('get_owner_full_name')
     diet = DietSerializer(many=True, read_only=True)
     cuisine = CuisineSerializer(many=True, read_only=True)
@@ -103,6 +107,27 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField('get_images')
     videos = serializers.SerializerMethodField('get_videos')
     favorites = serializers.SerializerMethodField('get_favorites')
+    num_ratings = serializers.SerializerMethodField('get_num_ratings')
+    average_rating = serializers.SerializerMethodField('get_avg_rating')
+    avatar = serializers.SerializerMethodField('get_avatar')
+    
+    def get_avatar(self, recipe):
+        user = get_object_or_404(get_user_model(), email=recipe.owner)
+        
+        if (not user.avatar):
+            return ""
+        
+        return str(user.avatar)
+    
+    def get_owner_id(self, recipe):
+        user = get_object_or_404(get_user_model(), email=recipe.owner)
+        return user.pk
+    
+    def get_avg_rating(self, recipe):
+        return Rating.objects.filter(recipe=recipe).aggregate(Avg('stars')).get('stars__avg')
+    
+    def get_num_ratings(self, recipe):
+        return Rating.objects.filter(recipe=recipe).count()
     
     def get_owner_full_name(self, recipe):
         
@@ -156,9 +181,13 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
         fields = ['id',
                   'name',
                   'owner',
+                  'owner_id',
                   'owner_name',
+                  'avatar',
                   'description',
                   'favorites',
+                  'num_ratings',
+                  'average_rating',
                   'diet',
                   'cuisine',
                   'ingredients_info',
@@ -225,6 +254,11 @@ class CreateCommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ['recipe', 'content']
 
+
+class UpdateRatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = ['stars']
 
 class CreateRatingSerializer(serializers.ModelSerializer):
     class Meta:

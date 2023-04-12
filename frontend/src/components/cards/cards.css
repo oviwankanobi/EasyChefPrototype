@@ -3,10 +3,17 @@
     flex-wrap: wrap;
   }
   
-  .flex-container > div {
-    width: 100px;
-    margin: 10px;
-    text-align: center;
-    line-height: 75px;
-    font-size: 30px;
-  }
+.flex-container > div {
+  width: 100px;
+  margin: 10px;
+  text-align: center;
+  line-height: 75px;
+  font-size: 30px;
+}
+
+.card:hover {
+  cursor:pointer;
+  transition: ease-out .2s;
+  border: thin solid rgb(11, 130, 194);
+  box-shadow: 0 0 8px rgb(11, 130, 194);
+}

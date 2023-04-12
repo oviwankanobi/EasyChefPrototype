@@ -3,6 +3,18 @@ from recipes.views import *
 
 urlpatterns = [
 
+    #get num favs of a recipe
+    path('get-num-favs/<int:recipe_id>/', GetNumFavsRecipe.as_view(), name='get-num-favs'),
+
+    #did user favorite a recipe
+    path('is-favorited/<int:recipe_id>/', IsRecipeFavoritedByUser.as_view(), name='did-user-favorite'),
+
+    #did user rate a recipe
+    path('is-rated/<int:recipe_id>/', IsRecipeRatedByUser.as_view(), name='did-user-rate'),
+    
+    #update user rating
+    path('update-rating/<int:recipe_id>/', UpdateUserRating.as_view(), name='update-user-rating'),
+
     #most favorited recipes
     path('popular/', MostPopularRecipes.as_view(), name='popular'),
     

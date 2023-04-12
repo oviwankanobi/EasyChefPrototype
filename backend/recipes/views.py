@@ -105,17 +105,17 @@ class DeleteIngredientView(DestroyAPIView):
 
 class CreateDietView(CreateAPIView):
     serializer_class = DietSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
 
 
 class CreateCuisineView(CreateAPIView):
     serializer_class = CuisineSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
 
 
 class CreateBaseIngredientView(CreateAPIView):
     serializer_class = BaseIngredientSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
 
 
 class CreateImageRecipeView(CreateAPIView):
@@ -732,3 +732,37 @@ class GetRecipesMadeByUserView(ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return Recipe.objects.filter(owner=user)
+
+class IsRecipeRatedByUser(views.APIView):
+    def get(self, request, recipe_id):
+        
+        user = request.user
+        recipe = get_object_or_404(Recipe, id=recipe_id)
+        
+        return Response({'is_rated': Rating.objects.filter(user=user, recipe=recipe).count()})
+    
+
+class IsRecipeFavoritedByUser(views.APIView):
+    def get(self, request, recipe_id):
+        
+        user = request.user
+        recipe = get_object_or_404(Recipe, id=recipe_id)
+        
+        return Response({'is_favorited': Favorite.objects.filter(user=user, recipe=recipe).count()})
+    
+    
+class GetNumFavsRecipe(views.APIView):
+    def get(self, request, recipe_id):
+        return Response({'num_favs': Favorite.objects.filter(recipe=recipe_id).count()})
+    
+#update user rating
+class UpdateUserRating(UpdateAPIView):
+    serializer_class = UpdateRatingSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_object(self):
+        user=self.request.user
+        recipe=self.kwargs['recipe_id']
+        rating = get_object_or_404(Rating, user=user, recipe=recipe)
+        
+        return rating

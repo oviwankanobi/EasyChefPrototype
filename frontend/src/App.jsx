@@ -5,6 +5,7 @@ import {
   Home,
   MyRecipes,
   CreateRecipes,
+  RecipeDetails,
   Profile,
   Layout,
   Authentication,
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: "/create-recipe",
         element: <CreateRecipes />,
+      },
+      {
+        path: "/recipe-details/:id",
+        element: <RecipeDetails />,
       },
       {
         path: "/profile",
