@@ -86,7 +86,7 @@ export default function Cards() {
 
             {Object.keys(card.images).length === 0 ? <span></span> : 
               <Image
-              src={"http://127.0.0.1:8000/media/"+card.images[0].image}
+              src={card.images[0].image}
               height={200}
               width={280}
               alt={card.name}

@@ -766,3 +766,11 @@ class UpdateUserRating(UpdateAPIView):
         rating = get_object_or_404(Rating, user=user, recipe=recipe)
         
         return rating
+
+class EditStepView(UpdateAPIView):
+    serializer_class = EditStepSerializer
+    permission_classes = [IsAuthenticated]
+        
+    def get_object(self):
+        return get_object_or_404(Step, id=self.kwargs['step_id'])
+        

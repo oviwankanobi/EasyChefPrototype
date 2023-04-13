@@ -95,6 +95,7 @@ function RecipeDetailsPage() {
 
         var accessToken = localStorage.getItem('access_token');
 
+        //first load fails this some how (goes into diduserfavortie)
         if(accessToken){
             didUserFavorite()
         }else{
@@ -280,13 +281,13 @@ function RecipeDetailsPage() {
 
                     {images.map(image => (
                         <Carousel.Slide sx={{ backgroundColor: "#eee" }}>
-                            <Image width={650} height={450} src={"http://127.0.0.1:8000/media/"+image.image} />
+                            <Image width={650} height={450} src={image.image} />
                         </Carousel.Slide>
                     ))}
         
                     {videos.map(video => (
                         <Carousel.Slide sx={{ backgroundColor: "#eee" }}>
-                            <video width={650} height={450} controls loop autoPlay src={"http://127.0.0.1:8000/media/"+video.video} fit="contain" />
+                            <video width={650} height={450} controls loop autoPlay src={video.video} fit="contain" />
                         </Carousel.Slide>
                     ))}
         
@@ -393,13 +394,13 @@ function RecipeDetailsPage() {
 
                                     {step.images.map(image => (
                                         <Carousel.Slide sx={{ backgroundColor: "#eee" }}>
-                                            <Image width={650} height={450} src={"http://127.0.0.1:8000/media/"+image.image} />
+                                            <Image width={650} height={450} src={image.image} />
                                         </Carousel.Slide>
                                     ))}
                         
                                     {step.videos.map(video => (
                                         <Carousel.Slide sx={{ backgroundColor: "#eee" }}>
-                                            <video width={650} height={450} controls loop autoPlay src={"http://127.0.0.1:8000/media/"+video.video} fit="contain" />
+                                            <video width={650} height={450} controls loop autoPlay src={video.video} fit="contain" />
                                         </Carousel.Slide>
                                     ))}
             

@@ -13,6 +13,7 @@ import {
     Center,
     Textarea,
     Stack,
+    Text,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import placeholder from "../../assets/images/placeholder.png";
@@ -25,6 +26,11 @@ import {
     createBaseIngredientAPI,
     getIngredientsAPI,
 } from "../../utils/apis.jsx";
+
+import './EditRecipe.css';
+import EditProfileHeader from '../../components/EditProfile/EditProfileHeader';
+import { Trash, PhotoUp } from 'tabler-icons-react';
+
 
 export default function EditRecipePage() {
     const { id } = useParams()
@@ -39,6 +45,13 @@ export default function EditRecipePage() {
     const [ingredientOptions, setIngredientOptions] = useState([]);
     const [dietOptions, setDietOptions] = useState([]);
     const [cuisineOptions, setCuisineOptions] = useState([]);
+
+    const [images, setImages] = useState([]);
+    const [videos, setVideos] = useState([]);
+    const [steps, setSteps] = useState([]);
+
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedVideo, setselectedVideo] = useState(null);
 
     useEffect(() => {
         delete axios.defaults.headers.common["Authorization"]
@@ -71,6 +84,9 @@ export default function EditRecipePage() {
                 setNameField(response.data["name"])
                 setDescField(response.data["description"])
                 setServingSize(response.data["serving"])
+                setImages(response.data.images);
+                setVideos(response.data.videos); 
+                setSteps(response.data.steps);
             })
     }, []);
 
@@ -135,6 +151,99 @@ export default function EditRecipePage() {
         </Group>
     ));
     console.log(nameField)
+
+
+    function deleteImage (image_id) {    
+        const DEL_RECIPE_IMAGE = "http://127.0.0.1:8000/recipes/delete-image-from-recipe/"+image_id+"/"
+        var accessToken = localStorage.getItem('access_token');
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer '+accessToken
+        }
+
+        axios.delete(DEL_RECIPE_IMAGE, {
+            headers: headers
+        });
+
+        setImages(images => images.filter((image)=> image.id != image_id ))
+
+    }
+
+    function deleteVideo (video_id) {
+        const DEL_RECIPE_VIDEO = "http://127.0.0.1:8000/recipes/delete-video-from-recipe/"+video_id+"/"
+        var accessToken = localStorage.getItem('access_token');
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer '+accessToken
+        }
+
+        axios.delete(DEL_RECIPE_VIDEO, {
+            headers: headers
+        });
+
+        setVideos(videos => videos.filter((video)=> video.id != video_id ))
+    }
+
+    function uploadImage(){
+        const UPLOAD_RECIPE_IMAGE = "http://127.0.0.1:8000/recipes/add-image-to-recipe/"
+        var accessToken = localStorage.getItem('access_token');
+        const headers = {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': 'Bearer '+accessToken
+        }
+
+        const formData = new FormData();
+        formData.append("recipe", id);
+        formData.append("image", selectedImage);
+
+
+        axios.post(UPLOAD_RECIPE_IMAGE, formData, {
+            headers: headers
+        }).then((response) => {
+            console.log(response.data);
+
+            const newImgObj = {
+                'id': response.data.id,
+                'image': response.data.image
+            }
+
+            const newImages = images.concat(newImgObj);
+            setImages(newImages)
+
+        });
+
+    }
+
+    function uploadVideo(){
+        const UPLOAD_RECIPE_VIDEO = "http://127.0.0.1:8000/recipes/add-video-to-recipe/"
+        var accessToken = localStorage.getItem('access_token');
+        const headers = {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': 'Bearer '+accessToken
+        }
+
+        const formData = new FormData();
+        formData.append("recipe", id);
+        formData.append("video", selectedVideo);
+
+
+        axios.post(UPLOAD_RECIPE_VIDEO, formData, {
+            headers: headers
+        }).then((response) => {
+            console.log(response.data);
+
+            const newVidObj = {
+                'id': response.data.id,
+                'video': response.data.video
+            }
+
+            const newVideos = videos.concat(newVidObj);
+            setVideos(newVideos)
+
+        });
+
+    }
+
     return (
         <Container>
             <Title my="1rem">Edit Recipe</Title>
@@ -270,6 +379,90 @@ export default function EditRecipePage() {
             </form>
 
             <SearchModal />
+
+            <br />
+            <br />
+            
+
+            <EditProfileHeader text="Overall Images"/>
+
+            {Object.keys(images).length === 0 ? <span className="empty-media">No images to show</span> :
+                <tbody className="images-table">
+                {images.map(image => (
+                    
+                    <tr>
+                    <td><Image width={150} height={150} src={image.image} /></td>
+                    <td>
+                        <Button onClick={() => {deleteImage(image.id)}} variant="outline" color="red" leftIcon={<Trash size={20} strokeWidth={1} color={'red'}/>}>
+                        Delete
+                        </Button>
+                    </td>
+
+                    </tr>
+                            
+                ))}
+                </tbody>
+            }
+
+            <div className="upload-wrapper">
+                <Text>
+                    Upload an image
+                </Text>              
+                <FileInput className="file-input"
+                    onChange={(event) => {
+                    setSelectedImage(event);
+                    }}
+                />
+                <br />
+                <Button id="upload-button" onClick={() => {uploadImage()}} color="green" leftIcon={<PhotoUp size={20} strokeWidth={2} color={'white'}/>}>
+                    Upload
+                </Button>
+            </div>
+
+
+            <EditProfileHeader text="Overall Videos"/>
+
+            {Object.keys(videos).length === 0 ? <span className="empty-media">No videos to show</span> :
+                <tbody className="images-table">
+                {videos.map(video => (
+                    
+                    <tr>
+                    <td>
+                    <video width={150} height={150} controls loop autoPlay src={video.video} fit="contain" />
+                    </td>
+                    <td>
+                        <Button onClick={() => {deleteVideo(video.id)}} variant="outline" color="red" leftIcon={<Trash size={20} strokeWidth={1} color={'red'}/>}>
+                        Delete
+                        </Button>
+                    </td>
+
+                    </tr>
+                            
+                ))}
+                </tbody>
+            }
+
+            <div className="upload-wrapper">
+                <Text>
+                    Upload a video
+                </Text>              
+                <FileInput className="file-input"
+                    onChange={(event) => {
+                    setselectedVideo(event);
+                    }}
+                />
+                <br />
+                <Button id="upload-button" onClick={() => {uploadVideo()}} color="green" leftIcon={<PhotoUp size={20} strokeWidth={2} color={'white'}/>}>
+                    Upload
+                </Button>
+            </div>
+
+            <EditProfileHeader text="Steps"/>
+
+
+
+
         </Container>
+
     );
 }

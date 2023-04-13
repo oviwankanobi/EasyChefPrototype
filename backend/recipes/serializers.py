@@ -60,6 +60,12 @@ class RecipeSerializer(serializers.ModelSerializer):
                   'base_recipe']
 
 
+class EditStepSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Step
+        fields = ['name',
+                  'description']
+
 class StepSerializer(serializers.ModelSerializer):
     
     images = serializers.SerializerMethodField('get_images')
@@ -69,7 +75,7 @@ class StepSerializer(serializers.ModelSerializer):
         
         queryset = step.step_images.all()
         
-        data = [{'image': str(img.image)} for img in queryset]
+        data = [{'id': img.id, 'image': "http://127.0.0.1:8000/media/"+str(img.image)} for img in queryset]
         
         return data
     
@@ -77,7 +83,7 @@ class StepSerializer(serializers.ModelSerializer):
         
         queryset = step.step_videos.all()
         
-        data = [{'video': str(vid.video)} for vid in queryset]
+        data = [{'id': vid.id, 'video': "http://127.0.0.1:8000/media/"+str(vid.video)} for vid in queryset]
         
         return data
     
@@ -164,7 +170,7 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
         
         queryset = recipe.overall_images.all()
         
-        data = [{'image': str(img.image)} for img in queryset]
+        data = [{'id': img.id, 'image': "http://127.0.0.1:8000/media/"+str(img.image)} for img in queryset]
         
         return data
     
@@ -172,7 +178,7 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
         
         queryset = recipe.overall_videos.all()
         
-        data = [{'video': str(vid.video)} for vid in queryset]
+        data = [{'id': vid.id, 'video': "http://127.0.0.1:8000/media/"+str(vid.video)} for vid in queryset]
         
         return data
 
@@ -204,14 +210,14 @@ class ImageRecipeSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = ImageRecipe
-        fields = ['recipe', 'image']
+        fields = ['id', 'recipe', 'image']
 
 
 class VideoRecipeSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = VideoRecipe
-        fields = ['recipe', 'video']
+        fields = ['id', 'recipe', 'video']
 
 
 class ImageStepSerializer(serializers.ModelSerializer):

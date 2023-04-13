@@ -3,6 +3,9 @@ from recipes.views import *
 
 urlpatterns = [
 
+    #update a step
+    path('edit-step/<int:step_id>/', EditStepView.as_view(), name='edit-step'),
+
     #get num favs of a recipe
     path('get-num-favs/<int:recipe_id>/', GetNumFavsRecipe.as_view(), name='get-num-favs'),
 

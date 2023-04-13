@@ -12,6 +12,7 @@ echo "from django.contrib.auth import get_user_model; User = get_user_model(); U
 
 cd ../frontend
 npm install embla-carousel-react @mantine/carousel
+npm install tabler-icons-react
 npm i
 
 cd ../

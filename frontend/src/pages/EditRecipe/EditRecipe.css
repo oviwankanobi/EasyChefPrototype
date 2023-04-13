@@ -1,0 +1,21 @@
+.images-table td{
+    padding-top: 20px;
+    padding-left: 40px;
+}
+
+.empty-media{
+    padding-left: 30px;
+}
+
+.upload-wrapper{
+    margin-top: 20px;
+    margin-left: 40px;
+}
+
+#upload-button{
+    margin-top: -16px;
+}
+
+.file-input{
+    width: 200px;
+}
