@@ -38,15 +38,11 @@ export default function CreateRecipePage() {
 
   useEffect(() => {
     async function fetchData() {
-      const ingredientData = await axios.get(
-        "http://127.0.0.1:8000/recipes/autocomplete-ingredient/"
-      );
-      const dietData = await axios.get(
-        "http://127.0.0.1:8000/recipes/get-diets/"
-      );
-      const cuisineData = await axios.get(
-        "http://127.0.0.1:8000/recipes/get-cuisines/"
-      );
+      const [ingredientData, dietData, cuisineData] = await Promise.all([
+        axios.get("http://127.0.0.1:8000/recipes/autocomplete-ingredient/"),
+        axios.get("http://127.0.0.1:8000/recipes/get-diets/"),
+        axios.get("http://127.0.0.1:8000/recipes/get-cuisines/"),
+      ]);
 
       const ingredientArr = ingredientData.data.results.map((item) => ({
         value: item.id,
@@ -69,6 +65,7 @@ export default function CreateRecipePage() {
     }
     fetchData();
   }, []);
+
   const form = useForm({
     initialValues: {
       image: "",
@@ -129,8 +126,6 @@ export default function CreateRecipePage() {
       <Textarea {...form.getInputProps(`steps.${index}.description`)} />
     </Group>
   ));
-
-  const test = { value: 6, label: "lettuce" };
 
   return (
     <Container>
