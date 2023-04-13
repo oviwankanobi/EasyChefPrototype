@@ -326,7 +326,7 @@ class EditRecipeView(UpdateAPIView):
 #https://medium.com/swlh/searching-in-django-rest-framework-45aad62e7782
 class AutocompleteIngredientView(ListAPIView):
     serializer_class = BaseIngredientSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     search_fields = ['name']
     filter_backends = (filters.SearchFilter,)
     queryset = BaseIngredient.objects.all()
