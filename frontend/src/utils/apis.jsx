@@ -122,19 +122,19 @@ export const getBaseRecipeAPI = async () => {
 
 export const getUserCreatedAPI = async () => {
   const response = await axios.get("http://127.0.0.1:8000/recipes/my-recipes/");
-  return response.data;
+  return response.data.results;
 };
 
 export const getUserFavouritesAPI = async () => {
   const response = await axios.get(
     "http://127.0.0.1:8000/recipes/my-favourites/"
   );
-  return response.data;
+  return response.data.results;
 };
 
 export const getUserInteractedAPI = async () => {
   const response = await axios.get(
     "http://127.0.0.1:8000/recipes/interacted-recipes/"
   );
-  return response.data;
+  return response.data.results;
 };
