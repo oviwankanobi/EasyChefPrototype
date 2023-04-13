@@ -122,7 +122,6 @@ export const getBaseRecipeAPI = async () => {
 
 export const getUserCreatedAPI = async () => {
   const response = await axios.get("http://127.0.0.1:8000/recipes/my-recipes/");
-  console.log(response.data);
   return response.data;
 };
 
@@ -137,6 +136,5 @@ export const getUserInteractedAPI = async () => {
   const response = await axios.get(
     "http://127.0.0.1:8000/recipes/interacted-recipes/"
   );
-  console.log(response.data);
   return response.data;
 };

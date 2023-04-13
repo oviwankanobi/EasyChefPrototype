@@ -4,3 +4,4 @@ export { default as Logout } from "./Logout.jsx";
 export { default as EasyChefHeader } from "./Header.jsx";
 export { default as Attachments } from "./Attachments.jsx";
 export { default as SearchModal } from "./SearchModal.jsx";
+export { default as RecipeCard } from "./RecipeCard.jsx";
