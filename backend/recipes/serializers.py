@@ -40,6 +40,20 @@ class IngredientSerializer(serializers.ModelSerializer):
         model = Ingredient
         fields = ['id', 'base_ingredient', 'recipe', 'quantity']
 
+    def create(self, validated_data):
+        ingredient_id = validated_data.get('id')
+        base_id = validated_data.get('base_ingredient')
+        recipe_id = validated_data.get('recipe')
+        quantity = validated_data.get('quantity')
+
+        ingr, created = Ingredient.objects.update_or_create(
+            base_ingredient=base_id,
+            recipe=recipe_id,
+            defaults={'quantity': quantity}
+        )
+
+        return ingr
+
 
 class RecipeSerializer(serializers.ModelSerializer):
     
