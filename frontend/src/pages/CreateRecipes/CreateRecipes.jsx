@@ -110,7 +110,7 @@ export default function CreateRecipePage() {
 
   const IngredientsField = form.values.ingredients.map((item, index) => (
     <Group key={index}>
-      <NumberInput value={item.quantity} precision={2} step={0.5} min={1} />
+      <NumberInput value={item.quantity} precision={2} step={0.5} min={1} {...form.getInputProps(`ingredients.${index}.quantity`)} />
       <TextInput
         disabled
         {...form.getInputProps(`ingredients.${index}.name`)}
@@ -123,7 +123,7 @@ export default function CreateRecipePage() {
 
   const StepsField = form.values.steps.map((item, index) => (
     <Group grow key={index}>
-      <NumberInput value={item.prepTime} min={1} />
+      <NumberInput value={item.prepTime} min={1} {...form.getInputProps(`steps.${index}.prepTime`)} />
       <Textarea {...form.getInputProps(`steps.${index}.description`)} />
     </Group>
   ));
