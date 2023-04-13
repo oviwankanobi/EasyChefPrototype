@@ -32,14 +32,40 @@ export const getIngredientsAPI = async () => {
   }
 };
 
-export const addIngredientAPI = async (ingredientObject, recipeId) => {
-  const { base_ingredient, quantity } = ingredientObject;
+export const addIngredientAPI = async (base_ingredient, quantity, recipeId) => {
   const response = await axios.post(
     `http://127.0.0.1:8000/recipes/add-ingredient-to-recipe/${recipeId}/`,
     {
       base_ingredient: base_ingredient,
       quantity: quantity,
     }
+  );
+};
+
+export const addImageToRecipe = async () => {
+  const response = await axios.post(
+    `http://127.0.0.1:8000/recipes/add-image-to-recipe/`
+  );
+};
+
+export const addVideoToRecipe = async () => {
+  const response = await axios.post(
+    `http://127.0.0.1:8000/recipes/add-video-to-recipe/`
+  );
+};
+export const addImageToStep = async () => {
+  const response = await axios.post(
+    `http://127.0.0.1:8000/recipes/add-image-to-step/`
+  );
+};
+export const addVideoToStep = async () => {
+  const response = await axios.post(
+    `http://127.0.0.1:8000/recipes/add-video-to-step/`
+  );
+};
+export const addStepToRecipe = async () => {
+  const response = await axios.post(
+    `http://127.0.0.1:8000/recipes/add-image-to-recipe/`
   );
 };
 

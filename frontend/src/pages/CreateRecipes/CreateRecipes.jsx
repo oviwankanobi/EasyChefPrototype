@@ -12,6 +12,7 @@ import {
   Center,
   Textarea,
   Stack,
+  Select,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import placeholder from "../../assets/images/placeholder.png";
@@ -23,6 +24,7 @@ import {
   addIngredientAPI,
   createBaseIngredientAPI,
   getIngredientsAPI,
+  getBaseIngredientAPI,
 } from "../../utils/apis.jsx";
 
 export default function CreateRecipePage() {
@@ -35,12 +37,20 @@ export default function CreateRecipePage() {
 
   useEffect(() => {
     async function fetchData() {
+      const ingredientData = await axios.get(
+        "http://127.0.0.1:8000/recipes/autocomplete-ingredient/"
+      );
       const dietData = await axios.get(
         "http://127.0.0.1:8000/recipes/get-diets/"
       );
       const cuisineData = await axios.get(
         "http://127.0.0.1:8000/recipes/get-cuisines/"
       );
+
+      const ingredientArr = ingredientData.data.results.map((item) => ({
+        value: item.id,
+        label: item.name,
+      }));
 
       const dietArr = dietData.data.results.map((item) => ({
         value: item.id,
@@ -52,30 +62,21 @@ export default function CreateRecipePage() {
         label: item.name,
       }));
 
+      setIngredientOptions(ingredientArr);
       setDietOptions(dietArr);
       setCuisineOptions(cuisineArr);
     }
     fetchData();
   }, []);
-
   const form = useForm({
     initialValues: {
       image: "",
       recipeName: "",
       serving: 1,
-      ingredients: [
-        { quantity: 1, name: "Lettuce" },
-        { quantity: 2, name: "Tomato" },
-      ],
+      ingredients: [],
       diets: [],
       cuisine: [],
-      steps: [
-        {
-          description: "wash lettuce and cut into size of your choosing",
-          prepTime: 300,
-        },
-        { description: "slice tomato", prepTime: 150 },
-      ],
+      steps: [],
       prepTime: 1,
       cookingTime: 1,
       baseRecipe: "",
@@ -84,31 +85,39 @@ export default function CreateRecipePage() {
   });
 
   const handleRecipe = async (formValues) => {
-    const ingredientPromises = formValues.ingredients.map(
-      async (ingredient) => {
-        const base_ingredient = await createBaseIngredientAPI(ingredient.name);
-        const quantity = ingredient.quantity;
-        return { base_ingredient, quantity };
-      }
-    );
-
-    const ingredientObject = await Promise.all(ingredientPromises);
-
     try {
-      createRecipeAPI(formValues).then((recipeId) => {
-        ingredientObject.forEach((ingredient) => {
-          addIngredientAPI(ingredient, recipeId);
-        });
-      });
+      createRecipeAPI(formValues).then((recipeId) =>
+        formValues.ingredients.forEach((ingredient) =>
+          addIngredientAPI(ingredient.id, ingredient.quantity, recipeId)
+        )
+      );
     } catch (error) {
       console.error(error);
     }
   };
 
+  const ingredientClick = () => {
+    const ingredientName = ingredientOptions.find(
+      (option) => option.value === ingredientInput
+    ).label;
+    form.insertListItem("ingredients", {
+      quantity: 1,
+      name: ingredientName,
+      id: ingredientInput,
+    });
+    setIngredientInput(null);
+  };
+
   const IngredientsField = form.values.ingredients.map((item, index) => (
     <Group key={index}>
       <NumberInput value={item.quantity} precision={2} step={0.5} min={1} />
-      <TextInput {...form.getInputProps(`ingredients.${index}.name`)} />
+      <TextInput
+        disabled
+        {...form.getInputProps(`ingredients.${index}.name`)}
+      />
+      <Button onClick={() => form.removeListItem("ingredients", index)}>
+        delete
+      </Button>
     </Group>
   ));
 
@@ -118,6 +127,8 @@ export default function CreateRecipePage() {
       <Textarea {...form.getInputProps(`steps.${index}.description`)} />
     </Group>
   ));
+
+  const test = { value: 6, label: "lettuce" };
 
   return (
     <Container>
@@ -151,22 +162,26 @@ export default function CreateRecipePage() {
             {...form.getInputProps("serving")}
           />
           <Group my="1rem">
-            <TextInput
+            <Select
               label="Ingredients"
-              defaultValue={ingredientInput}
-              onChange={(event) =>
-                setIngredientInput(event.currentTarget.value)
+              placeholder="Ingredient"
+              searchable
+              hoverOnSearchChange
+              nothingFound="No options"
+              filter={(value, item) =>
+                !form
+                  .getInputProps("ingredients")
+                  .value.some((ingredient) => ingredient.id === item.value)
               }
+              data={ingredientOptions}
+              value={ingredientInput}
+              onChange={(event) => setIngredientInput(event)}
             />
             <Button
               label="Ingredients"
-              onClick={() => {
-                form.insertListItem("ingredients", {
-                  quantity: 1,
-                  name: ingredientInput,
-                });
-                setIngredientInput("");
-              }}
+              onClick={(event) =>
+                ingredientInput ? ingredientClick(event) : null
+              }
             >
               +
             </Button>
