@@ -30,6 +30,7 @@ import {
 import './EditRecipe.css';
 import EditProfileHeader from '../../components/EditProfile/EditProfileHeader';
 import { Trash, PhotoUp } from 'tabler-icons-react';
+import EditIngredients from "../../components/EditRecipe/EditIngredients";
 
 
 export default function EditRecipePage() {
@@ -38,6 +39,7 @@ export default function EditRecipePage() {
     const [nameField, setNameField] = useState("")
     const [descField, setDescField] = useState("")
     const [servingSize, setServingSize] = useState(0)
+    const [ingredients, setIngredients] = useState([])
 
     const [ingredientInput, setIngredientInput] = useState();
     const [stepInput, setStepInput] = useState();
@@ -87,6 +89,7 @@ export default function EditRecipePage() {
                 setImages(response.data.images);
                 setVideos(response.data.videos); 
                 setSteps(response.data.steps);
+                setIngredients(response.data["ingredients_info"])
             })
     }, []);
 
@@ -248,7 +251,6 @@ export default function EditRecipePage() {
         <Container>
             <Title my="1rem">Edit Recipe</Title>
             <Stack>
-                <form onSubmit={form.onSubmit(handleRecipe)}>
                     <Image
                         component={FileInput}
                         maw={240}
@@ -283,25 +285,7 @@ export default function EditRecipePage() {
                         {...form.getInputProps("serving")}
                     />
                     <Group my="1rem">
-                        <TextInput
-                            label="Ingredients"
-                            defaultValue={ingredientInput}
-                            onChange={(event) =>
-                                setIngredientInput(event.currentTarget.value)
-                            }
-                        />
-                        <Button
-                            label="Ingredients"
-                            onClick={() => {
-                                form.insertListItem("ingredients", {
-                                    quantity: 1,
-                                    name: ingredientInput,
-                                });
-                                setIngredientInput("");
-                            }}
-                        >
-                            +
-                        </Button>
+                        <EditIngredients initial_ingredients={ingredients} recipeid={id} />
                     </Group>
                     {IngredientsField}
 
@@ -368,7 +352,6 @@ export default function EditRecipePage() {
                     <Center>
                         <Button type="submit">Create Recipe</Button>
                     </Center>
-                </form>
             </Stack>
 
             <form onSubmit={form.onSubmit(getRecipesAPI)}>

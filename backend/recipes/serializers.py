@@ -162,7 +162,7 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
         queryset = Ingredient.objects.filter(recipe=r)
         
         #https://stackoverflow.com/questions/30012470/how-can-i-get-the-string-representation-from-queryset-in-django
-        data = [{'name': str(ingr.base_ingredient), 'quantity': ingr.quantity} for ingr in queryset]
+        data = [{'id': ingr.id, 'base_id': ingr.base_ingredient.id,  'name': str(ingr.base_ingredient), 'quantity': ingr.quantity} for ingr in queryset]
         
         return data
         
