@@ -42,9 +42,18 @@ export const addIngredientAPI = async (base_ingredient, quantity, recipeId) => {
   );
 };
 
-export const addImageToRecipe = async () => {
+export const addImageToRecipe = async (recipeId, file) => {
+  const formData = new FormData();
+  formData.append("recipe", recipeId);
+  formData.append("image", file);
   const response = await axios.post(
-    `http://127.0.0.1:8000/recipes/add-image-to-recipe/`
+    `http://127.0.0.1:8000/recipes/add-image-to-recipe/`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
   );
 };
 

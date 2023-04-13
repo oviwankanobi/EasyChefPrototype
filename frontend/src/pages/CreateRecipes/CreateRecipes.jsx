@@ -25,6 +25,7 @@ import {
   createBaseIngredientAPI,
   getIngredientsAPI,
   getBaseIngredientAPI,
+  addImageToRecipe,
 } from "../../utils/apis.jsx";
 
 export default function CreateRecipePage() {
@@ -86,11 +87,12 @@ export default function CreateRecipePage() {
 
   const handleRecipe = async (formValues) => {
     try {
-      createRecipeAPI(formValues).then((recipeId) =>
+      createRecipeAPI(formValues).then((recipeId) => {
         formValues.ingredients.forEach((ingredient) =>
           addIngredientAPI(ingredient.id, ingredient.quantity, recipeId)
-        )
-      );
+        );
+        addImageToRecipe(recipeId, formValues.image);
+      });
     } catch (error) {
       console.error(error);
     }
