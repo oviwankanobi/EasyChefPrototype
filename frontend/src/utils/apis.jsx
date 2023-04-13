@@ -32,8 +32,7 @@ export const getIngredientsAPI = async () => {
   }
 };
 
-export const addIngredientAPI = async (ingredientObject, recipeId) => {
-  const { base_ingredient, quantity } = ingredientObject;
+export const addIngredientAPI = async (base_ingredient, quantity, recipeId) => {
   const response = await axios.post(
     `http://127.0.0.1:8000/recipes/add-ingredient-to-recipe/${recipeId}/`,
     {
