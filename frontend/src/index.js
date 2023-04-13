@@ -5,6 +5,15 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { MantineProvider } from "@mantine/core";
 
+function setAuthToken() {
+  const authToken = localStorage.getItem("authToken");
+  if (authToken) {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${authToken}`;
+  }
+}
+
+window.addEventListener("load", setAuthToken);
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
