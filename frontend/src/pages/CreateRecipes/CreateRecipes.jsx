@@ -18,6 +18,7 @@ import {
   Text,
   Paper,
   Flex,
+  Divider
 } from "@mantine/core";
 import { modals, ModalsProvider, ContextModalProps } from '@mantine/modals';
 import { useForm } from "@mantine/form";
@@ -34,6 +35,7 @@ import {
 } from "../../utils/apis.jsx";
 import CreateIngredientsTable from "../../components/CreateRecipe/CreateIngredientsTable";
 import { Notifications } from '@mantine/notifications';
+import './CreateRecipes.css';
 
 export default function CreateRecipePage() {
   const [ingredientInput, setIngredientInput] = useState();
@@ -200,35 +202,32 @@ export default function CreateRecipePage() {
     <MantineProvider>
       <ModalsProvider modals={{ ingr: TestModal }}>
     <Container>
-      <Title my="1rem">Create Your Own Recipe</Title>
+    <Title weight="100" my="2rem" align="center">Create your Recipe</Title>
       <Stack>
         <form onSubmit={form.onSubmit(handleRecipe)}>
-          <Image
-            component={FileInput}
-            maw={240}
-            mah={240}
-            mx="0"
-            radius="md"
-            src={placeholder}
-            alt="Placeholder"
-            {...form.getInputProps("image")}
-          />
+          <Group>
           <TextInput
+            className="name-input"
             my="1rem"
-            placeholder="Recipe Name"
-            label="Create Recipe"
+            placeholder="Recipe name"
+            label="Name"
             required
             {...form.getInputProps("recipeName")}
           />
           <NumberInput
+            className="serving-input"
             my="1rem"
             defaultValue={1}
             min={1}
-            placeholder="Serving Size"
-            label="Serving Size"
+            placeholder="Serving size"
+            label="Serving"
             required
             {...form.getInputProps("serving")}
           />
+          </Group>
+
+          <br />
+
           <Paper my="0rem" maw="30rem" shadow="xs" p="sm" withBorder>
             <h6>Add Ingredients</h6>
             <CreateIngredientsTable ingredients={ingredients} update={update} setUpdate={setUpdate} setIngredients={setIngredients} />
@@ -241,10 +240,12 @@ export default function CreateRecipePage() {
               value={searchField}
               onChange={setSearchField} />
             <NumberInput ml="1rem" label="Quantity (oz)" w="7rem" min={1} value={amountField} onChange={setAmountField} />
-            <Button ml="1rem" mt="1rem" onClick={addIngredient}>Add</Button>
+            <Button className="add-button" ml="1rem" mt="1rem" onClick={addIngredient}>Add</Button>
             </Flex>
           </Paper>
           {IngredientsField}
+
+          <br />
 
           <Group my="1rem" grow>
             <MultiSelect
@@ -263,13 +264,19 @@ export default function CreateRecipePage() {
             />
           </Group>
 
+            <br />
+
+          <Title weight={100} size="1.4rem">Add steps to your recipe.</Title>
+          <Divider my="xs" />
           <Group my="1rem">
-            <Textarea
-              label="Steps"
+            <TextInput
+              label="Step"
+              placeholder="description"
               defaultValue={stepInput}
               onChange={(event) => setStepInput(event.currentTarget.value)}
             />
             <Button
+              className="add-button"
               onClick={() => {
                 form.insertListItem("steps", {
                   prepTime: 1,
@@ -284,6 +291,9 @@ export default function CreateRecipePage() {
 
           {StepsField}
 
+          <Divider my="xl" />
+
+              <br />
           <Group>
             <NumberInput
               min={0}
@@ -300,6 +310,7 @@ export default function CreateRecipePage() {
               {...form.getInputProps("cookingTime")}
             />
           </Group>
+          <br />
           <Attachments
             placeholder="Attachments"
             label="Gallery Attachment(s)"
@@ -312,14 +323,7 @@ export default function CreateRecipePage() {
         </form>
       </Stack>
 
-      <form onSubmit={form.onSubmit(getRecipesAPI)}>
-        <Button type="submit">console.log(recipes available)</Button>
-      </form>
-      <form onSubmit={form.onSubmit(getIngredientsAPI)}>
-        <Button type="submit">console.log(ingredients available)</Button>
-      </form>
 
-      <SearchModal />
     </Container>
     </ModalsProvider>
     </MantineProvider>
