@@ -1,6 +1,6 @@
 import React from "react";
 import { Image, Rating, Tooltip, Button, Badge } from "@mantine/core";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import "./RecipeDetails.css";
 import { Carousel } from "@mantine/carousel";
 import { useEffect, useState } from "react";

@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 export const getRecipesAPI = async () => {
@@ -120,14 +121,14 @@ export const getBaseRecipeAPI = async () => {
   }
 };
 
-export const getUserCreatedAPI = async () => {
+export const getUserPersonalAPI = async () => {
   const response = await axios.get("http://127.0.0.1:8000/recipes/my-recipes/");
   return response.data.results;
 };
 
 export const getUserFavouritesAPI = async () => {
   const response = await axios.get(
-    "http://127.0.0.1:8000/recipes/my-favourites/"
+    "http://127.0.0.1:8000/recipes/my-favorites/"
   );
   return response.data.results;
 };

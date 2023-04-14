@@ -31,6 +31,7 @@ import {
 export default function CreateRecipePage() {
   const [ingredientInput, setIngredientInput] = useState();
   const [stepInput, setStepInput] = useState();
+  const [searchValue, onSearchChange] = useState("");
 
   const [ingredientOptions, setIngredientOptions] = useState([]);
   const [dietOptions, setDietOptions] = useState([]);
@@ -109,7 +110,13 @@ export default function CreateRecipePage() {
 
   const IngredientsField = form.values.ingredients.map((item, index) => (
     <Group key={index}>
-      <NumberInput value={item.quantity} precision={2} step={0.5} min={1} />
+      <NumberInput
+        value={item.quantity}
+        precision={2}
+        step={0.5}
+        min={1}
+        {...form.getInputProps(`ingredients.${index}.quantity`)}
+      />
       <TextInput
         disabled
         {...form.getInputProps(`ingredients.${index}.name`)}
@@ -155,6 +162,7 @@ export default function CreateRecipePage() {
             min={1}
             placeholder="Serving Size"
             label="Serving Size"
+            onChange={(event) => console.log(event)}
             required
             {...form.getInputProps("serving")}
           />
@@ -163,12 +171,17 @@ export default function CreateRecipePage() {
               label="Ingredients"
               placeholder="Ingredient"
               searchable
-              hoverOnSearchChange
+              onSearchChange={onSearchChange}
+              searchValue={searchValue}
               nothingFound="No options"
               filter={(value, item) =>
                 !form
                   .getInputProps("ingredients")
-                  .value.some((ingredient) => ingredient.id === item.value)
+                  .value.some(
+                    (ingredient) =>
+                      ingredient.id === item.value &&
+                      item.label != ingredientInput
+                  )
               }
               data={ingredientOptions}
               value={ingredientInput}
