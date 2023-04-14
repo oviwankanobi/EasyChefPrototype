@@ -55,8 +55,6 @@ export default function EditRecipePage() {
   const [selectedVideo, setselectedVideo] = useState(null);
 
   useEffect(() => {
-    delete axios.defaults.headers.common["Authorization"];
-
     async function fetchData() {
       const dietData = await axios.get(
         "http://127.0.0.1:8000/recipes/get-diets/"
@@ -161,14 +159,7 @@ export default function EditRecipePage() {
       image_id +
       "/";
     var accessToken = localStorage.getItem("access_token");
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + accessToken,
-    };
-
-    axios.delete(DEL_RECIPE_IMAGE, {
-      headers: headers,
-    });
+    axios.delete(DEL_RECIPE_IMAGE);
 
     setImages((images) => images.filter((image) => image.id != image_id));
   }
@@ -179,14 +170,7 @@ export default function EditRecipePage() {
       video_id +
       "/";
     var accessToken = localStorage.getItem("access_token");
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + accessToken,
-    };
-
-    axios.delete(DEL_RECIPE_VIDEO, {
-      headers: headers,
-    });
+    axios.delete(DEL_RECIPE_VIDEO);
 
     setVideos((videos) => videos.filter((video) => video.id != video_id));
   }
