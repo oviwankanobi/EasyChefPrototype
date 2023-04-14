@@ -46,8 +46,6 @@ function RecipeDetailsPage() {
     "http://127.0.0.1:8000/recipes/is-favorited/" + id + "/";
 
   useEffect(() => {
-    delete axios.defaults.headers.common["Authorization"];
-
     //get all recipe details
     async function fetchData() {
       const response = await axios.get(RECIPE_DETAILS_ENDPOINT);
@@ -68,14 +66,7 @@ function RecipeDetailsPage() {
 
     //see if user already rated the recipe, if logged in
     async function fetchIsRated() {
-      var accessToken = localStorage.getItem("access_token");
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + accessToken,
-      };
-      const response = await axios.get(DID_USER_RATE_ENDPOINT, {
-        headers: headers,
-      });
+      const response = await axios.get(DID_USER_RATE_ENDPOINT);
       setIsRated(response.data.is_rated);
     }
 
@@ -86,14 +77,7 @@ function RecipeDetailsPage() {
 
     async function didUserFavorite() {
       //set favBtnColor & favBtnText accordingly based on 0 or 1 return from backend
-      var accessToken = localStorage.getItem("access_token");
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + accessToken,
-      };
-      const response = await axios.get(DID_USER_FAVORITE_ENDPOINT, {
-        headers: headers,
-      });
+      const response = await axios.get(DID_USER_FAVORITE_ENDPOINT);
       var isFavorited = response.data.is_favorited;
 
       if (isFavorited === 0) {
@@ -132,38 +116,16 @@ function RecipeDetailsPage() {
 
       //if not rated, rate (creates new rating)
       if (isRated === 0) {
-        const headers = {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + accessToken,
-        };
-
-        axios.post(
-          RATE_RECIPE_ENDPOINT,
-          {
-            recipe: id,
-            stars: user_rating,
-          },
-          {
-            headers: headers,
-          }
-        );
+        axios.post(RATE_RECIPE_ENDPOINT, {
+          recipe: id,
+          stars: user_rating,
+        });
 
         //if rated, update user's existing rating
       } else if (isRated > 0) {
-        const headers = {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + accessToken,
-        };
-
-        axios.patch(
-          UPDATE_USER_RATING_ENDPOINT,
-          {
-            stars: user_rating,
-          },
-          {
-            headers: headers,
-          }
-        );
+        axios.patch(UPDATE_USER_RATING_ENDPOINT, {
+          stars: user_rating,
+        });
       }
 
       //update avg rating and num rating states
@@ -208,20 +170,10 @@ function RecipeDetailsPage() {
       if (isFavorited === 0) {
         //call endpoint to fav a recipe (create Favorite)
         var accessToken = localStorage.getItem("access_token");
-        const headers = {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + accessToken,
-        };
         const FAV_RECIPE_ENDPOINT = "http://127.0.0.1:8000/recipes/favorite/";
-        axios.post(
-          FAV_RECIPE_ENDPOINT,
-          {
-            recipe: id,
-          },
-          {
-            headers: headers,
-          }
-        );
+        axios.post(FAV_RECIPE_ENDPOINT, {
+          recipe: id,
+        });
 
         setisFavorited(1);
         setFavBtnColor("green");
@@ -230,16 +182,9 @@ function RecipeDetailsPage() {
         setFavorites(favorites + 1);
       } else if (isFavorited > 0) {
         //call endpoint to unfav a recipe (delete Favorite)
-        var accessToken = localStorage.getItem("access_token");
-        const headers = {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + accessToken,
-        };
         const UNFAV_RECIPE_ENDPOINT =
           "http://127.0.0.1:8000/recipes/favorite/" + id + "/";
-        axios.delete(UNFAV_RECIPE_ENDPOINT, {
-          headers: headers,
-        });
+        axios.delete(UNFAV_RECIPE_ENDPOINT);
 
         setisFavorited(0);
         setFavBtnColor("indigo");
@@ -253,22 +198,11 @@ function RecipeDetailsPage() {
   function addToCart() {
     var accessToken = localStorage.getItem("access_token");
     if (accessToken) {
-      var accessToken = localStorage.getItem("access_token");
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + accessToken,
-      };
       const ADD_RECIPE_CART =
         "http://127.0.0.1:8000/recipes/add-recipe-to-cart/";
-      axios.post(
-        ADD_RECIPE_CART,
-        {
-          item: id,
-        },
-        {
-          headers: headers,
-        }
-      );
+      axios.post(ADD_RECIPE_CART, {
+        item: id,
+      });
 
       Store.addNotification({
         title: "Recipe added to cart!",

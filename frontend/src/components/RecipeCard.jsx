@@ -11,6 +11,7 @@ import {
   Container,
 } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
+import placeholder from "../assets/images/placeholder.png";
 
 const useStyles = createStyles({
   card: {
@@ -32,6 +33,20 @@ export default function RecipeCard({ recipe }) {
     navigate(`/recipe-details/${id}`);
   };
 
+  const handleImage = () => {
+    const test = recipe.images[0];
+    return test ? (
+      <Image
+        src={`${recipe.images[0].image}`}
+        alt={recipe.name}
+        height={200}
+        width={280}
+      />
+    ) : (
+      <Image src={placeholder} alt={recipe.name} height={200} width={280} />
+    );
+  };
+
   return (
     <Container m="0" p="0">
       <Card
@@ -44,14 +59,7 @@ export default function RecipeCard({ recipe }) {
         shadow="sm"
         radius="lg"
       >
-        <Card.Section>
-          <Image
-            src={`http://127.0.0.1:8000/media/${recipe.images[0].image}`}
-            alt={recipe.name}
-            height={200}
-            width={280}
-          />
-        </Card.Section>
+        <Card.Section>{handleImage()}</Card.Section>
 
         <Group position="center" mt="md" mb="xs">
           <Text size="md" weight={500}>

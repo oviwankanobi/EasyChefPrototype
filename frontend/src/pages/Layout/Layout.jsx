@@ -11,7 +11,6 @@ function setAuthToken() {
     axios.defaults.headers.common["Authorization"] = `Bearer ${authToken}`;
   }
 }
-
 const Layout = () => {
   useEffect(() => {
     setAuthToken();

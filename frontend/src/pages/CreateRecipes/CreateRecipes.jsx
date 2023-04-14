@@ -116,9 +116,6 @@ export default function CreateRecipePage() {
 
   const handleRecipe = async (formValues) => {
     try {
-      axios.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${localStorage.getItem("access_token")}`;
       createRecipeAPI(formValues).then((recipeId) => {
         console.log(recipeId);
         let timeout = 0;
