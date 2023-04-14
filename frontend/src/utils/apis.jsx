@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 export const getRecipesAPI = async () => {
@@ -42,9 +43,18 @@ export const addIngredientAPI = async (base_ingredient, quantity, recipeId) => {
   );
 };
 
-export const addImageToRecipe = async () => {
+export const addImageToRecipe = async (recipeId, file) => {
+  const formData = new FormData();
+  formData.append("recipe", recipeId);
+  formData.append("image", file);
   const response = await axios.post(
-    `http://127.0.0.1:8000/recipes/add-image-to-recipe/`
+    `http://127.0.0.1:8000/recipes/add-image-to-recipe/`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
   );
 };
 
@@ -109,4 +119,23 @@ export const getBaseRecipeAPI = async () => {
   } catch (error) {
     console.error(error);
   }
+};
+
+export const getUserPersonalAPI = async () => {
+  const response = await axios.get("http://127.0.0.1:8000/recipes/my-recipes/");
+  return response.data.results;
+};
+
+export const getUserFavouritesAPI = async () => {
+  const response = await axios.get(
+    "http://127.0.0.1:8000/recipes/my-favorites/"
+  );
+  return response.data.results;
+};
+
+export const getUserInteractedAPI = async () => {
+  const response = await axios.get(
+    "http://127.0.0.1:8000/recipes/interacted-recipes/"
+  );
+  return response.data.results;
 };

@@ -12,62 +12,55 @@ import 'react-notifications-component/dist/theme.css'
 import { Store } from 'react-notifications-component';
 
 function RecipeDetailsPage() {
+  const { id } = useParams();
+  var [recipe, setRecipe] = useState([]);
+  var [images, setImages] = useState([]);
+  var [videos, setVideos] = useState([]);
+  var [avgRating, setAvgRating] = useState([]);
+  var [numRatings, setNumRatings] = useState([]);
+  var [isRated, setIsRated] = useState(0);
+  var [avatar, setAvatar] = useState("");
+  var [diets, setDiets] = useState([]);
+  var [cuisines, setCuisines] = useState([]);
+  var [ingredients, setIngredients] = useState([]);
+  var [steps, setSteps] = useState([]);
+  var [serving, setServing] = useState([]);
+  var [favBtnColor, setFavBtnColor] = useState("");
+  var [favBtnText, setFavBtnText] = useState("");
+  var [isFavorited, setisFavorited] = useState(0);
+  var [favorites, setFavorites] = useState(0);
 
-    const { id } = useParams()
-    var [recipe, setRecipe] = useState([]);
-    var [images, setImages] = useState([]);
-    var [videos, setVideos] = useState([]);
-    var [avgRating, setAvgRating] = useState([]);
-    var [numRatings, setNumRatings] = useState([]);
-    var [isRated, setIsRated] = useState(0);
-    var [avatar, setAvatar] = useState("");
-    var [diets, setDiets] = useState([]);
-    var [cuisines, setCuisines] = useState([]);
-    var [ingredients, setIngredients] = useState([]);
-    var [steps, setSteps] = useState([]);
-    var [serving, setServing] = useState([]);
-    var [favBtnColor, setFavBtnColor] = useState("");
-    var [favBtnText, setFavBtnText] = useState("");
-    var [isFavorited, setisFavorited] = useState(0);
-    var [favorites, setFavorites] = useState(0);
+  const RECIPE_DETAILS_ENDPOINT =
+    "http://127.0.0.1:8000/recipes/recipe-details/" + id + "/";
+  const DID_USER_RATE_ENDPOINT =
+    "http://127.0.0.1:8000/recipes/is-rated/" + id + "/";
+  const DID_USER_FAVORITE_ENDPOINT =
+    "http://127.0.0.1:8000/recipes/is-favorited/" + id + "/";
 
-    const RECIPE_DETAILS_ENDPOINT = "http://127.0.0.1:8000/recipes/recipe-details/"+id+"/";
-    const DID_USER_RATE_ENDPOINT = "http://127.0.0.1:8000/recipes/is-rated/"+id+"/";
-    const DID_USER_FAVORITE_ENDPOINT = "http://127.0.0.1:8000/recipes/is-favorited/"+id+"/";
+  useEffect(() => {
+    //get all recipe details
+    async function fetchData() {
+      const response = await axios.get(RECIPE_DETAILS_ENDPOINT);
+      setRecipe(response.data);
+      setImages(response.data.images);
+      setVideos(response.data.videos);
+      setAvgRating(response.data.average_rating);
+      setNumRatings(response.data.num_ratings);
+      setAvatar(response.data.avatar);
+      setDiets(response.data.diet);
+      setCuisines(response.data.cuisine);
+      setIngredients(response.data.ingredients_info);
+      setSteps(response.data.steps);
+      setServing(response.data.serving);
+      setFavorites(response.data.favorites);
+    }
+    fetchData();
 
-
-    useEffect(() => {
-
-        delete axios.defaults.headers.common["Authorization"]
-
-        //get all recipe details
-        async function fetchData() {
-            const response = await axios.get(RECIPE_DETAILS_ENDPOINT);
-            setRecipe(response.data);
-            setImages(response.data.images);
-            setVideos(response.data.videos);
-            setAvgRating(response.data.average_rating);
-            setNumRatings(response.data.num_ratings);
-            setAvatar(response.data.avatar);
-            setDiets(response.data.diet);
-            setCuisines(response.data.cuisine);
-            setIngredients(response.data.ingredients_info);
-            setSteps(response.data.steps);
-            setServing(response.data.serving);
-            setFavorites(response.data.favorites);
-        }
-        fetchData();
-
-        //see if user already rated the recipe, if logged in
-        async function fetchIsRated() {
-            var accessToken = localStorage.getItem('access_token');
-            const headers = {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer '+accessToken
-            }
-            const response = await axios.get(DID_USER_RATE_ENDPOINT, {headers: headers});
-            setIsRated(response.data.is_rated)
-        }
+    //see if user already rated the recipe, if logged in
+    async function fetchIsRated() {
+      const response = await axios.get(DID_USER_RATE_ENDPOINT);
+      setIsRated(response.data.is_rated);
+    }
 
         var accessToken = localStorage.getItem('access_token');
         if(accessToken){
@@ -76,28 +69,22 @@ function RecipeDetailsPage() {
         
         async function didUserFavorite() {
 
-            //set favBtnColor & favBtnText accordingly based on 0 or 1 return from backend
-            var accessToken = localStorage.getItem('access_token');
-            const headers = {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer '+accessToken
-            }
-            const response = await axios.get(DID_USER_FAVORITE_ENDPOINT, {headers: headers});
-            var isFavorited = response.data.is_favorited
-    
-            if(isFavorited === 0){
-                setFavBtnColor("indigo")
-                setFavBtnText("Save to Favorites")
-                setisFavorited(0)
-            } else if (isFavorited > 0){
-                setFavBtnColor("green")
-                setFavBtnText("Saved")
-                setisFavorited(1)
-            }
-    
-        }
+      //set favBtnColor & favBtnText accordingly based on 0 or 1 return from backend
+      const response = await axios.get(DID_USER_FAVORITE_ENDPOINT);
+      var isFavorited = response.data.is_favorited;
 
-        var accessToken = localStorage.getItem('access_token');
+      if (isFavorited === 0) {
+        setFavBtnColor("indigo");
+        setFavBtnText("Save to Favorites");
+        setisFavorited(0);
+      } else if (isFavorited > 0) {
+        setFavBtnColor("green");
+        setFavBtnText("Saved");
+        setisFavorited(1);
+      }
+    }
+
+    var accessToken = localStorage.getItem("access_token");
 
         //first load fails this some how (goes into diduserfavortie)
         if(accessToken){
@@ -111,130 +98,94 @@ function RecipeDetailsPage() {
 
     }, [])
 
-    const RATE_RECIPE_ENDPOINT = "http://127.0.0.1:8000/recipes/rate/";
-    const UPDATE_USER_RATING_ENDPOINT = "http://127.0.0.1:8000/recipes/update-rating/"+id+"/";
-    const GET_RATING_DATA = "http://127.0.0.1:8000/recipes/"+id+"/average-rating/"
+  const RATE_RECIPE_ENDPOINT = "http://127.0.0.1:8000/recipes/rate/";
+  const UPDATE_USER_RATING_ENDPOINT =
+    "http://127.0.0.1:8000/recipes/update-rating/" + id + "/";
+  const GET_RATING_DATA =
+    "http://127.0.0.1:8000/recipes/" + id + "/average-rating/";
 
+  const rateRecipe = (user_rating) => {
+    var accessToken = localStorage.getItem("access_token");
+    if (accessToken) {
+      //logged in
 
-    const rateRecipe = (user_rating) => {
+      //if not rated, rate (creates new rating)
+      if (isRated === 0) {
+        axios.post(RATE_RECIPE_ENDPOINT, {
+          recipe: id,
+          stars: user_rating,
+        });
 
-        var accessToken = localStorage.getItem('access_token');
-        if (accessToken) { //logged in
-            
-            //if not rated, rate (creates new rating)
-            if(isRated === 0){
+        //if rated, update user's existing rating
+      } else if (isRated > 0) {
+        axios.patch(UPDATE_USER_RATING_ENDPOINT, {
+          stars: user_rating,
+        });
+      }
 
-                const headers = {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer '+accessToken
-                }
-
-                axios.post(RATE_RECIPE_ENDPOINT, {
-                    recipe: id,
-                    stars: user_rating
-                }, {
-                    headers: headers
-                });
-                
-            //if rated, update user's existing rating
-            } else if (isRated > 0){
-
-                const headers = {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer '+accessToken
-                }
-
-                axios.patch(UPDATE_USER_RATING_ENDPOINT, {
-                    stars: user_rating
-                }, {
-                    headers: headers
-                });
-            }
-
-            //update avg rating and num rating states
-            async function fetchUpdatedRatingData() {
-                const response = await axios.get(GET_RATING_DATA);
-                setAvgRating(response.data.average_rating)
-                setNumRatings(response.data.num_ratings)
-            }
-            fetchUpdatedRatingData();
-
-        }
-        
+      //update avg rating and num rating states
+      async function fetchUpdatedRatingData() {
+        const response = await axios.get(GET_RATING_DATA);
+        setAvgRating(response.data.average_rating);
+        setNumRatings(response.data.num_ratings);
+      }
+      fetchUpdatedRatingData();
     }
+  };
 
-    const incrementServing = () => {
-        
-        setServing(serving + 1)
+  const incrementServing = () => {
+    setServing(serving + 1);
 
-        var multiplier = serving / (serving - 1)
+    var multiplier = serving / (serving - 1);
 
-        //multiply every qty in ingredients by multiplier
-        for (let i = 0; i < ingredients.length; i++) {
-            ingredients[i].quantity = ingredients[i].quantity * multiplier
-        }
+    //multiply every qty in ingredients by multiplier
+    for (let i = 0; i < ingredients.length; i++) {
+      ingredients[i].quantity = ingredients[i].quantity * multiplier;
     }
+  };
 
-    const decrementServing = () => {
+  const decrementServing = () => {
+    if (serving - 1 > 1) {
+      setServing(serving - 1);
 
-        if(serving - 1 > 1){
+      var multiplier = serving / (serving + 1);
 
-            setServing(serving - 1)
-
-            var multiplier = serving / (serving + 1)
-
-            //multiply every qty in ingredients by multiplier
-            for (let i = 0; i < ingredients.length; i++) {
-                ingredients[i].quantity = ingredients[i].quantity * multiplier
-            }
-        }
+      //multiply every qty in ingredients by multiplier
+      for (let i = 0; i < ingredients.length; i++) {
+        ingredients[i].quantity = ingredients[i].quantity * multiplier;
+      }
     }
+  };
 
+  const favoriteRecipe = () => {
+    var accessToken = localStorage.getItem("access_token");
+    if (accessToken) {
+      //logged in
 
-    const favoriteRecipe = () => {
+      if (isFavorited === 0) {
+        //call endpoint to fav a recipe (create Favorite)
+        const FAV_RECIPE_ENDPOINT = "http://127.0.0.1:8000/recipes/favorite/";
+        axios.post(FAV_RECIPE_ENDPOINT, {
+          recipe: id,
+        });
 
-        var accessToken = localStorage.getItem('access_token');
-        if (accessToken) { //logged in
+        setisFavorited(1);
+        setFavBtnColor("green");
+        setFavBtnText("Saved");
 
-            if(isFavorited === 0){
-                //call endpoint to fav a recipe (create Favorite)
-                var accessToken = localStorage.getItem('access_token');
-                const headers = {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer '+accessToken
-                }
-                const FAV_RECIPE_ENDPOINT = "http://127.0.0.1:8000/recipes/favorite/";
-                axios.post(FAV_RECIPE_ENDPOINT, {
-                    recipe: id
-                }, {
-                    headers: headers
-                });
+        setFavorites(favorites + 1);
+      } else if (isFavorited > 0) {
+        //call endpoint to unfav a recipe (delete Favorite)
+        const UNFAV_RECIPE_ENDPOINT =
+          "http://127.0.0.1:8000/recipes/favorite/" + id + "/";
+        axios.delete(UNFAV_RECIPE_ENDPOINT);
 
-                setisFavorited(1)
-                setFavBtnColor("green")
-                setFavBtnText("Saved")
-                
-                setFavorites(favorites + 1)
+        setisFavorited(0);
+        setFavBtnColor("indigo");
+        setFavBtnText("Save to Favorites");
 
-            } else if (isFavorited > 0){
-                //call endpoint to unfav a recipe (delete Favorite)
-                var accessToken = localStorage.getItem('access_token');
-                const headers = {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer '+accessToken
-                }
-                const UNFAV_RECIPE_ENDPOINT = "http://127.0.0.1:8000/recipes/favorite/"+id+"/";
-                axios.delete(UNFAV_RECIPE_ENDPOINT, {
-                    headers: headers
-                });
-
-                setisFavorited(0)
-                setFavBtnColor("indigo")
-                setFavBtnText("Save to Favorites")
-                
-                setFavorites(favorites - 1)
-            }
-        }
+        setFavorites(favorites - 1);
+      }
     }
 
     function addToCart() {
@@ -291,14 +242,19 @@ function RecipeDetailsPage() {
 
             <br />
 
-            <p>
-                by &nbsp;
-                <span id="underline-padded">{recipe.owner_name}</span>
-            </p>
+        <p>
+          by &nbsp;
+          <span id="underline-padded">{recipe.owner_name}</span>
+        </p>
 
-            {Object.keys(avatar).length === 0 ? <span></span> : 
-            <img src={"http://127.0.0.1:8000/media/"+avatar} id="jsmith-profile"></img>
-            }
+        {Object.keys(avatar).length === 0 ? (
+          <span></span>
+        ) : (
+          <img
+            src={"http://127.0.0.1:8000/media/" + avatar}
+            id="jsmith-profile"
+          ></img>
+        )}
 
             <br />
 
@@ -341,8 +297,8 @@ function RecipeDetailsPage() {
             
             <p>{recipe.description}</p>
 
-            <br />
-            <br />
+        <br />
+        <br />
 
             <div id="recipe-info">
                 <div className="card2">
@@ -459,11 +415,14 @@ function RecipeDetailsPage() {
                         ))
                     }
                 </div>
-            </div>
+              ))
+            )}
+          </div>
         </div>
-        <CommentSection recipeid={id} />
-        </>
-    );
+      </div>
+      <CommentSection recipeid={id} />
+    </>
+  );
 }
 
 export default RecipeDetailsPage;
