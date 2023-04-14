@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Rating, Tooltip, Button, Badge } from '@mantine/core';
+import { Image, Rating, Tooltip, Button, Badge, Divider, Title } from '@mantine/core';
 import { useParams } from 'react-router-dom';
 import './RecipeDetails.css';
 import { Carousel } from "@mantine/carousel";
@@ -301,7 +301,6 @@ function RecipeDetailsPage() {
             }
 
             <br />
-            <br />
 
             <div className="fav-cart-container">
                 <div>
@@ -321,7 +320,7 @@ function RecipeDetailsPage() {
             </div>
 
             <br />
-
+            <Divider my="xl" />
             {Object.keys(images).length === 0 && Object.keys(videos).length === 0 ? <span></span> :
                 <Carousel sx={{ maxWidth: 650 }} mx="auto" withIndicators height={450}>
 
@@ -414,8 +413,13 @@ function RecipeDetailsPage() {
                 </div>
             </div>
             <br />
+            <br />
+            <br />
+
+            <Divider my="xl" />
+
             <div className="steps">
-                <h1>Steps</h1>
+                <Title weight={100}>Steps</Title>
                 <div className="a-step">
 
                     {Object.keys(steps).length === 0 ? <span>no steps specified</span> : 
@@ -448,6 +452,8 @@ function RecipeDetailsPage() {
             
                                 </Carousel>
                             }
+
+                            <Divider my="xl" />
 
                             </div>
                         ))
