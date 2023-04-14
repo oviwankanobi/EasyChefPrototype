@@ -55,6 +55,8 @@ export default function EditRecipePage() {
   const [selectedVideo, setselectedVideo] = useState(null);
 
   useEffect(() => {
+    delete axios.defaults.headers.common["Authorization"];
+
     async function fetchData() {
       const dietData = await axios.get(
         "http://127.0.0.1:8000/recipes/get-diets/"
@@ -158,7 +160,15 @@ export default function EditRecipePage() {
       "http://127.0.0.1:8000/recipes/delete-image-from-recipe/" +
       image_id +
       "/";
-    axios.delete(DEL_RECIPE_IMAGE);
+    var accessToken = localStorage.getItem("access_token");
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + accessToken,
+    };
+
+    axios.delete(DEL_RECIPE_IMAGE, {
+      headers: headers,
+    });
 
     setImages((images) => images.filter((image) => image.id != image_id));
   }
@@ -168,7 +178,15 @@ export default function EditRecipePage() {
       "http://127.0.0.1:8000/recipes/delete-video-from-recipe/" +
       video_id +
       "/";
-    axios.delete(DEL_RECIPE_VIDEO);
+    var accessToken = localStorage.getItem("access_token");
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + accessToken,
+    };
+
+    axios.delete(DEL_RECIPE_VIDEO, {
+      headers: headers,
+    });
 
     setVideos((videos) => videos.filter((video) => video.id != video_id));
   }
@@ -177,22 +195,30 @@ export default function EditRecipePage() {
     const UPLOAD_RECIPE_IMAGE =
       "http://127.0.0.1:8000/recipes/add-image-to-recipe/";
     var accessToken = localStorage.getItem("access_token");
+    const headers = {
+      "Content-Type": "multipart/form-data",
+      Authorization: "Bearer " + accessToken,
+    };
 
     const formData = new FormData();
     formData.append("recipe", id);
     formData.append("image", selectedImage);
 
-    axios.post(UPLOAD_RECIPE_IMAGE, formData).then((response) => {
-      console.log(response.data);
+    axios
+      .post(UPLOAD_RECIPE_IMAGE, formData, {
+        headers: headers,
+      })
+      .then((response) => {
+        console.log(response.data);
 
-      const newImgObj = {
-        id: response.data.id,
-        image: response.data.image,
-      };
+        const newImgObj = {
+          id: response.data.id,
+          image: response.data.image,
+        };
 
-      const newImages = images.concat(newImgObj);
-      setImages(newImages);
-    });
+        const newImages = images.concat(newImgObj);
+        setImages(newImages);
+      });
   }
 
   function uploadVideo() {

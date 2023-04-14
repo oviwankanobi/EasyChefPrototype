@@ -6,9 +6,6 @@ urlpatterns = [
     # update a step
     path('edit-step/<int:step_id>/', EditStepView.as_view(), name='edit-step'),
 
-    # update a step
-    path('edit-step/<int:step_id>/', EditStepView.as_view(), name='edit-step'),
-
     # get num favs of a recipe
     path('get-num-favs/<int:recipe_id>/',
          GetNumFavsRecipe.as_view(), name='get-num-favs'),
@@ -131,7 +128,6 @@ urlpatterns = [
     path('<int:recipe_id>/favorites/', CountRecipeFavoritesView.as_view()),
 
     path('interacted-recipes/', GetUserInteractedRecipesView.as_view()),
-    path('my-favorites/', GetRecipesFavoritedByUserView.as_view()),
     path('my-recipes/', GetRecipesMadeByUserView.as_view()),
 
 ]

@@ -32,7 +32,6 @@ import {
   createBaseIngredientAPI,
   getIngredientsAPI,
   getBaseIngredientAPI,
-  addImageToRecipe,
 } from "../../utils/apis.jsx";
 import CreateIngredientsTable from "../../components/CreateRecipe/CreateIngredientsTable";
 import { Notifications } from "@mantine/notifications";
@@ -53,20 +52,15 @@ export default function CreateRecipePage() {
   const [update, setUpdate] = useState(false);
   useEffect(() => {
     async function fetchData() {
-      const [ingredientData, dietData, cuisineData] = await Promise.all([
-        axios.get("http://127.0.0.1:8000/recipes/autocomplete-ingredient/"),
-        axios.get("http://127.0.0.1:8000/recipes/get-diets/"),
-        axios.get("http://127.0.0.1:8000/recipes/get-cuisines/"),
-      ]);
-
-      axios
-        .get(
-          `http://localhost:8000/recipes/autocomplete-ingredient/?search=${searchQuery}`
-        )
-        .then((request) => {
-          console.log(request.data);
-          setSearchResults(request.data["results"]);
-        });
+      const ingredientData = await axios.get(
+        "http://127.0.0.1:8000/recipes/autocomplete-ingredient/"
+      );
+      const dietData = await axios.get(
+        "http://127.0.0.1:8000/recipes/get-diets/"
+      );
+      const cuisineData = await axios.get(
+        "http://127.0.0.1:8000/recipes/get-cuisines/"
+      );
 
       axios
         .get(

@@ -24,6 +24,8 @@ export default function Cards() {
   const POPULAR_RECIPES_ENDPOINT = "http://127.0.0.1:8000/recipes/popular/";
 
   useEffect(() => {
+    delete axios.defaults.headers.common["Authorization"];
+
     async function fetchData() {
       const response = await axios.get(POPULAR_RECIPES_ENDPOINT);
       setCards(response.data.results);
