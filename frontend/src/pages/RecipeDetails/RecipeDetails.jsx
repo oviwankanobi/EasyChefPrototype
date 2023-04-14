@@ -6,6 +6,10 @@ import { Carousel } from "@mantine/carousel";
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import CommentSection from '../../components/Comments/CommentSection';
+import { ShoppingCart } from 'tabler-icons-react';
+import { ReactNotifications } from 'react-notifications-component'
+import 'react-notifications-component/dist/theme.css'
+import { Store } from 'react-notifications-component';
 
 function RecipeDetailsPage() {
 
@@ -70,7 +74,7 @@ function RecipeDetailsPage() {
             fetchIsRated();
         }   
         
-        async function didUserFavorite() { //TODO: handle button states if logged out
+        async function didUserFavorite() {
 
             //set favBtnColor & favBtnText accordingly based on 0 or 1 return from backend
             var accessToken = localStorage.getItem('access_token');
@@ -233,8 +237,40 @@ function RecipeDetailsPage() {
         }
     }
 
+    function addToCart() {
+        var accessToken = localStorage.getItem('access_token');
+        if (accessToken) {
+            var accessToken = localStorage.getItem('access_token');
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+accessToken
+            }
+            const ADD_RECIPE_CART = "http://127.0.0.1:8000/recipes/add-recipe-to-cart/";
+            axios.post(ADD_RECIPE_CART, {
+                "item": id
+            }, {
+                headers: headers
+            });
+
+            Store.addNotification({
+                title: "Recipe added to cart!",
+                type: "success",
+                insert: "top",
+                container: "top-right",
+                animationIn: ["animate__animated", "animate__fadeIn"],
+                animationOut: ["animate__animated", "animate__fadeOut"],
+                dismiss: {
+                  duration: 2000,
+                  onScreen: true
+                }
+            });
+
+        }
+    }
+
     return (
         <>
+        <ReactNotifications />
         <div className="recipe-details-container">
             <h1 className='recipe-name-title'>{recipe.name}</h1>
             <Badge className='favs' color="pink" variant="light">
@@ -244,24 +280,15 @@ function RecipeDetailsPage() {
             <Tooltip label="You must be logged in to rate" disabled = {localStorage.getItem('access_token')}>
                 <Rating size='lg' className='rating' value={avgRating} onChange={(newRating) => rateRecipe(newRating)}/>
             </Tooltip>
-            <span id="rating-text">
+            <div id="rating-text">
+            <span>
                 {(Math.round(avgRating * 10) / 10) + " out of 5"}
             </span>
-            <br />
+            </div>
             <span id='num-ratings'>
                 {numRatings+" ratings"}
             </span>
 
-            <br />
-            <br />
-
-            <Tooltip label="You must be logged in to favorite" disabled = {localStorage.getItem('access_token')}>
-            <Button variant="light" color={favBtnColor} radius="lg" size="xs" onClick={favoriteRecipe}>
-                {favBtnText}
-            </Button>
-            </Tooltip>
-
-            <br />
             <br />
 
             <p>
@@ -274,6 +301,25 @@ function RecipeDetailsPage() {
             }
 
             <br />
+            <br />
+
+            <div className="fav-cart-container">
+                <div>
+                <Tooltip label="You must be logged in to favorite" disabled = {localStorage.getItem('access_token')}>
+                    <Button variant="light" color={favBtnColor} radius="lg" onClick={favoriteRecipe}>
+                        {favBtnText}
+                    </Button>
+                </Tooltip>
+                </div>
+                <div>
+                <Tooltip label="You must be logged in to add to cart" disabled = {localStorage.getItem('access_token')}>
+                    <Button onClick={() => {addToCart()}} variant="outline" color="green" leftIcon={<ShoppingCart size={26} strokeWidth={1} color={'green'}/>}>
+                        Add to Cart
+                    </Button>
+                </Tooltip>
+                </div>
+            </div>
+
             <br />
 
             {Object.keys(images).length === 0 && Object.keys(videos).length === 0 ? <span></span> :
@@ -294,10 +340,6 @@ function RecipeDetailsPage() {
                 </Carousel>
             }
             
-            {/**
-            <button type="button" class="btn btn-primary">Save to Favorites</button>
-            <button type="button" class="btn btn-primary">Add to Shopping List</button>
-            */}
             <p>{recipe.description}</p>
 
             <br />

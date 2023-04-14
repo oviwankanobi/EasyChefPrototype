@@ -12,6 +12,10 @@ body {
 
 }
 
+#rating-text{
+    margin-bottom: -8px;
+}
+
 .card2 {
     border: thin solid rgb(11, 130, 194);
     box-shadow: 0 0 8px rgb(11, 130, 194);
@@ -24,13 +28,27 @@ body {
 }
 
 .recipe-name-title{
-    margin-bottom: -8px;
+    margin-bottom: -5px;
 }
 
 .favs{
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
+.fav-cart-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .fav-cart-container > div {
+    width: fit-content;
+    margin: 10px;
+    margin-top: -10px;
+    text-align: center;
+
+  }
 
 
 
