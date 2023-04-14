@@ -13,7 +13,13 @@ import {
   Textarea,
   Stack,
   Select,
+  Autocomplete,
+  MantineProvider,
+  Text,
+  Paper,
+  Flex,
 } from "@mantine/core";
+import { modals, ModalsProvider, ContextModalProps } from '@mantine/modals';
 import { useForm } from "@mantine/form";
 import placeholder from "../../assets/images/placeholder.png";
 import { Attachments, SearchModal } from "../../components";
@@ -26,15 +32,22 @@ import {
   getIngredientsAPI,
   getBaseIngredientAPI,
 } from "../../utils/apis.jsx";
+import CreateIngredientsTable from "../../components/CreateRecipe/CreateIngredientsTable";
+import { Notifications } from '@mantine/notifications';
 
 export default function CreateRecipePage() {
   const [ingredientInput, setIngredientInput] = useState();
   const [stepInput, setStepInput] = useState();
-
+  const [searchResults, setSearchResults] = useState([])
+  const [searchField, setSearchField] = useState("")
+  const [addField, setAddField] = useState(null)
+  const [amountField, setAmountField] = useState(1)
   const [ingredientOptions, setIngredientOptions] = useState([]);
   const [dietOptions, setDietOptions] = useState([]);
   const [cuisineOptions, setCuisineOptions] = useState([]);
-
+  const [searchQuery, setSearchQuery] = useState("")
+  const [ingredients, setIngredients] = useState([])
+  const [update, setUpdate] = useState(false)
   useEffect(() => {
     async function fetchData() {
       const ingredientData = await axios.get(
@@ -46,6 +59,12 @@ export default function CreateRecipePage() {
       const cuisineData = await axios.get(
         "http://127.0.0.1:8000/recipes/get-cuisines/"
       );
+
+      axios.get(`http://localhost:8000/recipes/autocomplete-ingredient/?search=${searchQuery}`)
+            .then(request => {
+                console.log(request.data)
+                setSearchResults(request.data["results"])
+            })
 
       const ingredientArr = ingredientData.data.results.map((item) => ({
         value: item.id,
@@ -67,7 +86,7 @@ export default function CreateRecipePage() {
       setCuisineOptions(cuisineArr);
     }
     fetchData();
-  }, []);
+  }, [ingredients]);
   const form = useForm({
     initialValues: {
       image: "",
@@ -86,11 +105,15 @@ export default function CreateRecipePage() {
 
   const handleRecipe = async (formValues) => {
     try {
-      createRecipeAPI(formValues).then((recipeId) =>
-        formValues.ingredients.forEach((ingredient) =>
-          addIngredientAPI(ingredient.id, ingredient.quantity, recipeId)
-        )
-      );
+      axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`
+      createRecipeAPI(formValues).then((recipeId) => {
+        console.log(recipeId)
+        let timeout = 0;
+        ingredients.map((ingredient) => {
+          setTimeout(()=>addIngredientAPI(ingredient.baseID, ingredient.quantity, recipeId), timeout)
+          timeout += 100;
+      })
+    });
     } catch (error) {
       console.error(error);
     }
@@ -129,8 +152,53 @@ export default function CreateRecipePage() {
   ));
 
   const test = { value: 6, label: "lettuce" };
+  
+  function addIngredient() {
+    if (addField) {
+      let foundIngredient = ingredients.find(ingredient => (ingredient.baseID === addField.id))
+      if (foundIngredient) {
+        foundIngredient.quantity = amountField
+        setAddField(null)
+        setSearchField("")
+      }
+      else{
+        setIngredients(ingredients.concat({
+          baseID: addField.id,
+          name: addField.value,
+          quantity: amountField,
+        }))
+        setAddField(null)
+        setSearchField("")
+      }
+    }
+    else {
+      openModal()
+    }
+    
+  }
+  // https://mantine.dev/others/modals/
+  const TestModal = ({ context, id, innerProps }) => (
+    <>
+      <Text size="sm">{innerProps.modalBody}</Text>
+      <Button mt="md" onClick={() => context.closeModal(id)}>
+        Close
+      </Button>
+    </>
+  );
+
+  const openModal = () => modals.openContextModal({
+    modal: 'ingr',
+    title: 'Select an ingredient',
+    innerProps: {
+      modalBody:
+        'Please select an ingredient from the dropdown.',
+    },
+  })
+
 
   return (
+    <MantineProvider>
+      <ModalsProvider modals={{ ingr: TestModal }}>
     <Container>
       <Title my="1rem">Create Your Own Recipe</Title>
       <Stack>
@@ -161,31 +229,21 @@ export default function CreateRecipePage() {
             required
             {...form.getInputProps("serving")}
           />
-          <Group my="1rem">
-            <Select
-              label="Ingredients"
-              placeholder="Ingredient"
-              searchable
-              hoverOnSearchChange
-              nothingFound="No options"
-              filter={(value, item) =>
-                !form
-                  .getInputProps("ingredients")
-                  .value.some((ingredient) => ingredient.id === item.value)
-              }
-              data={ingredientOptions}
-              value={ingredientInput}
-              onChange={(event) => setIngredientInput(event)}
-            />
-            <Button
-              label="Ingredients"
-              onClick={(event) =>
-                ingredientInput ? ingredientClick(event) : null
-              }
-            >
-              +
-            </Button>
-          </Group>
+          <Paper my="0rem" maw="30rem" shadow="xs" p="sm" withBorder>
+            <h6>Add Ingredients</h6>
+            <CreateIngredientsTable ingredients={ingredients} update={update} setUpdate={setUpdate} setIngredients={setIngredients} />
+            <Flex mt="1rem">
+            <Autocomplete label="Search ingredients"
+              data={searchResults.map((ingredient) => {
+                return { "value": ingredient["name"], "id": ingredient["id"] }
+              })}
+              onItemSubmit={(i) => { setAddField(i) }}
+              value={searchField}
+              onChange={setSearchField} />
+            <NumberInput ml="1rem" label="Quantity (oz)" w="7rem" min={1} value={amountField} onChange={setAmountField} />
+            <Button ml="1rem" mt="1rem" onClick={addIngredient}>Add</Button>
+            </Flex>
+          </Paper>
           {IngredientsField}
 
           <Group my="1rem" grow>
@@ -263,5 +321,7 @@ export default function CreateRecipePage() {
 
       <SearchModal />
     </Container>
+    </ModalsProvider>
+    </MantineProvider>
   );
 }
