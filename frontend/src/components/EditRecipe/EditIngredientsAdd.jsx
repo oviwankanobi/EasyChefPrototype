@@ -6,7 +6,7 @@ import axios from 'axios'
 
 
 function EditIngredientsAdd(props) {
-    const {recipeid, update, setUpdate} = props
+    const {recipeid, update, setUpdate, ingredients} = props
     const [searchQuery, setSearchQuery] = useState("")
     const [searchResults, setSearchResults] = useState([])
     const [searchField, setSearchField] = useState("")
@@ -17,23 +17,24 @@ function EditIngredientsAdd(props) {
         if (localStorage.getItem('access_token')) {
             axios.defaults.headers.common["Authorization"] = "Bearer " + localStorage.getItem('access_token')
         }
-        console.log(axios.defaults.headers.common["Authorization"])
         axios.get(`http://localhost:8000/recipes/autocomplete-ingredient/?search=${searchQuery}`)
             .then(request => {
-                console.log(request.data)
                 setSearchResults(request.data["results"])
             })
     }, [searchQuery])
 
-    console.log(recipeid, addField, amountField)
-
     function postIngredient(e) {
         e.preventDefault();
         if (addField) {
+            let foundIngredient = ingredients.find(ingredient => {
+                return ingredient.base_id === addField.id
+            })
+            let previousAmount = 0
+            foundIngredient ? previousAmount = foundIngredient.quantity : previousAmount = 0
             axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`
             axios.post(`http://localhost:8000/recipes/add-ingredient-to-recipe/${recipeid}/`, {
                 base_ingredient: addField["id"],
-                quantity: amountField
+                quantity: amountField + previousAmount
             }).then(() => {
                 setUpdate(!update)
                 setSearchField("")
@@ -54,7 +55,7 @@ function EditIngredientsAdd(props) {
                     value={searchField}
                     onChange={setSearchField}/>
                 <NumberInput ml="1rem" w="5rem" min={1} value={amountField} onChange={setAmountField} />
-                <Button type="submit">Add</Button> 
+                <Button type="submit" ml="1rem">Save Ingredient</Button> 
             </Flex>
             
         </form>

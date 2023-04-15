@@ -17,9 +17,9 @@ function EditIngredientsTable(props) {
     var [page, setPage] = useState(1)
     function deleteIngredient(id) {
         axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`
-        axios.delete(`http://localhost:8000/recipes/delete-ingredient-from-recipe/${id}/`)
-        setUpdate(!update)
+        axios.delete(`http://localhost:8000/recipes/delete-ingredient-from-recipe/${id}/`).then(()=>{setUpdate(!update)})
     }
+
     return (
         <Table>
             <tbody>
@@ -28,8 +28,9 @@ function EditIngredientsTable(props) {
                         <td>{ingredient["name"]}</td>
                         <td>{ingredient["quantity"]} oz</td>
                         <td>
-                            <Button onClick={()=>{deleteIngredient(ingredient["id"])}} variant="outline" color="red" size="xs" compact>
-                                <Trash size={20} strokeWidth={1} color={'red'}/>
+                            <Button onClick={()=>{deleteIngredient(ingredient["id"])}} color="red" size="xs" compact>
+                                <Trash size={20} strokeWidth={2} color={'white'}/>
+                                Delete Ingredient
                             </Button>
                         </td>
                     </tr>

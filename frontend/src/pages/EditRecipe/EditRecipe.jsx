@@ -14,6 +14,8 @@ import {
     Textarea,
     Stack,
     Text,
+    Paper,
+    Divider,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import placeholder from "../../assets/images/placeholder.png";
@@ -31,7 +33,9 @@ import './EditRecipe.css';
 import EditProfileHeader from '../../components/EditProfile/EditProfileHeader';
 import { Trash, PhotoUp } from 'tabler-icons-react';
 import EditIngredients from "../../components/EditRecipe/EditIngredients";
-
+import EditSteps from "../../components/EditRecipe/EditSteps";
+import EditIngredientsTable from "../../components/EditRecipe/EditIngredientsTable";
+import EditTimeField from "../../components/EditRecipe/EditTime";
 
 export default function EditRecipePage() {
     const { id } = useParams()
@@ -40,6 +44,11 @@ export default function EditRecipePage() {
     const [descField, setDescField] = useState("")
     const [servingSize, setServingSize] = useState(0)
     const [ingredients, setIngredients] = useState([])
+    const [update, setUpdate] = useState(false)
+    const [dietField, setDietField] = useState([])
+    const [cuisineField, setCuisineField] = useState([])
+    const [totalPrepTime, setTotalPrepTime] = useState({ h: 0, m: 0, s: 0 })
+    const [totalCookTime, setTotalCookTime] = useState({ h: 0, m: 0, s: 0 })
 
     const [ingredientInput, setIngredientInput] = useState();
     const [stepInput, setStepInput] = useState();
@@ -54,6 +63,19 @@ export default function EditRecipePage() {
 
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedVideo, setselectedVideo] = useState(null);
+
+    //------------------------------------------------------
+    // PARSE HH:MM:SS TIME FORMAT INTO MINUTES, TRUNCATES MINUTES, UPDATE IF CHANGING TIME FORMAT
+    // Preconditions: MM < 60, SS < 60
+    // ----------------------------------------------------
+    function parseDurationString(s) {
+        let split = s.split(":").map((s) => parseInt(s))
+        return { h: split[0], m: split[1], s: split[2] }
+    }
+
+    function parseDuration(o) {
+        return o.h * 3600 + o.m * 60 + o.s
+    }
 
     useEffect(() => {
         delete axios.defaults.headers.common["Authorization"]
@@ -81,15 +103,22 @@ export default function EditRecipePage() {
         }
         fetchData();
 
-        axios.get("http://127.0.0.1:8000/recipes/recipe-details/"+id+"/")
+        axios.get("http://127.0.0.1:8000/recipes/recipe-details/" + id + "/")
             .then(response => {
                 setNameField(response.data["name"])
                 setDescField(response.data["description"])
                 setServingSize(response.data["serving"])
                 setImages(response.data.images);
-                setVideos(response.data.videos); 
+                setVideos(response.data.videos);
                 setSteps(response.data.steps);
                 setIngredients(response.data["ingredients_info"])
+                // setDietField(response.data["diet"])
+                setDietField(response.data["diet"].map(({ id }) => id))
+                setCuisineField(response.data["cuisine"].map(({ id }) => id))
+                setTotalPrepTime(parseDurationString(response.data.prep_time))
+                setTotalCookTime(parseDurationString(response.data.cooking_time))
+                // setTotalPrepTime()
+                // setTotalCookTime(response.data.cooking_time)
             })
     }, []);
 
@@ -156,43 +185,43 @@ export default function EditRecipePage() {
     console.log(nameField)
 
 
-    function deleteImage (image_id) {    
-        const DEL_RECIPE_IMAGE = "http://127.0.0.1:8000/recipes/delete-image-from-recipe/"+image_id+"/"
+    function deleteImage(image_id) {
+        const DEL_RECIPE_IMAGE = "http://127.0.0.1:8000/recipes/delete-image-from-recipe/" + image_id + "/"
         var accessToken = localStorage.getItem('access_token');
         const headers = {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer '+accessToken
+            'Authorization': 'Bearer ' + accessToken
         }
 
         axios.delete(DEL_RECIPE_IMAGE, {
             headers: headers
         });
 
-        setImages(images => images.filter((image)=> image.id != image_id ))
+        setImages(images => images.filter((image) => image.id != image_id))
 
     }
 
-    function deleteVideo (video_id) {
-        const DEL_RECIPE_VIDEO = "http://127.0.0.1:8000/recipes/delete-video-from-recipe/"+video_id+"/"
+    function deleteVideo(video_id) {
+        const DEL_RECIPE_VIDEO = "http://127.0.0.1:8000/recipes/delete-video-from-recipe/" + video_id + "/"
         var accessToken = localStorage.getItem('access_token');
         const headers = {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer '+accessToken
+            'Authorization': 'Bearer ' + accessToken
         }
 
         axios.delete(DEL_RECIPE_VIDEO, {
             headers: headers
         });
 
-        setVideos(videos => videos.filter((video)=> video.id != video_id ))
+        setVideos(videos => videos.filter((video) => video.id != video_id))
     }
 
-    function uploadImage(){
+    function uploadImage() {
         const UPLOAD_RECIPE_IMAGE = "http://127.0.0.1:8000/recipes/add-image-to-recipe/"
         var accessToken = localStorage.getItem('access_token');
         const headers = {
             'Content-Type': 'multipart/form-data',
-            'Authorization': 'Bearer '+accessToken
+            'Authorization': 'Bearer ' + accessToken
         }
 
         const formData = new FormData();
@@ -217,12 +246,12 @@ export default function EditRecipePage() {
 
     }
 
-    function uploadVideo(){
+    function uploadVideo() {
         const UPLOAD_RECIPE_VIDEO = "http://127.0.0.1:8000/recipes/add-video-to-recipe/"
         var accessToken = localStorage.getItem('access_token');
         const headers = {
             'Content-Type': 'multipart/form-data',
-            'Authorization': 'Bearer '+accessToken
+            'Authorization': 'Bearer ' + accessToken
         }
 
         const formData = new FormData();
@@ -247,34 +276,45 @@ export default function EditRecipePage() {
 
     }
 
+    function submitDiets(e) {
+        e.preventDefault()
+        console.log(dietField)
+    }
+
+    function editField(e, field, value) {
+        e.preventDefault()
+        axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`
+        axios.patch(`http://localhost:8000/recipes/edit-recipe/${id}/`, { [field]: value })
+    }
+
     return (
         <Container>
             <Title my="1rem">Edit Recipe</Title>
             <Stack>
-                    <Image
-                        component={FileInput}
-                        maw={240}
-                        mah={240}
-                        mx="0"
-                        radius="md"
-                        src={placeholder}
-                        alt="Placeholder"
-                        {...form.getInputProps("image")}
-                    />
+                <form onSubmit={(e) => { editField(e, "name", nameField) }}>
                     <TextInput
                         my="1rem"
                         placeholder="Recipe Name"
-                        label="Create Recipe"
+                        label="Recipe Name"
                         value={nameField}
                         required
-                        // {...form.getInputProps("recipeName")}
+                        onChange={(e) => setNameField(e.target.value)}
+                    // {...form.getInputProps("recipeName")}
                     />
+                    <Button type="submit">Save Name</Button>
+                </form>
+                <form onSubmit={(e) => { editField(e, "description", descField) }}>
                     <Textarea
                         my="1rem"
                         placeholder="Recipe Description"
                         label="Description"
                         value={descField}
+                        onChange={(e) => setDescField(e.target.value)}
                     />
+                    <Button type="submit">Save Description</Button>
+                </form>
+
+                <form onSubmit={(e) => { editField(e, "serving", servingSize) }}>
                     <NumberInput
                         my="1rem"
                         min={1}
@@ -282,165 +322,201 @@ export default function EditRecipePage() {
                         label="Serving Size"
                         value={servingSize}
                         required
-                        {...form.getInputProps("serving")}
+                        onChange={(e) => { setServingSize(e) }}
                     />
-                    <Group my="1rem">
-                        <EditIngredients initial_ingredients={ingredients} recipeid={id} />
-                    </Group>
-                    {IngredientsField}
+                    <Button type="submit">Save Serving Size</Button>
+                </form>
 
-                    <Group my="1rem" grow>
-                        <MultiSelect
+                <Group my="1rem">
+                    <Paper my="0rem" maw="50rem" shadow="xs" p="sm" withBorder>
+                        <EditIngredients initial_ingredients={ingredients} recipeid={id} />
+                    </Paper>
+
+                </Group>
+
+                <form onSubmit={(e) => editField(e, "diet", dietField)}>
+                    <Group my="1rem" >
+                        <MultiSelect w="50%"
                             data={dietOptions}
                             placeholder="Diets"
                             label="Diets"
                             required
-                            {...form.getInputProps("diets")}
+                            value={dietField}
+                            searchable
+                            onChange={(e) => { setDietField(e) }}
                         />
-                        <MultiSelect
+                    </Group>
+                    <Button type="submit">Save Diets</Button>
+                </form>
+                <form onSubmit={(e) => editField(e, "cuisine", cuisineField)}>
+                    <Group my="1rem" >
+                        <MultiSelect w="50%"
                             data={cuisineOptions}
                             placeholder="Cuisine"
                             label="Cuisine"
                             required
-                            {...form.getInputProps("cuisine")}
+                            value={cuisineField}
+                            searchable
+                            onChange={(e) => { setCuisineField(e) }}
                         />
                     </Group>
+                    <Button type="submit">Save Cuisine</Button>
+                </form>
 
-                    <Group my="1rem">
-                        <Textarea
-                            label="Steps"
-                            defaultValue={stepInput}
-                            onChange={(event) => setStepInput(event.currentTarget.value)}
-                        />
-                        <Button
-                            onClick={() => {
-                                form.insertListItem("steps", {
-                                    prepTime: 1,
-                                    description: stepInput,
-                                });
-                                setStepInput("");
-                            }}
-                        >
-                            +
-                        </Button>
-                    </Group>
+                <Group my="1rem">
+                    <Paper my="0rem" w="100%" shadow="xs" p="sm" >
+                        <EditSteps initial_steps={steps} recipeid={id} />
+                    </Paper>
+                </Group>
 
-                    {StepsField}
-
-                    <Group>
-                        <NumberInput
-                            min={0}
-                            placeholder="Prep Time"
-                            label="Prep Time"
-                            required
-                            {...form.getInputProps("prepTime")}
-                        />
-                        <NumberInput
-                            min={0}
-                            placeholder="Cooking Time"
-                            label="Cooking Time"
-                            required
-                            {...form.getInputProps("cookingTime")}
-                        />
-                    </Group>
-                    <Attachments
-                        placeholder="Attachments"
-                        label="Gallery Attachment(s)"
-                        required
-                        {...form}
+                <Paper w="50%" shadow="sm" p="1rem">
+                    <h6>Edit Total Prep Time</h6>
+                    <Divider my="sm" />
+                    <EditTimeField 
+                        id={id} 
+                        time={totalPrepTime}
+                        setTime={setTotalPrepTime}
+                        name="Prep"
+                        field="prep_time"
                     />
-                    <Center>
-                        <Button type="submit">Create Recipe</Button>
-                    </Center>
+                </Paper>
+                <Paper w="50%" shadow="sm" p="1rem">
+                    <h6>Edit Total Cooking Time</h6>
+                    <Divider my="sm" />
+                    <form onSubmit={(e) => editField(e, "cooking_time", parseDuration(totalCookTime))}>
+                        <Group>
+                            <NumberInput
+                                w="4rem"
+                                mb="1rem"
+                                min={0}
+                                max={504}
+                                placeholder="HH"
+                                label="Hours"
+                                required
+                                value={totalCookTime.h}
+                                onChange={ (e)=>setTotalCookTime({...totalCookTime, h: e}) }
+                            />
+                            <NumberInput
+                                w="4rem"
+                                mb="1rem"
+                                min={0}
+                                max={59}
+                                placeholder="MM"
+                                label="Mins"
+                                required
+                                value={totalCookTime.m}
+                                onChange={ (e)=>setTotalCookTime({...totalCookTime, m: e}) }
+                            />
+                            <NumberInput
+                                w="4rem"
+                                mb="1rem"
+                                min={0}
+                                max={59}
+                                placeholder="SS"
+                                label="Secs"
+                                required
+                                value={totalCookTime.s}
+                                onChange={ (e)=>setTotalCookTime({...totalCookTime, s: e}) }
+                            />
+                        </Group>
+                        <Button mb="1rem" type="submit">Save Cook Time</Button>
+                    </form>
+                </Paper>
+                <Attachments
+                    placeholder="Attachments"
+                    label="Gallery Attachment(s)"
+                    required
+                    {...form}
+                />
             </Stack>
-
+            {/* 
             <form onSubmit={form.onSubmit(getRecipesAPI)}>
                 <Button type="submit">console.log(recipes available)</Button>
             </form>
             <form onSubmit={form.onSubmit(getIngredientsAPI)}>
                 <Button type="submit">console.log(ingredients available)</Button>
-            </form>
+            </form> */}
 
-            <SearchModal />
+            {/* <SearchModal /> */}
 
             <br />
             <br />
-            
 
-            <EditProfileHeader text="Overall Images"/>
+
+            <EditProfileHeader text="Overall Images" />
 
             {Object.keys(images).length === 0 ? <span className="empty-media">No images to show</span> :
                 <tbody className="images-table">
-                {images.map(image => (
-                    
-                    <tr>
-                    <td><Image width={150} height={150} src={image.image} /></td>
-                    <td>
-                        <Button onClick={() => {deleteImage(image.id)}} variant="outline" color="red" leftIcon={<Trash size={20} strokeWidth={1} color={'red'}/>}>
-                        Delete
-                        </Button>
-                    </td>
+                    {images.map(image => (
 
-                    </tr>
-                            
-                ))}
+                        <tr>
+                            <td><Image width={150} height={150} src={image.image} /></td>
+                            <td>
+                                <Button onClick={() => { deleteImage(image.id) }} variant="outline" color="red" leftIcon={<Trash size={20} strokeWidth={1} color={'red'} />}>
+                                    Delete
+                                </Button>
+                            </td>
+
+                        </tr>
+
+                    ))}
                 </tbody>
             }
 
             <div className="upload-wrapper">
                 <Text>
                     Upload an image
-                </Text>              
+                </Text>
                 <FileInput className="file-input"
                     onChange={(event) => {
-                    setSelectedImage(event);
+                        setSelectedImage(event);
                     }}
                 />
                 <br />
-                <Button id="upload-button" onClick={() => {uploadImage()}} color="green" leftIcon={<PhotoUp size={20} strokeWidth={2} color={'white'}/>}>
+                <Button id="upload-button" onClick={() => { uploadImage() }} color="green" leftIcon={<PhotoUp size={20} strokeWidth={2} color={'white'} />}>
                     Upload
                 </Button>
             </div>
 
 
-            <EditProfileHeader text="Overall Videos"/>
+            <EditProfileHeader text="Overall Videos" />
 
             {Object.keys(videos).length === 0 ? <span className="empty-media">No videos to show</span> :
                 <tbody className="images-table">
-                {videos.map(video => (
-                    
-                    <tr>
-                    <td>
-                    <video width={150} height={150} controls loop autoPlay src={video.video} fit="contain" />
-                    </td>
-                    <td>
-                        <Button onClick={() => {deleteVideo(video.id)}} variant="outline" color="red" leftIcon={<Trash size={20} strokeWidth={1} color={'red'}/>}>
-                        Delete
-                        </Button>
-                    </td>
+                    {videos.map(video => (
 
-                    </tr>
-                            
-                ))}
+                        <tr>
+                            <td>
+                                <video width={150} height={150} controls loop autoPlay src={video.video} fit="contain" />
+                            </td>
+                            <td>
+                                <Button onClick={() => { deleteVideo(video.id) }} variant="outline" color="red" leftIcon={<Trash size={20} strokeWidth={1} color={'red'} />}>
+                                    Delete
+                                </Button>
+                            </td>
+
+                        </tr>
+
+                    ))}
                 </tbody>
             }
 
             <div className="upload-wrapper">
                 <Text>
                     Upload a video
-                </Text>              
+                </Text>
                 <FileInput className="file-input"
                     onChange={(event) => {
-                    setselectedVideo(event);
+                        setselectedVideo(event);
                     }}
                 />
                 <br />
-                <Button id="upload-button" onClick={() => {uploadVideo()}} color="green" leftIcon={<PhotoUp size={20} strokeWidth={2} color={'white'}/>}>
+                <Button id="upload-button" onClick={() => { uploadVideo() }} color="green" leftIcon={<PhotoUp size={20} strokeWidth={2} color={'white'} />}>
                     Upload
                 </Button>
             </div>
 
-            <EditProfileHeader text="Steps"/>
+            <EditProfileHeader text="Steps" />
 
 
 

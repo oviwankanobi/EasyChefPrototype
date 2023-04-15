@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import {Container, Table} from '@mantine/core'
+import {Container, Table, Divider} from '@mantine/core'
 import {Row, Col} from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios'
 import EditIngredientsTable from './EditIngredientsTable';
-import EditIngredientsAdd from './EditIngredientsAdd';
+import EditStepsAdd from './EditStepsAdd';
+import EditStepsList from './EditStepsList'
 
 
-function EditIngredients(props) {
-    const {initial_ingredients, recipeid} = props
-    var [ingredients, setIngredients] = useState(initial_ingredients)
+function EditSteps(props) {
+    const {initial_steps, recipeid} = props
+    var [steps, setSteps] = useState(initial_steps)
     const accessToken = localStorage.getItem('access_token');
     var [userID, setUserID] = useState(null);
     var [avatarURL, setAvatarURL] = useState("")
@@ -25,7 +26,7 @@ function EditIngredients(props) {
         
         axios.get("http://127.0.0.1:8000/recipes/recipe-details/"+recipeid+"/")
             .then(response => {
-                setIngredients(response.data["ingredients_info"])
+                setSteps(response.data["steps"])
             })
         // Get user data
         axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
@@ -41,13 +42,15 @@ function EditIngredients(props) {
     return (
         <>
            <Container>
-                <h6>Edit Ingredients</h6>
-                <EditIngredientsTable ingredients={ingredients} update={update} setUpdate={setUpdate} />
-                <EditIngredientsAdd ingredients={ingredients} recipeid={recipeid} update={update} setUpdate={setUpdate}/>
+                <h5>Edit Steps</h5>
+                <Divider my="sm" />
+                {/* <EditIngredientsTable steps={steps} update={update} setUpdate={setUpdate} /> */}
+                <EditStepsAdd recipeid={recipeid} update={update} setUpdate={setUpdate}/>
+                <EditStepsList steps={steps} update={update} setUpdate={setUpdate}/>
            </Container>
             
         </>
     )
 }
 
-export default EditIngredients;
+export default EditSteps;
