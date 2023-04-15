@@ -5,9 +5,9 @@ const instance = axios.create({});
 
 const refreshAuthLogic = (failedRequest) =>
   axios
-    .post("http://127.0.0.1:8000/accounts/login/refresh")
+    .post("http://127.0.0.1:8000/accounts/login/refresh/")
     .then((tokenRefreshResponse) => {
-      localStorage.setItem("refresh_token", tokenRefreshResponse.data.token);
+      localStorage.setItem("access_token", tokenRefreshResponse.data.token);
       failedRequest.response.config.headers["Authorization"] =
         "Bearer " + tokenRefreshResponse.data.token;
       return Promise.resolve();

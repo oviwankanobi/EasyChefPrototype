@@ -128,6 +128,8 @@ urlpatterns = [
     path('<int:recipe_id>/favorites/', CountRecipeFavoritesView.as_view()),
 
     path('interacted-recipes/', GetUserInteractedRecipesView.as_view()),
+    path('my-favorites/', GetRecipesFavoritedByUserView.as_view()),
     path('my-recipes/', GetRecipesMadeByUserView.as_view()),
+
 
 ]
