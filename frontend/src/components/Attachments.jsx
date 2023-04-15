@@ -8,10 +8,7 @@ export default function Attachments(form) {
   const handleFileUpload = (newFiles) => {
     setFiles((prevFiles) => [...prevFiles, ...newFiles]);
     const existingAttachments = form.getInputProps("galleryAttachments").value;
-    const updatedAttachments = [
-      ...existingAttachments,
-      ...newFiles.map((file) => ({ files: file })),
-    ];
+    const updatedAttachments = [...existingAttachments, ...newFiles];
     form.setFieldValue("galleryAttachments", updatedAttachments);
   };
 
