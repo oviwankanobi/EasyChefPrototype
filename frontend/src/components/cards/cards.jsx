@@ -12,7 +12,7 @@ import {
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { axios } from "../../utils/axiosAutoAuth";
 import "./cards.css";
 
 export default function Cards() {

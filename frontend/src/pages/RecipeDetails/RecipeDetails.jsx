@@ -12,7 +12,7 @@ import { useParams } from "react-router-dom";
 import "./RecipeDetails.css";
 import { Carousel } from "@mantine/carousel";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { axios } from "../../utils/axiosAutoAuth";
 import CommentSection from "../../components/Comments/CommentSection";
 import { ShoppingCart } from "tabler-icons-react";
 import { ReactNotifications } from "react-notifications-component";
