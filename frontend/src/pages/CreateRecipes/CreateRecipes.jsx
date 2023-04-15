@@ -60,7 +60,7 @@ export default function CreateRecipePage() {
         "http://127.0.0.1:8000/recipes/get-cuisines/"
       );
 
-      axios.get(`http://localhost:8000/recipes/autocomplete-ingredient/?search=${searchQuery}`)
+      axios.get(`http://localhost:8000/recipes/autocomplete-ingredient/?search=${searchField}`)
             .then(request => {
                 console.log(request.data)
                 setSearchResults(request.data["results"])
@@ -86,7 +86,7 @@ export default function CreateRecipePage() {
       setCuisineOptions(cuisineArr);
     }
     fetchData();
-  }, [ingredients]);
+  }, [ingredients, searchField]);
   const form = useForm({
     initialValues: {
       image: "",
@@ -194,8 +194,6 @@ export default function CreateRecipePage() {
         'Please select an ingredient from the dropdown.',
     },
   })
-
-
   return (
     <MantineProvider>
       <ModalsProvider modals={{ ingr: TestModal }}>

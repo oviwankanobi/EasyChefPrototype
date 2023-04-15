@@ -17,11 +17,12 @@ function EditIngredientsAdd(props) {
         if (localStorage.getItem('access_token')) {
             axios.defaults.headers.common["Authorization"] = "Bearer " + localStorage.getItem('access_token')
         }
-        axios.get(`http://localhost:8000/recipes/autocomplete-ingredient/?search=${searchQuery}`)
+        delete axios.defaults.headers.common["Authorization"]
+        axios.get(`http://localhost:8000/recipes/autocomplete-ingredient/?search=${searchField}`)
             .then(request => {
                 setSearchResults(request.data["results"])
             })
-    }, [searchQuery])
+    }, [searchField])
 
     function postIngredient(e) {
         e.preventDefault();
@@ -43,6 +44,8 @@ function EditIngredientsAdd(props) {
         }
         
     }
+
+    console.log(searchField)
     
     return (    
         <form onSubmit={postIngredient}>
