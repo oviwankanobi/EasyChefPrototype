@@ -16,8 +16,10 @@ import {
   Text,
   Paper,
   Divider,
+  MantineProvider,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { modals, ModalsProvider } from '@mantine/modals';
 import placeholder from "../../assets/images/placeholder.png";
 import { Attachments, SearchModal } from "../../components";
 import axios from "axios";
@@ -55,6 +57,7 @@ export default function EditRecipePage() {
   const [totalPrepTime, setTotalPrepTime] = useState({ h: 0, m: 0, s: 0 })
   const [totalCookTime, setTotalCookTime] = useState({ h: 0, m: 0, s: 0 })
   const [isOwner, setIsOwner] = useState(true)
+  const [redirectHome, setRedirectHome] = useState(false)
 
   const [ingredientInput, setIngredientInput] = useState();
   const [stepInput, setStepInput] = useState();
@@ -287,9 +290,6 @@ export default function EditRecipePage() {
 
   }
 
-  function submitDiets(e) {
-    e.preventDefault()
-  }
 
   function editField(e, field, value) {
     e.preventDefault()
@@ -312,23 +312,60 @@ export default function EditRecipePage() {
     });
   }
 
+  function deleteRecipe() {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`
+    axios.delete(`http://localhost:8000/recipes/delete-recipe/${id}/`).then(()=>setRedirectHome(true))
+  }
+
+  //https://mantine.dev/others/modals/
+  const openDeleteModal = () => {
+    modals.openConfirmModal({
+      title: 'Delete Recipe?',
+      centered: true,
+      children: (
+        <Text size="sm">
+          Are you sure you want to delete this recipe? This cannot be undone.
+        </Text>
+      ),
+      labels: { confirm: 'Delete', cancel: "Cancel" },
+      confirmProps: { color: 'red' },
+      onCancel: () => console.log('Cancel'),
+      onConfirm: () => deleteRecipe(),
+    });
+  }
+
   return (
     <>
       {notFound && <Navigate to="/not-found" />}
+      {redirectHome && <Navigate to="/" />}
       {!(localStorage.getItem('access_token')) && <Navigate to="/login" />}
       <ReactNotifications />
+      <MantineProvider>
+      <ModalsProvider>
       <Container>
-        <Button
-          component={Link}
-          to={`/recipe-details/${id}`}
-          variant="outline"
-          color="blue"
+        <Group position="apart">
+          <Button
+            component={Link}
+            to={`/recipe-details/${id}`}
+            variant="outline"
+            color="blue"
+            leftIcon={
+              <ArrowBackUp size={26} strokeWidth={1} color={"blue"} />
+            }
+          >
+            Return to Recipe
+          </Button>
+          <Button
+          onClick={openDeleteModal}
+          color="red"
           leftIcon={
-            <ArrowBackUp size={26} strokeWidth={1} color={"blue"} />
+            <Trash size={26} strokeWidth={1} color={"white"} />
           }
         >
-          Return to Recipe
+          Delete Recipe
         </Button>
+        </Group>
+        
         <Title my="1rem">Edit Recipe</Title>
         <Stack>
           <form onSubmit={(e) => { editField(e, "name", nameField) }}>
@@ -601,6 +638,8 @@ export default function EditRecipePage() {
           </Button>
         </div>
       </Container>
+      </ModalsProvider>
+    </MantineProvider>
     </>
   );
 }
