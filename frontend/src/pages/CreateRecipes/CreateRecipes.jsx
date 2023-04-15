@@ -67,7 +67,6 @@ export default function CreateRecipePage() {
           `http://localhost:8000/recipes/autocomplete-ingredient/?search=${searchQuery}`
         )
         .then((request) => {
-          console.log(request.data);
           setSearchResults(request.data["results"]);
         });
 
@@ -92,6 +91,7 @@ export default function CreateRecipePage() {
     }
     fetchData();
   }, [ingredients]);
+
   const form = useForm({
     initialValues: {
       image: "",
@@ -164,12 +164,28 @@ export default function CreateRecipePage() {
 
   const StepsField = form.values.steps.map((item, index) => (
     <Group grow key={index}>
+      <TextInput
+        value={item.name}
+        label="Name"
+        {...form.getInputProps(`steps.${index}.name`)}
+      />
+      <Textarea
+        value={item.description}
+        label="Description"
+        {...form.getInputProps(`steps.${index}.description`)}
+      />
       <NumberInput
+        label="Prep Time"
         value={item.prepTime}
         min={1}
         {...form.getInputProps(`steps.${index}.prepTime`)}
       />
-      <Textarea {...form.getInputProps(`steps.${index}.description`)} />
+      <NumberInput
+        label="Cooking Time"
+        value={item.prepTime}
+        min={1}
+        {...form.getInputProps(`steps.${index}.cookingTime`)}
+      />
     </Group>
   ));
 
@@ -300,6 +316,7 @@ export default function CreateRecipePage() {
                   data={dietOptions}
                   placeholder="Diets"
                   label="Diets"
+                  searchable
                   required
                   {...form.getInputProps("diets")}
                 />
@@ -307,6 +324,7 @@ export default function CreateRecipePage() {
                   data={cuisineOptions}
                   placeholder="Cuisine"
                   label="Cuisine"
+                  searchable
                   required
                   {...form.getInputProps("cuisine")}
                 />
@@ -321,7 +339,7 @@ export default function CreateRecipePage() {
               <Group my="1rem">
                 <TextInput
                   label="Step"
-                  placeholder="description"
+                  placeholder="Name"
                   defaultValue={stepInput}
                   onChange={(event) => setStepInput(event.currentTarget.value)}
                 />
@@ -330,7 +348,9 @@ export default function CreateRecipePage() {
                   onClick={() => {
                     form.insertListItem("steps", {
                       prepTime: 1,
-                      description: stepInput,
+                      cookingTime: 1,
+                      name: stepInput,
+                      description: "",
                     });
                     setStepInput("");
                   }}

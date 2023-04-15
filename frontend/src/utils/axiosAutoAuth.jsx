@@ -15,4 +15,13 @@ const refreshAuthLogic = (failedRequest) =>
 
 createAuthRefreshInterceptor(instance, refreshAuthLogic);
 
+function getAccessToken() {
+  return localStorage.getItem("access_token");
+}
+
+instance.interceptors.request.use((request) => {
+  request.headers["Authorization"] = `Bearer ${getAccessToken()}`;
+  return request;
+});
+
 export { instance as axios };
