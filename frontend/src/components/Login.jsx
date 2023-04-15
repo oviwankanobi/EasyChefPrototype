@@ -13,7 +13,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { axios } from "../utils/axiosAutoAuth";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {

@@ -13,7 +13,7 @@ import {
 } from "@mantine/core";
 import { useForm, hasLength, isEmail, matchesField } from "@mantine/form";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { axios } from "../utils/axiosAutoAuth";
 
 export default function Register() {
   const form = useForm({

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container, Table } from "@mantine/core";
 import { Row, Col } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import axios from "axios";
+import { axios } from "../../utils/axiosAutoAuth";
 import EditIngredientsTable from "./EditIngredientsTable";
 import EditIngredientsAdd from "./EditIngredientsAdd";
 

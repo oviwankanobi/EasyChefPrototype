@@ -3,7 +3,7 @@ import { Avatar, Textarea, Button, Container } from "@mantine/core";
 import Alert from "react-bootstrap/Alert";
 import Fade from "react-bootstrap/Fade";
 import "bootstrap/dist/css/bootstrap.min.css";
-import axios from "axios";
+import { axios } from "../../utils/axiosAutoAuth";
 import "./style.css";
 
 function CommentField(props) {
