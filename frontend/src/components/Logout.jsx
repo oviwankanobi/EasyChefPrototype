@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { axios } from "../utils/axiosAutoAuth";
+import axios from "axios";
 
 export default function Logout() {
   const navigate = useNavigate();

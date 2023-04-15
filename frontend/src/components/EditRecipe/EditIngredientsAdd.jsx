@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Form, Autocomplete, Button, Flex, NumberInput } from "@mantine/core";
 import { Row, Col } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { axios } from "../../utils/axiosAutoAuth";
+import axios from "axios";
 
 function EditIngredientsAdd(props) {
     const {recipeid, update, setUpdate, ingredients} = props
