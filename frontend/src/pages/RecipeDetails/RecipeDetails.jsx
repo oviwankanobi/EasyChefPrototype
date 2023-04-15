@@ -18,7 +18,7 @@ import { ShoppingCart, Edit } from "tabler-icons-react";
 import { ReactNotifications } from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
 import { Store } from "react-notifications-component";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 function RecipeDetailsPage() {
   const { id } = useParams();
@@ -40,6 +40,7 @@ function RecipeDetailsPage() {
   var [favorites, setFavorites] = useState(0);
   var [isOwner, setIsOwner] = useState(false);
   var [location, setLocation] = useState("");
+  var [notFound, setNotFound] = useState(false);
 
   const RECIPE_DETAILS_ENDPOINT =
     "http://127.0.0.1:8000/recipes/recipe-details/" + id + "/";
@@ -53,7 +54,11 @@ function RecipeDetailsPage() {
     //get all recipe details
     async function fetchData() {
       delete axios.defaults.headers.common['Authorization']
-      const response = await axios.get(RECIPE_DETAILS_ENDPOINT);
+      const response = await axios.get(RECIPE_DETAILS_ENDPOINT).catch((e)=>{
+        if (e.response.status === 404) {
+          setNotFound(true)
+        }
+      });
       setRecipe(response.data);
       setImages(response.data.images);
       setVideos(response.data.videos);
@@ -270,6 +275,7 @@ function RecipeDetailsPage() {
 
   return (
     <>
+      {notFound && <Navigate to="/not-found" />}
       <ReactNotifications />
       <div className="recipe-details-container">
         <h1 className="recipe-name-title">{recipe.name}</h1>

@@ -11,6 +11,7 @@ import {
   Authentication,
   ShoppingList,
   EditRecipe,
+  NotFound,
 } from "./pages";
 
 const router = createBrowserRouter([
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
         path: "/shopping-list",
         element: <ShoppingList />,
       },
+      {
+        path: "/not-found",
+        element: <NotFound />
+      }
     ],
   },
   {

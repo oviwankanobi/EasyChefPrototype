@@ -69,6 +69,7 @@ export default function EditRecipePage() {
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedVideo, setselectedVideo] = useState(null);
+  var [notFound, setNotFound] = useState(false);
 
   //------------------------------------------------------
   // PARSE HH:MM:SS TIME FORMAT INTO MINUTES, TRUNCATES MINUTES, UPDATE IF CHANGING TIME FORMAT
@@ -136,6 +137,10 @@ export default function EditRecipePage() {
       else {
         setIsOwner(false)
       }
+      }).catch((e)=> {
+        if (e.response.status === 404) {
+          setNotFound(true)
+        }
       })
   }, []);
 
@@ -240,7 +245,6 @@ export default function EditRecipePage() {
         headers: headers,
       })
       .then((response) => {
-        console.log(response.data);
 
         const newImgObj = {
           id: response.data.id,
@@ -270,7 +274,6 @@ export default function EditRecipePage() {
         headers: headers,
       })
       .then((response) => {
-        console.log(response.data);
 
         const newVidObj = {
           id: response.data.id,
@@ -309,9 +312,9 @@ export default function EditRecipePage() {
     });
   }
 
-  console.log(localStorage.getItem('access_token'))
   return (
     <>
+      {notFound && <Navigate to="/not-found" />}
       {!(localStorage.getItem('access_token')) && <Navigate to="/login" />}
       <ReactNotifications />
       <Container>
