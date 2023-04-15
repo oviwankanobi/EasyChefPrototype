@@ -6,16 +6,10 @@ import axios from 'axios'
 
 
 function EditTimeField(props) {
-    const { id, time, setTime, name, field } = props
+    const { id, time, setTime, name, field, editField } = props
 
     function parseDuration(o) {
         return o.h * 3600 + o.m * 60 + o.s
-    }
-
-    function editField(e, field, value) {
-        e.preventDefault()
-        axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`
-        axios.patch(`http://localhost:8000/recipes/edit-recipe/${id}/`, { [field]: value })
     }
 
     return (

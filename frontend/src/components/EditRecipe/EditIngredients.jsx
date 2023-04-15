@@ -7,14 +7,13 @@ import EditIngredientsTable from "./EditIngredientsTable";
 import EditIngredientsAdd from "./EditIngredientsAdd";
 
 function EditIngredients(props) {
-  const { initial_ingredients, recipeid } = props;
+  const { initial_ingredients, recipeid, notification } = props;
   var [ingredients, setIngredients] = useState(initial_ingredients);
   const accessToken = localStorage.getItem("access_token");
   var [userID, setUserID] = useState(null);
   var [avatarURL, setAvatarURL] = useState("");
   var [update, setUpdate] = useState(false);
-
-    var [comments, setComments] = useState([])
+  
     var [next, setNext] = useState(null)
     var [prev, setPrev] = useState(null)
     var [page, setPage] = useState(1)
@@ -42,7 +41,7 @@ function EditIngredients(props) {
            <Container>
                 <h6>Edit Ingredients</h6>
                 <EditIngredientsTable ingredients={ingredients} update={update} setUpdate={setUpdate} />
-                <EditIngredientsAdd ingredients={ingredients} recipeid={recipeid} update={update} setUpdate={setUpdate}/>
+                <EditIngredientsAdd ingredients={ingredients} recipeid={recipeid} update={update} setUpdate={setUpdate} notification={notification}/>
            </Container>
             
         </>

@@ -3,9 +3,12 @@ import { Form, Autocomplete, Button, Flex, NumberInput } from "@mantine/core";
 import { Row, Col } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
+import { ReactNotifications } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
+import { Store } from "react-notifications-component";
 
 function EditIngredientsAdd(props) {
-    const {recipeid, update, setUpdate, ingredients} = props
+    const {recipeid, update, setUpdate, ingredients, notification} = props
     const [searchQuery, setSearchQuery] = useState("")
     const [searchResults, setSearchResults] = useState([])
     const [searchField, setSearchField] = useState("")
@@ -39,10 +42,28 @@ function EditIngredientsAdd(props) {
                 setUpdate(!update)
                 setSearchField("")
                 setAddField(null)
+                notification()
             })
+        }
+        else {
+            errorNotification()
         }
         
     }
+
+    function errorNotification() {  
+        Store.addNotification({
+          title: "Please pick an ingredient from the dropdown list.",
+          type: "danger",
+          insert: "top",
+          container: "top-right",
+          animationIn: ["animateanimated", "animatefadeIn"],
+          animationOut: ["animateanimated", "animatefadeOut"],
+          dismiss: {
+            duration: 2000,
+            onScreen: true,
+          },
+        });}
     
     return (    
         <form onSubmit={postIngredient}>
