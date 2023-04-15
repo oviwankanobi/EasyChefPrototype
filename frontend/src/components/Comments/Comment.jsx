@@ -19,6 +19,7 @@ function Comment(props) {
     const { classes } = useStyles();
 
     function deleteComment() {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`
         axios.delete(`http://localhost:8000/recipes/comments/${id}/`)
         setUpdate(!update)
     }

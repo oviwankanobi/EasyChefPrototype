@@ -51,6 +51,7 @@ function EditProfileForm() {
   }
 
   var get_profile_data = () => {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`
     axios
       .get("http://localhost:8000/accounts/profile/my-profile/")
       .then((response) => {
@@ -69,6 +70,7 @@ function EditProfileForm() {
 
   var formSubmit = (e) => {
     e.preventDefault();
+    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`
     axios
       .put(
         "http://localhost:8000/accounts/profile/edit/",

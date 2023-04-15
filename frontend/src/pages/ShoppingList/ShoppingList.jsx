@@ -14,6 +14,7 @@ function ShoppingListPage() {
   var [loginError, setLoginError] = useState(false);
 
   useEffect(() => {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`
     axios
       .get("http://localhost:8000/recipes/cart-details/")
       .then((response) => {

@@ -25,6 +25,7 @@ export default function Cards() {
 
   useEffect(() => {
     async function fetchData() {
+      delete axios.defaults.headers.common['Authorization']
       const response = await axios.get(POPULAR_RECIPES_ENDPOINT);
       setCards(response.data.results);
     }
@@ -36,6 +37,7 @@ export default function Cards() {
 
   const handleSearchClick = async () => {
     try {
+      delete axios.defaults.headers.common['Authorization']
       const response = await axios.get(SEARCH_RECIPE_ENDPOINT);
       const isDataAvailable =
         response.data.results && response.data.results.length;
