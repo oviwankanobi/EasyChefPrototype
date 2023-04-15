@@ -182,7 +182,6 @@ export default function EditRecipePage() {
             <Textarea {...form.getInputProps(`steps.${index}.description`)} />
         </Group>
     ));
-    console.log(nameField)
 
 
     function deleteImage(image_id) {
@@ -232,7 +231,6 @@ export default function EditRecipePage() {
         axios.post(UPLOAD_RECIPE_IMAGE, formData, {
             headers: headers
         }).then((response) => {
-            console.log(response.data);
 
             const newImgObj = {
                 'id': response.data.id,
@@ -262,7 +260,6 @@ export default function EditRecipePage() {
         axios.post(UPLOAD_RECIPE_VIDEO, formData, {
             headers: headers
         }).then((response) => {
-            console.log(response.data);
 
             const newVidObj = {
                 'id': response.data.id,
@@ -278,7 +275,6 @@ export default function EditRecipePage() {
 
     function submitDiets(e) {
         e.preventDefault()
-        console.log(dietField)
     }
 
     function editField(e, field, value) {

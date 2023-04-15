@@ -44,8 +44,6 @@ function EditIngredientsAdd(props) {
         }
         
     }
-
-    console.log(searchField)
     
     return (    
         <form onSubmit={postIngredient}>
