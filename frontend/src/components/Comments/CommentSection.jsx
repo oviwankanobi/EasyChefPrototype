@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container } from "@mantine/core";
 import { Row, Col } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { axios } from "../../utils/axiosAutoAuth";
+import axios from "axios";
 import CommentField from "./CommentField";
 import Comment from "./Comment";
 

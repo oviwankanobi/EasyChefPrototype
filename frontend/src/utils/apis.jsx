@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { axios } from "./axiosAutoAuth";
+import axios from "axios";
 
 export const getRecipesAPI = async () => {
   try {

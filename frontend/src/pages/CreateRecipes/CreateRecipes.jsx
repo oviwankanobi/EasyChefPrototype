@@ -24,7 +24,7 @@ import { modals, ModalsProvider, ContextModalProps } from "@mantine/modals";
 import { useForm } from "@mantine/form";
 import placeholder from "../../assets/images/placeholder.png";
 import { Attachments, SearchModal } from "../../components";
-import { axios } from "../../utils/axiosAutoAuth";
+import axios from "axios";
 import {
   getRecipesAPI,
   createRecipeAPI,

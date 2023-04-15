@@ -4,7 +4,7 @@ import Alert from "react-bootstrap/Alert";
 import Fade from "react-bootstrap/Fade";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./style.css";
-import { axios } from "../../utils/axiosAutoAuth";
+import axios from "axios";
 
 function ShoppingCartRemoveButton(props) {
   const { recipe_id, setRemoveErrors } = props;

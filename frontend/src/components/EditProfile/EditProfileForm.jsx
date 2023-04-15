@@ -3,7 +3,7 @@ import Alert from "react-bootstrap/Alert";
 import Fade from "react-bootstrap/Fade";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./style.css";
-import { axios } from "../../utils/axiosAutoAuth";
+import axios from "axios";
 import EditProfileTextField from "./EditProfileTextField";
 import { Avatar } from "@mantine/core";
 

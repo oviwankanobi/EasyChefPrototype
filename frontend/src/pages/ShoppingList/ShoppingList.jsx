@@ -5,7 +5,7 @@ import EditProfileHeader from "../../components/EditProfile/EditProfileHeader";
 import EditProfileForm from "../../components/ShoppingCart/ShoppingCartList";
 import ShoppingCartList from "../../components/ShoppingCart/ShoppingCartList";
 import ShoppingCartRecipes from "../../components/ShoppingCart/ShoppingCartRecipes";
-import { axios } from "../../utils/axiosAutoAuth";
+import axios from "axios";
 
 function ShoppingListPage() {
   var [shoppingCart, setShoppingCart] = useState([]);
