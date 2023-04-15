@@ -14,10 +14,11 @@ import { Carousel } from "@mantine/carousel";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import CommentSection from "../../components/Comments/CommentSection";
-import { ShoppingCart } from "tabler-icons-react";
+import { ShoppingCart, Edit } from "tabler-icons-react";
 import { ReactNotifications } from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
 import { Store } from "react-notifications-component";
+import { Link } from "react-router-dom";
 
 function RecipeDetailsPage() {
   const { id } = useParams();
@@ -37,6 +38,8 @@ function RecipeDetailsPage() {
   var [favBtnText, setFavBtnText] = useState("");
   var [isFavorited, setisFavorited] = useState(0);
   var [favorites, setFavorites] = useState(0);
+  var [isOwner, setIsOwner] = useState(false);
+  var [location, setLocation] = useState("");
 
   const RECIPE_DETAILS_ENDPOINT =
     "http://127.0.0.1:8000/recipes/recipe-details/" + id + "/";
@@ -46,6 +49,7 @@ function RecipeDetailsPage() {
     "http://127.0.0.1:8000/recipes/is-favorited/" + id + "/";
 
   useEffect(() => {
+
     //get all recipe details
     async function fetchData() {
       const response = await axios.get(RECIPE_DETAILS_ENDPOINT);
@@ -61,6 +65,16 @@ function RecipeDetailsPage() {
       setSteps(response.data.steps);
       setServing(response.data.serving);
       setFavorites(response.data.favorites);
+
+      // Get user info, test to see if they own recipes
+      axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`
+      const userinfoResponse = await axios.get("http://localhost:8000/accounts/my-info/")
+      if (userinfoResponse.data.id === response.data.owner_id) {
+        setIsOwner(true);
+      }
+      else {
+        setIsOwner(false);
+      }
     }
     fetchData();
 
@@ -297,12 +311,28 @@ function RecipeDetailsPage() {
               </Button>
             </Tooltip>
           </div>
+          {
+            isOwner && <div>
+              <Button
+                component={Link}
+                to={`/recipe-details/${id}/edit`}
+                variant="outline"
+                color="blue"
+                leftIcon={
+                  <Edit size={26} strokeWidth={1} color={"blue"} />
+                }
+              >
+                Edit Recipe
+              </Button>
+            </div>
+          }
+
         </div>
 
         <br />
         <Divider my="xl" />
         {Object.keys(images).length === 0 &&
-        Object.keys(videos).length === 0 ? (
+          Object.keys(videos).length === 0 ? (
           <span></span>
         ) : (
           <Carousel
@@ -471,7 +501,7 @@ function RecipeDetailsPage() {
                   <p>{step.description}</p>
 
                   {Object.keys(step.images).length === 0 &&
-                  Object.keys(step.videos).length === 0 ? (
+                    Object.keys(step.videos).length === 0 ? (
                     <span></span>
                   ) : (
                     <Carousel
