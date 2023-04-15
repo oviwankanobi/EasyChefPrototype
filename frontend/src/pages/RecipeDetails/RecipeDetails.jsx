@@ -459,13 +459,13 @@ function RecipeDetailsPage() {
                     {recipe.prep_time === null ? (
                       <span>prep time: unspecified</span>
                     ) : (
-                      "prep time: " + recipe.prep_time
+                      "Prep Time: " + step.prep_time
                     )}
                     <br />
                     {recipe.cooking_time === null ? (
                       <span>cook time: unspecified</span>
                     ) : (
-                      "cook time: " + recipe.cooking_time
+                      "Cook Time: " + step.cooking_time
                     )}
                   </p>
                   <p>{step.description}</p>
