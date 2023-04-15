@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Button, TextInput, Textarea, NumberInput, Paper, Flex, Divider, Group } from '@mantine/core'
+import { Button, TextInput, Textarea, NumberInput, Paper, Flex, Divider, Group, FileInput } from '@mantine/core'
 import { Row, Col } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios'
 import EditTimeField from './EditTime';
+import { Upload } from 'tabler-icons-react';
 
 
 function EditStepsAdd(props) {
@@ -12,6 +13,8 @@ function EditStepsAdd(props) {
     const [descField, setDescField] = useState("")
     const [prepTimeField, setPrepTimeField] = useState({ h: 0, m: 0, s: 0 })
     const [cookTimeField, setCookTimeField] = useState({ h: 0, m: 0, s: 0 })
+    const [imageField, setImageField] = useState(null)
+    const [videoField, setVideoField] = useState(null)
     const [addField, setAddField] = useState(null)
     const [amountField, setAmountField] = useState(1)
 
@@ -35,6 +38,32 @@ function EditStepsAdd(props) {
         return o.h * 3600 + o.m * 60 + o.s
     }
 
+    function stepUploadImage(stepID) {
+        if (imageField) {
+            axios.post("http://localhost:8000/recipes/add-image-to-step/", {
+                step: stepID,
+                image: imageField
+            },
+            {headers: {
+                'Content-Type': 'multipart/form-data'
+              }})
+        }
+    }
+
+    function stepUploadVideo(stepID) {
+        if (videoField) {
+            axios.post("http://localhost:8000/recipes/add-video-to-step/", {
+                step: stepID,
+                video: videoField
+            },
+            {headers: {
+                'Content-Type': 'multipart/form-data'
+              }})
+        }
+    }
+
+    
+
     function postStep(e) {
         e.preventDefault()
         axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`
@@ -45,7 +74,11 @@ function EditStepsAdd(props) {
             cooking_time: parseDuration(cookTimeField),
             recipe: recipeid,
             number: 1,
-        }).then(() => { setUpdate(!update) })
+        }).then((response) => { 
+            stepUploadImage(response.data.id)
+            setTimeout(()=>stepUploadVideo(response.data.id), 100) 
+            setUpdate(!update) 
+        })
     }
 
 
@@ -116,7 +149,7 @@ function EditStepsAdd(props) {
                     </Group>
                 </Paper>
 
-                <Paper w="50%" shadow="sm" p="1rem">
+                <Paper w="50%" shadow="sm" p="1rem" mb="1rem">
                     <h6>Step Cooking Time</h6>
                     <Divider my="sm" />
                     <Group>
@@ -154,6 +187,35 @@ function EditStepsAdd(props) {
                             onChange={(e) => setCookTimeField({ ...cookTimeField, s: e })}
                         />
                     </Group>
+                </Paper>
+
+                {/* https://mantine.dev/core/file-input/ */}
+                <Paper shadow="sm" p="1rem" mb="1rem">
+                    <h6>Upload Files</h6>
+                    <Divider my="sm" />
+                    <FileInput w="40%"
+                        placeholder="Pick an image"
+                        label="Upload an image"
+                        accept="image/*"
+                        icon={<Upload
+                            size={20}
+                            strokeWidth={2}
+                            />}
+                        value={imageField}
+                        onChange={setImageField}
+                    />
+
+                    <FileInput w="40%"
+                        placeholder="Pick a video"
+                        label="Upload a video"
+                        accept="video/*"
+                        icon={<Upload
+                            size={20}
+                            strokeWidth={2}
+                            />}
+                        value={videoField}
+                        onChange={setVideoField}
+                    />
                 </Paper>
 
 

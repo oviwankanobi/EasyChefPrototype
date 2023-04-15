@@ -83,6 +83,7 @@ export default function EditRecipePage() {
 
   useEffect(() => {
     async function fetchData() {
+      delete axios.defaults.headers.common['Authorization']
       const dietData = await axios.get(
         "http://127.0.0.1:8000/recipes/get-diets/"
       );
@@ -104,7 +105,7 @@ export default function EditRecipePage() {
       setCuisineOptions(cuisineArr);
     }
     fetchData();
-
+        delete axios.defaults.headers.common['Authorization']
         axios.get("http://127.0.0.1:8000/recipes/recipe-details/" + id + "/")
             .then(response => {
                 setNameField(response.data["name"])
@@ -184,14 +185,13 @@ export default function EditRecipePage() {
       <Textarea {...form.getInputProps(`steps.${index}.description`)} />
     </Group>
   ));
-  console.log(nameField);
 
   function deleteImage(image_id) {
     const DEL_RECIPE_IMAGE =
       "http://127.0.0.1:8000/recipes/delete-image-from-recipe/" +
       image_id +
       "/";
-    var accessToken = localStorage.getItem("access_token");
+    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`
     axios.delete(DEL_RECIPE_IMAGE);
 
     setImages((images) => images.filter((image) => image.id != image_id));
@@ -202,7 +202,7 @@ export default function EditRecipePage() {
       "http://127.0.0.1:8000/recipes/delete-video-from-recipe/" +
       video_id +
       "/";
-    var accessToken = localStorage.getItem("access_token");
+    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`
     axios.delete(DEL_RECIPE_VIDEO);
 
     setVideos((videos) => videos.filter((video) => video.id != video_id));
@@ -220,7 +220,7 @@ export default function EditRecipePage() {
     const formData = new FormData();
     formData.append("recipe", id);
     formData.append("image", selectedImage);
-
+    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`
     axios
       .post(UPLOAD_RECIPE_IMAGE, formData, {
         headers: headers,
@@ -250,7 +250,7 @@ export default function EditRecipePage() {
     const formData = new FormData();
     formData.append("recipe", id);
     formData.append("video", selectedVideo);
-
+    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`
     axios
       .post(UPLOAD_RECIPE_VIDEO, formData, {
         headers: headers,
@@ -338,7 +338,7 @@ export default function EditRecipePage() {
 
                 <Group my="1rem">
                     <Paper my="0rem" maw="50rem" shadow="xs" p="sm" withBorder>
-                        <EditIngredients initial_ingredients={ingredients} recipeid={id} />
+                        <EditIngredients initial_ingredients={ingredients} recipeid={id} notification={saveNotification} />
                     </Paper>
 
                 </Group>
@@ -374,7 +374,7 @@ export default function EditRecipePage() {
 
                 <Group my="1rem">
                     <Paper my="0rem" w="100%" shadow="xs" p="sm" >
-                        <EditSteps initial_steps={steps} recipeid={id} />
+                        <EditSteps initial_steps={steps} recipeid={id} notification={saveNotification} />
                     </Paper>
                 </Group>
 
@@ -382,6 +382,7 @@ export default function EditRecipePage() {
                     <h6>Edit Total Prep Time</h6>
                     <Divider my="sm" />
                     <EditTimeField 
+                        editField={editField}
                         id={id} 
                         time={totalPrepTime}
                         setTime={setTotalPrepTime}
@@ -431,12 +432,12 @@ export default function EditRecipePage() {
                         <Button mb="1rem" type="submit">Save Cook Time</Button>
                     </form>
                 </Paper>
-                <Attachments
+                {/* <Attachments
                     placeholder="Attachments"
                     label="Gallery Attachment(s)"
                     required
                     {...form}
-                />
+                /> */}
             </Stack>
             {/* 
             <form onSubmit={form.onSubmit(getRecipesAPI)}>
@@ -556,8 +557,6 @@ export default function EditRecipePage() {
           Upload
         </Button>
       </div>
-
-      <EditProfileHeader text="Steps" />
     </Container>
     </>
   );
