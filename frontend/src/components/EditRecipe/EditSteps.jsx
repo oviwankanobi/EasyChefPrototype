@@ -42,7 +42,7 @@ function EditSteps(props) {
     return (
         <>
            <Container>
-                <h5>Edit Steps</h5>
+                <h3>Edit Steps</h3>
                 <Divider my="sm" />
                 {/* <EditIngredientsTable steps={steps} update={update} setUpdate={setUpdate} /> */}
                 <EditStepsAdd recipeid={recipeid} update={update} setUpdate={setUpdate}/>

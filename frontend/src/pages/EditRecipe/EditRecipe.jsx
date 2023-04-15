@@ -32,7 +32,7 @@ import {
 
 import "./EditRecipe.css";
 import EditProfileHeader from "../../components/EditProfile/EditProfileHeader";
-import { Trash, PhotoUp, ArrowBackUp } from "tabler-icons-react";
+import { Trash, PhotoUp, ArrowBackUp, Upload } from "tabler-icons-react";
 import EditIngredients from "../../components/EditRecipe/EditIngredients";
 import EditSteps from "../../components/EditRecipe/EditSteps";
 import EditIngredientsTable from "../../components/EditRecipe/EditIngredientsTable";
@@ -385,7 +385,7 @@ export default function EditRecipePage() {
                 </form>
 
                 <Group my="1rem">
-                    <Paper my="0rem" w="100%" shadow="xs" p="sm" >
+                    <Paper my="0rem" w="100%" shadow="md">
                         <EditSteps initial_steps={steps} recipeid={id} notification={saveNotification} />
                     </Paper>
                 </Group>
@@ -495,6 +495,12 @@ export default function EditRecipePage() {
       <div className="upload-wrapper">
         <Text>Upload an image</Text>
         <FileInput
+          placeholder="Click here to upload"
+          accept="image/*"
+          icon={<Upload
+              size={20}
+              strokeWidth={2}
+              />}
           className="file-input"
           onChange={(event) => {
             setSelectedImage(event);
@@ -552,6 +558,12 @@ export default function EditRecipePage() {
       <div className="upload-wrapper">
         <Text>Upload a video</Text>
         <FileInput
+          placeholder="Click here to upload"
+          accept="image/*"
+          icon={<Upload
+              size={20}
+              strokeWidth={2}
+              />}
           className="file-input"
           onChange={(event) => {
             setselectedVideo(event);

@@ -85,13 +85,13 @@ function EditStepsAdd(props) {
 
     return (
         <form onSubmit={postStep}>
-            <Paper p="1rem">
+            <Paper p="1rem" withBorder>
                 <h6 >Create New Step</h6>
                 <Divider mb="sm" />
 
                 <TextInput
                     placeholder="The title of your new step..."
-                    label="Step Name"
+                    label="New Step's Name"
                     value={nameField}
                     required
                     onChange={(e) => setNameField(e.target.value)}
@@ -99,7 +99,7 @@ function EditStepsAdd(props) {
                 <Textarea
                     my="1rem"
                     placeholder="A detailed description on how to carry out your step..."
-                    label="Step Description"
+                    label="New Step's Description"
                     value={descField}
                     required
                     onChange={(e) => setDescField(e.target.value)}
@@ -110,7 +110,7 @@ function EditStepsAdd(props) {
                 </Flex> */}
 
                 <Paper w="50%" shadow="sm" p="1rem">
-                    <h6>Step Prep Time</h6>
+                    <h6>New Step's Prep Time</h6>
                     <Divider my="sm" />
                     <Group>
                         <NumberInput
@@ -150,7 +150,7 @@ function EditStepsAdd(props) {
                 </Paper>
 
                 <Paper w="50%" shadow="sm" p="1rem" mb="1rem">
-                    <h6>Step Cooking Time</h6>
+                    <h6>New Step's Cooking Time</h6>
                     <Divider my="sm" />
                     <Group>
                         <NumberInput
@@ -191,10 +191,10 @@ function EditStepsAdd(props) {
 
                 {/* https://mantine.dev/core/file-input/ */}
                 <Paper shadow="sm" p="1rem" mb="1rem">
-                    <h6>Upload Files</h6>
+                    <h6>New Step's Media</h6>
                     <Divider my="sm" />
                     <FileInput w="40%"
-                        placeholder="Pick an image"
+                        placeholder="Click here to upload an image"
                         label="Upload an image"
                         accept="image/*"
                         icon={<Upload
@@ -206,7 +206,7 @@ function EditStepsAdd(props) {
                     />
 
                     <FileInput w="40%"
-                        placeholder="Pick a video"
+                        placeholder="Click here to upload a video"
                         label="Upload a video"
                         accept="video/*"
                         icon={<Upload
