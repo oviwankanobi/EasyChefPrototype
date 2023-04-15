@@ -62,14 +62,11 @@ export default function CreateRecipePage() {
         "http://127.0.0.1:8000/recipes/get-cuisines/"
       );
 
-      axios
-        .get(
-          `http://localhost:8000/recipes/autocomplete-ingredient/?search=${searchQuery}`
-        )
-        .then((request) => {
-          console.log(request.data);
-          setSearchResults(request.data["results"]);
-        });
+      axios.get(`http://localhost:8000/recipes/autocomplete-ingredient/?search=${searchField}`)
+            .then(request => {
+                console.log(request.data)
+                setSearchResults(request.data["results"])
+            })
 
       const ingredientArr = ingredientData.data.results.map((item) => ({
         value: item.id,
@@ -91,7 +88,7 @@ export default function CreateRecipePage() {
       setCuisineOptions(cuisineArr);
     }
     fetchData();
-  }, [ingredients]);
+  }, [ingredients, searchField]);
   const form = useForm({
     initialValues: {
       image: "",
@@ -209,15 +206,14 @@ export default function CreateRecipePage() {
     </>
   );
 
-  const openModal = () =>
-    modals.openContextModal({
-      modal: "ingr",
-      title: "Select an ingredient",
-      innerProps: {
-        modalBody: "Please select an ingredient from the dropdown.",
-      },
-    });
-
+  const openModal = () => modals.openContextModal({
+    modal: 'ingr',
+    title: 'Select an ingredient',
+    innerProps: {
+      modalBody:
+        'Please select an ingredient from the dropdown.',
+    },
+  })
   return (
     <MantineProvider>
       <ModalsProvider modals={{ ingr: TestModal }}>

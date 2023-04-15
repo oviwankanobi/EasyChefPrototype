@@ -103,7 +103,8 @@ class StepSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Step
-        fields = ['number',
+        fields = ['id',
+                  'number',
                   'name',
                   'description',
                   'prep_time',

@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
-  TextInput,
-  Title,
-  Container,
-  Group,
-  Button,
-  MultiSelect,
-  Image,
-  FileInput,
-  NumberInput,
-  Center,
-  Textarea,
-  Stack,
-  Text,
+    TextInput,
+    Title,
+    Container,
+    Group,
+    Button,
+    MultiSelect,
+    Image,
+    FileInput,
+    NumberInput,
+    Center,
+    Textarea,
+    Stack,
+    Text,
+    Paper,
+    Divider,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import placeholder from "../../assets/images/placeholder.png";
@@ -31,14 +33,22 @@ import "./EditRecipe.css";
 import EditProfileHeader from "../../components/EditProfile/EditProfileHeader";
 import { Trash, PhotoUp } from "tabler-icons-react";
 import EditIngredients from "../../components/EditRecipe/EditIngredients";
+import EditSteps from "../../components/EditRecipe/EditSteps";
+import EditIngredientsTable from "../../components/EditRecipe/EditIngredientsTable";
+import EditTimeField from "../../components/EditRecipe/EditTime";
 
 export default function EditRecipePage() {
   const { id } = useParams();
 
-  const [nameField, setNameField] = useState("");
-  const [descField, setDescField] = useState("");
-  const [servingSize, setServingSize] = useState(0);
-  const [ingredients, setIngredients] = useState([]);
+    const [nameField, setNameField] = useState("")
+    const [descField, setDescField] = useState("")
+    const [servingSize, setServingSize] = useState(0)
+    const [ingredients, setIngredients] = useState([])
+    const [update, setUpdate] = useState(false)
+    const [dietField, setDietField] = useState([])
+    const [cuisineField, setCuisineField] = useState([])
+    const [totalPrepTime, setTotalPrepTime] = useState({ h: 0, m: 0, s: 0 })
+    const [totalCookTime, setTotalCookTime] = useState({ h: 0, m: 0, s: 0 })
 
   const [ingredientInput, setIngredientInput] = useState();
   const [stepInput, setStepInput] = useState();
@@ -51,8 +61,21 @@ export default function EditRecipePage() {
   const [videos, setVideos] = useState([]);
   const [steps, setSteps] = useState([]);
 
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [selectedVideo, setselectedVideo] = useState(null);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedVideo, setselectedVideo] = useState(null);
+
+    //------------------------------------------------------
+    // PARSE HH:MM:SS TIME FORMAT INTO MINUTES, TRUNCATES MINUTES, UPDATE IF CHANGING TIME FORMAT
+    // Preconditions: MM < 60, SS < 60
+    // ----------------------------------------------------
+    function parseDurationString(s) {
+        let split = s.split(":").map((s) => parseInt(s))
+        return { h: split[0], m: split[1], s: split[2] }
+    }
+
+    function parseDuration(o) {
+        return o.h * 3600 + o.m * 60 + o.s
+    }
 
   useEffect(() => {
     async function fetchData() {
@@ -78,18 +101,24 @@ export default function EditRecipePage() {
     }
     fetchData();
 
-    axios
-      .get("http://127.0.0.1:8000/recipes/recipe-details/" + id + "/")
-      .then((response) => {
-        setNameField(response.data["name"]);
-        setDescField(response.data["description"]);
-        setServingSize(response.data["serving"]);
-        setImages(response.data.images);
-        setVideos(response.data.videos);
-        setSteps(response.data.steps);
-        setIngredients(response.data["ingredients_info"]);
-      });
-  }, []);
+        axios.get("http://127.0.0.1:8000/recipes/recipe-details/" + id + "/")
+            .then(response => {
+                setNameField(response.data["name"])
+                setDescField(response.data["description"])
+                setServingSize(response.data["serving"])
+                setImages(response.data.images);
+                setVideos(response.data.videos);
+                setSteps(response.data.steps);
+                setIngredients(response.data["ingredients_info"])
+                // setDietField(response.data["diet"])
+                setDietField(response.data["diet"].map(({ id }) => id))
+                setCuisineField(response.data["cuisine"].map(({ id }) => id))
+                setTotalPrepTime(parseDurationString(response.data.prep_time))
+                setTotalCookTime(parseDurationString(response.data.cooking_time))
+                // setTotalPrepTime()
+                // setTotalCookTime(response.data.cooking_time)
+            })
+    }, []);
 
   const form = useForm({
     initialValues: {
@@ -230,126 +259,174 @@ export default function EditRecipePage() {
           video: response.data.video,
         };
 
-        const newVideos = videos.concat(newVidObj);
-        setVideos(newVideos);
-      });
-  }
+            const newVideos = videos.concat(newVidObj);
+            setVideos(newVideos)
 
-  return (
-    <Container>
-      <Title my="1rem">Edit Recipe</Title>
-      <Stack>
-        <Image
-          component={FileInput}
-          maw={240}
-          mah={240}
-          mx="0"
-          radius="md"
-          src={placeholder}
-          alt="Placeholder"
-          {...form.getInputProps("image")}
-        />
-        <TextInput
-          my="1rem"
-          placeholder="Recipe Name"
-          label="Create Recipe"
-          value={nameField}
-          required
-          // {...form.getInputProps("recipeName")}
-        />
-        <Textarea
-          my="1rem"
-          placeholder="Recipe Description"
-          label="Description"
-          value={descField}
-        />
-        <NumberInput
-          my="1rem"
-          min={1}
-          placeholder="Serving Size"
-          label="Serving Size"
-          value={servingSize}
-          required
-          {...form.getInputProps("serving")}
-        />
-        <Group my="1rem">
-          <EditIngredients initial_ingredients={ingredients} recipeid={id} />
-        </Group>
-        {IngredientsField}
+        });
 
-        <Group my="1rem" grow>
-          <MultiSelect
-            data={dietOptions}
-            placeholder="Diets"
-            label="Diets"
-            required
-            {...form.getInputProps("diets")}
-          />
-          <MultiSelect
-            data={cuisineOptions}
-            placeholder="Cuisine"
-            label="Cuisine"
-            required
-            {...form.getInputProps("cuisine")}
-          />
-        </Group>
+    }
 
-        <Group my="1rem">
-          <Textarea
-            label="Steps"
-            defaultValue={stepInput}
-            onChange={(event) => setStepInput(event.currentTarget.value)}
-          />
-          <Button
-            onClick={() => {
-              form.insertListItem("steps", {
-                prepTime: 1,
-                description: stepInput,
-              });
-              setStepInput("");
-            }}
-          >
-            +
-          </Button>
-        </Group>
+    function submitDiets(e) {
+        e.preventDefault()
+    }
 
-        {StepsField}
+    function editField(e, field, value) {
+        e.preventDefault()
+        axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`
+        axios.patch(`http://localhost:8000/recipes/edit-recipe/${id}/`, { [field]: value })
+    }
 
-        <Group>
-          <NumberInput
-            min={0}
-            placeholder="Prep Time"
-            label="Prep Time"
-            required
-            {...form.getInputProps("prepTime")}
-          />
-          <NumberInput
-            min={0}
-            placeholder="Cooking Time"
-            label="Cooking Time"
-            required
-            {...form.getInputProps("cookingTime")}
-          />
-        </Group>
-        <Attachments
-          placeholder="Attachments"
-          label="Gallery Attachment(s)"
-          required
-          {...form}
-        />
-        <Center>
-          <Button type="submit">Create Recipe</Button>
-        </Center>
-      </Stack>
+    return (
+        <Container>
+            <Title my="1rem">Edit Recipe</Title>
+            <Stack>
+                <form onSubmit={(e) => { editField(e, "name", nameField) }}>
+                    <TextInput
+                        my="1rem"
+                        placeholder="Recipe Name"
+                        label="Recipe Name"
+                        value={nameField}
+                        required
+                        onChange={(e) => setNameField(e.target.value)}
+                    // {...form.getInputProps("recipeName")}
+                    />
+                    <Button type="submit">Save Name</Button>
+                </form>
+                <form onSubmit={(e) => { editField(e, "description", descField) }}>
+                    <Textarea
+                        my="1rem"
+                        placeholder="Recipe Description"
+                        label="Description"
+                        value={descField}
+                        onChange={(e) => setDescField(e.target.value)}
+                    />
+                    <Button type="submit">Save Description</Button>
+                </form>
 
-      <form onSubmit={form.onSubmit(getRecipesAPI)}>
-        <Button type="submit">console.log(recipes available)</Button>
-      </form>
-      <form onSubmit={form.onSubmit(getIngredientsAPI)}>
-        <Button type="submit">console.log(ingredients available)</Button>
-      </form>
+                <form onSubmit={(e) => { editField(e, "serving", servingSize) }}>
+                    <NumberInput
+                        my="1rem"
+                        min={1}
+                        placeholder="Serving Size"
+                        label="Serving Size"
+                        value={servingSize}
+                        required
+                        onChange={(e) => { setServingSize(e) }}
+                    />
+                    <Button type="submit">Save Serving Size</Button>
+                </form>
 
-      <SearchModal />
+                <Group my="1rem">
+                    <Paper my="0rem" maw="50rem" shadow="xs" p="sm" withBorder>
+                        <EditIngredients initial_ingredients={ingredients} recipeid={id} />
+                    </Paper>
+
+                </Group>
+
+                <form onSubmit={(e) => editField(e, "diet", dietField)}>
+                    <Group my="1rem" >
+                        <MultiSelect w="50%"
+                            data={dietOptions}
+                            placeholder="Diets"
+                            label="Diets"
+                            required
+                            value={dietField}
+                            searchable
+                            onChange={(e) => { setDietField(e) }}
+                        />
+                    </Group>
+                    <Button type="submit">Save Diets</Button>
+                </form>
+                <form onSubmit={(e) => editField(e, "cuisine", cuisineField)}>
+                    <Group my="1rem" >
+                        <MultiSelect w="50%"
+                            data={cuisineOptions}
+                            placeholder="Cuisine"
+                            label="Cuisine"
+                            required
+                            value={cuisineField}
+                            searchable
+                            onChange={(e) => { setCuisineField(e) }}
+                        />
+                    </Group>
+                    <Button type="submit">Save Cuisine</Button>
+                </form>
+
+                <Group my="1rem">
+                    <Paper my="0rem" w="100%" shadow="xs" p="sm" >
+                        <EditSteps initial_steps={steps} recipeid={id} />
+                    </Paper>
+                </Group>
+
+                <Paper w="50%" shadow="sm" p="1rem">
+                    <h6>Edit Total Prep Time</h6>
+                    <Divider my="sm" />
+                    <EditTimeField 
+                        id={id} 
+                        time={totalPrepTime}
+                        setTime={setTotalPrepTime}
+                        name="Prep"
+                        field="prep_time"
+                    />
+                </Paper>
+                <Paper w="50%" shadow="sm" p="1rem">
+                    <h6>Edit Total Cooking Time</h6>
+                    <Divider my="sm" />
+                    <form onSubmit={(e) => editField(e, "cooking_time", parseDuration(totalCookTime))}>
+                        <Group>
+                            <NumberInput
+                                w="4rem"
+                                mb="1rem"
+                                min={0}
+                                max={504}
+                                placeholder="HH"
+                                label="Hours"
+                                required
+                                value={totalCookTime.h}
+                                onChange={ (e)=>setTotalCookTime({...totalCookTime, h: e}) }
+                            />
+                            <NumberInput
+                                w="4rem"
+                                mb="1rem"
+                                min={0}
+                                max={59}
+                                placeholder="MM"
+                                label="Mins"
+                                required
+                                value={totalCookTime.m}
+                                onChange={ (e)=>setTotalCookTime({...totalCookTime, m: e}) }
+                            />
+                            <NumberInput
+                                w="4rem"
+                                mb="1rem"
+                                min={0}
+                                max={59}
+                                placeholder="SS"
+                                label="Secs"
+                                required
+                                value={totalCookTime.s}
+                                onChange={ (e)=>setTotalCookTime({...totalCookTime, s: e}) }
+                            />
+                        </Group>
+                        <Button mb="1rem" type="submit">Save Cook Time</Button>
+                    </form>
+                </Paper>
+                <Attachments
+                    placeholder="Attachments"
+                    label="Gallery Attachment(s)"
+                    required
+                    {...form}
+                />
+            </Stack>
+            {/* 
+            <form onSubmit={form.onSubmit(getRecipesAPI)}>
+                <Button type="submit">console.log(recipes available)</Button>
+            </form>
+            <form onSubmit={form.onSubmit(getIngredientsAPI)}>
+                <Button type="submit">console.log(ingredients available)</Button>
+            </form> */}
+
+            {/* <SearchModal /> */}
 
       <br />
       <br />

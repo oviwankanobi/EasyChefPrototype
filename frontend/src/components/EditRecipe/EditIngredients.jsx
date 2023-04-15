@@ -14,46 +14,39 @@ function EditIngredients(props) {
   var [avatarURL, setAvatarURL] = useState("");
   var [update, setUpdate] = useState(false);
 
-  var [comments, setComments] = useState([]);
-  var [next, setNext] = useState(null);
-  var [prev, setPrev] = useState(null);
-  var [page, setPage] = useState(1);
-  console.log(initial_ingredients);
-  useEffect(() => {
-    // Get ingredients
-    axios
-      .get("http://127.0.0.1:8000/recipes/recipe-details/" + recipeid + "/")
-      .then((response) => {
-        setIngredients(response.data["ingredients_info"]);
-      });
-    // Get user data
-    if (accessToken) {
-      axios.get("http://localhost:8000/accounts/my-info/").then((response) => {
-        setUserID(response.data["id"]);
-        setAvatarURL("http://localhost:8000" + response.data["avatar"]);
-      });
-    }
+    var [comments, setComments] = useState([])
+    var [next, setNext] = useState(null)
+    var [prev, setPrev] = useState(null)
+    var [page, setPage] = useState(1)
+    useEffect(() => {
+        // Get ingredients
+        delete axios.defaults.headers.common['Authorization']
+        
+        axios.get("http://127.0.0.1:8000/recipes/recipe-details/"+recipeid+"/")
+            .then(response => {
+                setIngredients(response.data["ingredients_info"])
+            })
+        // Get user data
+        axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
+        if (accessToken) {
+            axios.get('http://localhost:8000/accounts/my-info/')
+            .then(response => {
+                setUserID(response.data["id"])
+                setAvatarURL("http://localhost:8000" + response.data["avatar"])
+            })
+        }
+    }, [update])
 
-    console.log(update);
-  }, [update]);
-
-  return (
-    <>
-      <Container mt="5rem">
-        <h6>Ingredients</h6>
-        <EditIngredientsTable
-          ingredients={ingredients}
-          update={update}
-          setUpdate={setUpdate}
-        />
-        <EditIngredientsAdd
-          recipeid={recipeid}
-          update={update}
-          setUpdate={setUpdate}
-        />
-      </Container>
-    </>
-  );
+    return (
+        <>
+           <Container>
+                <h6>Edit Ingredients</h6>
+                <EditIngredientsTable ingredients={ingredients} update={update} setUpdate={setUpdate} />
+                <EditIngredientsAdd ingredients={ingredients} recipeid={recipeid} update={update} setUpdate={setUpdate}/>
+           </Container>
+            
+        </>
+    )
 }
 
 export default EditIngredients;
