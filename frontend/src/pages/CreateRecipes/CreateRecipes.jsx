@@ -26,12 +26,11 @@ import placeholder from "../../assets/images/placeholder.png";
 import { Attachments, SearchModal } from "../../components";
 import { axios } from "../../utils/axiosAutoAuth";
 import {
-  getRecipesAPI,
   createRecipeAPI,
   addIngredientAPI,
-  createBaseIngredientAPI,
-  getIngredientsAPI,
-  getBaseIngredientAPI,
+  addImageToRecipe,
+  addStepToRecipeAPI,
+  getRecipesAPI,
 } from "../../utils/apis.jsx";
 import CreateIngredientsTable from "../../components/CreateRecipe/CreateIngredientsTable";
 import { Notifications } from "@mantine/notifications";
@@ -107,30 +106,37 @@ export default function CreateRecipePage() {
       galleryAttachments: [],
     },
   });
+  console.log(getRecipesAPI());
 
   const handleRecipe = async (formValues) => {
+    const steps = form.getInputProps("steps").value;
+    const attachments = form.getInputProps("galleryAttachments").value;
+    console.log(formValues);
+    console.log(steps);
     try {
-      createRecipeAPI(formValues).then((recipeId) => {
-        console.log(recipeId);
-        let timeout = 0;
-        ingredients.map((ingredient) => {
-          setTimeout(
-            () =>
-              addIngredientAPI(
-                ingredient.baseID,
-                ingredient.quantity,
-                recipeId
-              ),
-            timeout
-          );
-          timeout += 100;
-        });
+      const recipeId = await createRecipeAPI(formValues);
+      console.log(recipeId);
+      let timeout = 0;
+      ingredients.map((ingredient) => {
+        setTimeout(
+          () =>
+            addIngredientAPI(ingredient.baseID, ingredient.quantity, recipeId),
+          timeout
+        );
+        timeout += 100;
+      });
+      steps.map((step, index) => {
+        setTimeout(() => addStepToRecipeAPI(index, recipeId, step), timeout);
+        timeout += 100;
+      });
+      attachments.map((attachment) => {
+        setTimeout(() => addImageToRecipe(recipeId, attachment), timeout);
+        timeout += 100;
       });
     } catch (error) {
       console.error(error);
     }
   };
-
   const ingredientClick = () => {
     const ingredientName = ingredientOptions.find(
       (option) => option.value === ingredientInput
@@ -182,14 +188,15 @@ export default function CreateRecipePage() {
       />
       <NumberInput
         label="Cooking Time"
-        value={item.prepTime}
+        value={item.cookingTime}
         min={1}
         {...form.getInputProps(`steps.${index}.cookingTime`)}
       />
+      <Button onClick={() => form.removeListItem("steps", index)}>
+        delete
+      </Button>
     </Group>
   ));
-
-  const test = { value: 6, label: "lettuce" };
 
   function addIngredient() {
     if (addField) {
@@ -233,7 +240,6 @@ export default function CreateRecipePage() {
         modalBody: "Please select an ingredient from the dropdown.",
       },
     });
-
   return (
     <MantineProvider>
       <ModalsProvider modals={{ ingr: TestModal }}>
@@ -340,7 +346,7 @@ export default function CreateRecipePage() {
                 <TextInput
                   label="Step"
                   placeholder="Name"
-                  defaultValue={stepInput}
+                  value={stepInput}
                   onChange={(event) => setStepInput(event.currentTarget.value)}
                 />
                 <Button

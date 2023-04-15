@@ -43,19 +43,41 @@ export const addIngredientAPI = async (base_ingredient, quantity, recipeId) => {
   );
 };
 
+export const addStepToRecipeAPI = async (index, recipeId, step) => {
+  console.log(step);
+  var accessToken = localStorage.getItem("access_token");
+  const headers = {
+    Authorization: "Bearer " + accessToken,
+  };
+  const response = await axios.post(
+    `http://127.0.0.1:8000/recipes/add-step-to-recipe/`,
+    {
+      number: index,
+      name: step.name,
+      description: step.description,
+      prep_time: step.prepTime,
+      cooking_time: step.cookingTime,
+      recipe: recipeId,
+    },
+    headers
+  );
+};
+
 export const addImageToRecipe = async (recipeId, file) => {
   const formData = new FormData();
   formData.append("recipe", recipeId);
   formData.append("image", file);
+  var accessToken = localStorage.getItem("access_token");
+  const headers = {
+    "Content-Type": "multipart/form-data",
+    Authorization: "Bearer " + accessToken,
+  };
   const response = await axios.post(
     `http://127.0.0.1:8000/recipes/add-image-to-recipe/`,
     formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
+    headers
   );
+  return response.data;
 };
 
 export const addVideoToRecipe = async () => {
