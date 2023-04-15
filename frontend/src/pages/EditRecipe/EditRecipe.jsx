@@ -37,6 +37,10 @@ import EditSteps from "../../components/EditRecipe/EditSteps";
 import EditIngredientsTable from "../../components/EditRecipe/EditIngredientsTable";
 import EditTimeField from "../../components/EditRecipe/EditTime";
 
+import { ReactNotifications } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
+import { Store } from "react-notifications-component";
+
 export default function EditRecipePage() {
   const { id } = useParams();
 
@@ -273,10 +277,26 @@ export default function EditRecipePage() {
     function editField(e, field, value) {
         e.preventDefault()
         axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`
-        axios.patch(`http://localhost:8000/recipes/edit-recipe/${id}/`, { [field]: value })
+        axios.patch(`http://localhost:8000/recipes/edit-recipe/${id}/`, { [field]: value }).then(()=>saveNotification())
     }
+    
+    function saveNotification() {  
+      Store.addNotification({
+        title: "Your changes have been saved!",
+        type: "success",
+        insert: "top",
+        container: "top-right",
+        animationIn: ["animateanimated", "animatefadeIn"],
+        animationOut: ["animateanimated", "animatefadeOut"],
+        dismiss: {
+          duration: 2000,
+          onScreen: true,
+        },
+      });}
 
     return (
+        <>
+        <ReactNotifications />
         <Container>
             <Title my="1rem">Edit Recipe</Title>
             <Stack>
@@ -539,5 +559,6 @@ export default function EditRecipePage() {
 
       <EditProfileHeader text="Steps" />
     </Container>
+    </>
   );
 }
