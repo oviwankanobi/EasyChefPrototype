@@ -21,6 +21,7 @@ import { useForm } from "@mantine/form";
 import placeholder from "../../assets/images/placeholder.png";
 import { Attachments, SearchModal } from "../../components";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import {
   getRecipesAPI,
   createRecipeAPI,
@@ -31,7 +32,7 @@ import {
 
 import "./EditRecipe.css";
 import EditProfileHeader from "../../components/EditProfile/EditProfileHeader";
-import { Trash, PhotoUp } from "tabler-icons-react";
+import { Trash, PhotoUp, ArrowBackUp } from "tabler-icons-react";
 import EditIngredients from "../../components/EditRecipe/EditIngredients";
 import EditSteps from "../../components/EditRecipe/EditSteps";
 import EditIngredientsTable from "../../components/EditRecipe/EditIngredientsTable";
@@ -298,6 +299,17 @@ export default function EditRecipePage() {
         <>
         <ReactNotifications />
         <Container>
+          <Button
+                component={Link}
+                to={`/recipe-details/${id}`}
+                variant="outline"
+                color="blue"
+                leftIcon={
+                  <ArrowBackUp size={26} strokeWidth={1} color={"blue"} />
+                }
+              >
+                Return to Recipe
+              </Button>
             <Title my="1rem">Edit Recipe</Title>
             <Stack>
                 <form onSubmit={(e) => { editField(e, "name", nameField) }}>
