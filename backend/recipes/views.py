@@ -433,7 +433,7 @@ class MostPopularRecipes(ListAPIView):
     def get_queryset(self):
         top = []
         favorites = Favorite.objects.all().values('recipe').annotate(
-            total=Count('recipe')).order_by('-total')[:2]  # top 2
+            total=Count('recipe')).order_by('-total')[:6]  # top 6 recipes
 
         for fav in favorites:
             top.append(fav.get('recipe'))

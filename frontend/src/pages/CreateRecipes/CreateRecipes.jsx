@@ -328,7 +328,6 @@ export default function CreateRecipePage() {
                   placeholder="Diets"
                   label="Diets"
                   searchable
-                  required
                   {...form.getInputProps("diets")}
                 />
                 <MultiSelect
@@ -336,7 +335,6 @@ export default function CreateRecipePage() {
                   placeholder="Cuisine"
                   label="Cuisine"
                   searchable
-                  required
                   {...form.getInputProps("cuisine")}
                 />
               </Group>
@@ -380,14 +378,12 @@ export default function CreateRecipePage() {
                   min={0}
                   placeholder="Prep Time"
                   label="Prep Time"
-                  required
                   {...form.getInputProps("prepTime")}
                 />
                 <NumberInput
                   min={0}
                   placeholder="Cooking Time"
                   label="Cooking Time"
-                  required
                   {...form.getInputProps("cookingTime")}
                 />
               </Group>
@@ -395,7 +391,6 @@ export default function CreateRecipePage() {
               <Attachments
                 placeholder="Attachments"
                 label="Gallery Attachment(s)"
-                required
                 {...form}
               />
               <Center>

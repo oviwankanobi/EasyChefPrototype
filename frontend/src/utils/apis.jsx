@@ -112,6 +112,7 @@ export const createBaseIngredientAPI = async (ingredientName) => {
 };
 
 export const createRecipeAPI = async (formValues) => {
+  axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`
   const response = await axios.post(
     "http://127.0.0.1:8000/recipes/create-recipe/",
     {
@@ -129,6 +130,7 @@ export const createRecipeAPI = async (formValues) => {
 
 export const getBaseRecipeAPI = async () => {
   try {
+    delete axios.defaults.headers.common['Authorization']
     const response = await axios.get(
       "http://127.0.0.1:8000/recipes/get-recipe-base/"
     );
