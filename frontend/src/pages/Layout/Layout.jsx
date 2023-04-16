@@ -17,13 +17,7 @@ const Layout = () => {
   }, []);
 
   return (
-    <AppShell
-      header={
-        <Header height={60} p="xs">
-          {<EasyChefHeader props={links} />}
-        </Header>
-      }
-    >
+    <AppShell header={<EasyChefHeader props={links} />}>
       <Outlet />
     </AppShell>
   );

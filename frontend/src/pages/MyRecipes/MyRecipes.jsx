@@ -5,7 +5,7 @@ import {
   getUserInteractedAPI,
 } from "../../utils/apis";
 import { RecipeCard } from "../../components";
-import { Container, Title, SegmentedControl, Flex } from "@mantine/core";
+import { Container, Center, SegmentedControl, Flex } from "@mantine/core";
 
 export default function MyRecipesPage() {
   const [personalRecipes, setPersonalRecipes] = useState();
@@ -44,15 +44,17 @@ export default function MyRecipesPage() {
 
   return (
     <Container size="80%">
-      <Title>We are in the My Recipes Page</Title>
-      <SegmentedControl
-        data={[
-          { value: "personal", label: "Personal" },
-          { value: "favourites", label: "Favourites" },
-          { value: "interacted", label: "Interacted" },
-        ]}
-        onChange={(value) => setSelectedValue(value)}
-      />
+      <Center>
+        <SegmentedControl
+          sx={{ marginBottom: "25px" }}
+          data={[
+            { value: "personal", label: "Personal" },
+            { value: "favourites", label: "Favourites" },
+            { value: "interacted", label: "Interacted" },
+          ]}
+          onChange={(value) => setSelectedValue(value)}
+        />
+      </Center>
       <Flex wrap="wrap" size direction="row" gap="xl">
         {renderRecipeCards(selectedValue)}
       </Flex>

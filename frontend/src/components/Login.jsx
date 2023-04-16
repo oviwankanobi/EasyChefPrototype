@@ -54,33 +54,17 @@ export default function Login() {
   const navigate = useNavigate();
 
   const handleLogin = async (formValues) => {
-    try {
-      const response = await axios.post(
-        LOGIN_API_ENDPOINT,
-        {
-          email: formValues.email,
-          password: formValues.password,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+    const response = await axios.post(LOGIN_API_ENDPOINT, {
+      email: formValues.email,
+      password: formValues.password,
+    });
 
-      if (response.status === 200) {
-        const data = response.data;
-        localStorage.clear();
-        localStorage.setItem("access_token", data.access);
-        localStorage.setItem("refresh_token", data.refresh);
-        axios.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${data["access"]}`;
-        navigate("/");
-      }
-    } catch (error) {
-      console.error(error);
-    }
+    const data = response.data;
+    localStorage.clear();
+    localStorage.setItem("access_token", data.access);
+    localStorage.setItem("refresh_token", data.refresh);
+    axios.defaults.headers.common["Authorization"] = `Bearer ${data["access"]}`;
+    navigate("/");
   };
 
   const { classes } = useStyles();

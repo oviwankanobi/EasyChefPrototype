@@ -37,6 +37,7 @@ import {
 import CreateIngredientsTable from "../../components/CreateRecipe/CreateIngredientsTable";
 import { Notifications } from "@mantine/notifications";
 import "./CreateRecipes.css";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateRecipePage() {
   const [ingredientInput, setIngredientInput] = useState();
@@ -51,6 +52,9 @@ export default function CreateRecipePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [ingredients, setIngredients] = useState([]);
   const [update, setUpdate] = useState(false);
+
+  const navigate = useNavigate();
+
   useEffect(() => {
     async function fetchData() {
       const ingredientData = await axios.get(
@@ -132,6 +136,7 @@ export default function CreateRecipePage() {
         setTimeout(() => addImageToRecipe(recipeId, attachment), timeout);
         timeout += 100;
       });
+      navigate("/my-recipes");
     } catch (error) {
       console.error(error);
     }

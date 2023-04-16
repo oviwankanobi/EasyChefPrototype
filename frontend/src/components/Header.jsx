@@ -1,14 +1,20 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
-  Anchor,
+  Flex,
   createStyles,
   Header,
+  Anchor,
+  Center,
   Container,
-  Flex,
-  Burger,
   rem,
+  Image,
+  BackgroundImage,
+  Menu,
+  Button,
+  Group,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useLocalStorage } from "@mantine/hooks";
+import { EasyChefBanner, EasyChefLogo } from "../assets/images";
 import { Link } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
@@ -57,11 +63,17 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const HeaderSimple = ({ props }) => {
+export default function HeaderSimple({ props }) {
   const links = props;
   const [opened, { toggle }] = useDisclosure(false);
   const [active, setActive] = useState(links[0].link);
-  const { classes, cx } = useStyles();
+  const [userMenuOpened, setUserMenuOpened] = useState(false);
+  const { classes, theme, cx } = useStyles();
+
+  const [auth, setAuth] = useLocalStorage({
+    key: "access_token",
+    defaultValue: null,
+  });
 
   const items = links.map((link) => (
     <Anchor
@@ -80,29 +92,84 @@ const HeaderSimple = ({ props }) => {
     </Anchor>
   ));
 
+  const renderAuth = () => {
+    return (
+      <>
+        {!auth ? (
+          <>
+            <Menu.Item component={Link} key="Login" to="/login">
+              Login
+            </Menu.Item>
+            <Menu.Item component={Link} key="Register" to="/register">
+              Register
+            </Menu.Item>
+          </>
+        ) : (
+          <Menu.Item component={Link} key="Logout" to="/logout">
+            Logout
+          </Menu.Item>
+        )}
+      </>
+    );
+  };
+
+  const renderProfile = () => {
+    return (
+      <>
+        <Menu.Item component={Link} key="Shopping List" to="/shopping-list">
+          My Shopping List
+        </Menu.Item>
+        <Menu.Item component={Link} key="Profile" to="/profile">
+          Edit Profile
+        </Menu.Item>
+      </>
+    );
+  };
+
   return (
-    <Header height={60} mb={120}>
-      <Container className={classes.header}>
-        <Flex
-          mih={60}
-          gap="sm"
-          justify="center"
-          align="center"
-          direction="row"
-          wrap="wrap"
-          className={classes.links}
-        >
+    <Header fixed height={265} sx={{ display: "block" }}>
+      <BackgroundImage
+        mah={205}
+        mih={205}
+        src={EasyChefBanner}
+        sx={{
+          backgroundSize: "cover",
+        }}
+      >
+        <Center>
+          <Image src={EasyChefLogo} height={175} width="auto" mt="15px" />
+        </Center>
+      </BackgroundImage>
+      <Container
+        fluid
+        p={0}
+        m={0}
+        sx={{ backgroundColor: theme.colors.gray[3] }}
+      >
+        <Group mih={60} gap="sm" position="center" className={classes.links}>
           {items}
-        </Flex>
-        <Burger
-          opened={opened}
-          onClick={toggle}
-          className={classes.burger}
-          size="sm"
-        />
+          <Menu
+            width={260}
+            position="bottom-end"
+            transitionProps={{ transition: "pop-top-right" }}
+            onClose={() => setUserMenuOpened(false)}
+            onOpen={() => setUserMenuOpened(true)}
+            withinPortal
+          >
+            <Menu.Target>
+              <Button variant="white" color="dark">
+                Profile
+              </Button>
+            </Menu.Target>
+
+            <Menu.Dropdown>
+              {renderProfile()}
+              <Menu.Divider />
+              {renderAuth()}
+            </Menu.Dropdown>
+          </Menu>
+        </Group>
       </Container>
     </Header>
   );
-};
-
-export default HeaderSimple;
+}

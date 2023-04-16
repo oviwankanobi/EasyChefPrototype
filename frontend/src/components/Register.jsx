@@ -34,33 +34,17 @@ export default function Register() {
   });
 
   const REGISTER_API_ENDPOINT = "http://127.0.0.1:8000/accounts/register/";
+
   const navigate = useNavigate();
 
   const handleRegister = async (formValues) => {
-    try {
-      const response = await axios.post(
-        REGISTER_API_ENDPOINT,
-        {
-          first_name: formValues.firstName,
-          last_name: formValues.lastName,
-          email: formValues.email,
-          password: formValues.password1,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.status === 200) {
-        navigate("/login");
-      } else {
-        console.log(response.data);
-      }
-    } catch (error) {
-      console.error(error);
-    }
+    const response = await axios.post(REGISTER_API_ENDPOINT, {
+      first_name: formValues.firstName,
+      last_name: formValues.lastName,
+      email: formValues.email,
+      password: formValues.password1,
+    });
+    navigate("/login");
   };
 
   useEffect(() => {
