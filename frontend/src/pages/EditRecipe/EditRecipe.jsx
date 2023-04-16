@@ -17,7 +17,6 @@ import {
   Paper,
   Divider,
   MantineProvider,
-  MantineProvider,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { modals, ModalsProvider } from "@mantine/modals";
