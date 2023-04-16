@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-^qul5c81s3f6@sm&v&k5@w-wsdj+68(%29++#4*8r(nlm77tb-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -47,19 +47,17 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 # Generally unsafe, but easier for development purposes.
 CORS_ALLOW_ALL_ORIGINS = True  
-ALLOWED_HOSTS = ['*']
-
 # Enables sending cookies and session data
 CORS_ALLOW_CREDENTIALS = True
 
@@ -141,7 +139,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 120
 }
 
 SIMPLE_JWT = {

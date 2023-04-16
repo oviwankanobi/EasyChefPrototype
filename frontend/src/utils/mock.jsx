@@ -11,34 +11,4 @@ export const links = [
     link: "/my-recipes",
     label: "My Recipes",
   },
-  {
-    link: "/profile",
-    label: "John",
-    dropdown: [
-      {
-        link: "/shoppinglist",
-        label: "My Shopping List",
-      },
-      {
-        link: "/edit",
-        label: "Edit Profile",
-      },
-      {
-        link: "#",
-        label: "Logout",
-      },
-    ],
-  },
-  {
-    link: "/login",
-    label: "Login",
-  },
-  {
-    link: "/register",
-    label: "Register",
-  },
-  {
-    link: "/logout",
-    label: "Logout",
-  },
 ];

@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Register, Login, Logout } from "./components"
+import { Register, Login, Logout } from "./components";
 import {
   Home,
   MyRecipes,
   CreateRecipes,
+  RecipeDetails,
   Profile,
   Layout,
   Authentication,
+  ShoppingList,
+  EditRecipe,
+  NotFound,
 } from "./pages";
 
 const router = createBrowserRouter([
@@ -27,8 +31,24 @@ const router = createBrowserRouter([
         element: <CreateRecipes />,
       },
       {
+        path: "/recipe-details/:id",
+        element: <RecipeDetails />,
+      },
+      {
+        path: "/recipe-details/:id/edit",
+        element: <EditRecipe />,
+      },
+      {
         path: "/profile",
         element: <Profile />,
+      },
+      {
+        path: "/shopping-list",
+        element: <ShoppingList />,
+      },
+      {
+        path: "/not-found",
+        element: <NotFound />,
       },
     ],
   },
